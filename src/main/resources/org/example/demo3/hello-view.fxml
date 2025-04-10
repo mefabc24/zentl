@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.demo3.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.HelloController">
+    <center>
+        <HBox fx:id="gameBoard" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
+            <VBox fx:id="player1Side" spacing="10" alignment="CENTER"/>
+            <VBox fx:id="player2Side" spacing="10" alignment="CENTER"/>
+        </HBox>
+    </center>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+    <bottom>
+        <HBox fx:id="playerHand" spacing="10" style="-fx-background-color: #333; -fx-padding: 10;" alignment="CENTER"/>
+    </bottom>
+
+    <right>
+        <VBox fx:id="infoPanel" spacing="10" style="-fx-background-color: #eee; -fx-padding: 10;">
+            <Label fx:id="roundLabel" text="Round: 1" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Label fx:id="currentPlayerLabel" text="Current: " style="-fx-font-size: 14px;"/>
+            <Label fx:id="p1Score" text="Player 1 score: 0"/>
+            <Label fx:id="p2Score" text="Player 2 score: 0"/>
+            <Button fx:id="newRoundButton" text="New Round" style="-fx-padding: 5px 15px;"/>
+            <Button fx:id="restartGameButton" text="Restart Game" style="-fx-padding: 5px 15px;"/>
+        </VBox>
+    </right>
+</BorderPane>
