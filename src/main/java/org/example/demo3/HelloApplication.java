@@ -2,23 +2,25 @@ package org.example.demo3;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class HelloApplication extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/demo3/hello-view.fxml"));
-        Parent root = loader.load();
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        stage.setTitle("Card Game");
+        stage.setScene(scene);
 
-        HelloController controller = loader.getController();
-        controller.initializeGame();
+        GameController controller = fxmlLoader.getController();
+        controller.initializeGame(); // Spiel initialisieren
 
-        primaryStage.setTitle("Gwent Card Game");
-        primaryStage.setScene(new Scene(root, 1200, 800));
-        primaryStage.show();
+        stage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);

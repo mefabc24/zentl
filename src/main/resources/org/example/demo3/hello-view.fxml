@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.HelloController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.GameController">
     <center>
         <HBox fx:id="gameBoard" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
             <VBox fx:id="player1Side" spacing="10" alignment="CENTER"/>
