@@ -3,6 +3,8 @@ module org.example.demo3 {
     requires javafx.fxml;
     requires javafx.web;
 
+    exports org.example.demo3.model;
+    exports org.example.demo3.model.enums;
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;

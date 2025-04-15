@@ -16,7 +16,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
 
         GameController controller = fxmlLoader.getController();
-        controller.initializeGame(); // Spiel initialisieren
+        controller.initializeGame();
 
         stage.show();
     }

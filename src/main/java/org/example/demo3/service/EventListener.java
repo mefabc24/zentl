@@ -1,7 +1,7 @@
 package org.example.demo3.service;
 import org.example.demo3.model.*;
 
-public interface GameEventListener {
+public interface EventListener {
     void onGameInitialized();
     void onCardPlayed(Player player, Card card);
     void onPlayerPassed(Player player);

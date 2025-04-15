@@ -8,11 +8,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.geometry.*;
+import org.example.demo3.service.EventListener;
+
 import java.net.URL;
 import java.util.*;
 
-public class GameController implements Initializable, GameEventListener {
-    @FXML private HBox gameBoard;
+public class GameController implements Initializable, EventListener {
     @FXML private VBox player1Side;
     @FXML private VBox player2Side;
     @FXML private HBox playerHand;
@@ -27,11 +28,9 @@ public class GameController implements Initializable, GameEventListener {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Service erstellen
         gameService = new GameServiceImpl();
-        gameService.registerListener(this);
+        gameService.registerListener(this); // Registrieren des Frontends als Listener
 
-        // Button-Handler
         newRoundButton.setOnAction(e -> gameService.startNewRound());
         restartGameButton.setOnAction(e -> gameService.restartGame());
         restartGameButton.setVisible(false);
@@ -41,7 +40,6 @@ public class GameController implements Initializable, GameEventListener {
         gameService.initializeGame();
     }
 
-    // UI-Update-Methoden
     private void updateUI() {
         updatePlayerSide(player1Side, gameService.getPlayer1());
         updatePlayerSide(player2Side, gameService.getPlayer2());
@@ -60,7 +58,7 @@ public class GameController implements Initializable, GameEventListener {
 
         Label playerName = new Label(player.getName());
         playerName.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-        playerSide.getChildren().add(playerName); // Hier fehlte das add
+        playerSide.getChildren().add(playerName);
 
         VBox meleeRow = createRowUI(RowType.MELEE, player);
         VBox rangedRow = createRowUI(RowType.RANGED, player);
@@ -80,7 +78,7 @@ public class GameController implements Initializable, GameEventListener {
         HBox cardsBox = new HBox(5);
         cardsBox.setAlignment(Pos.CENTER);
 
-        // Hier GameBoard über den Service holen
+        // Hier GameBoard über GameService abrufen
         GameBoard gameBoard = gameService.getGameBoard();
         List<Card> cards = gameBoard.getPlayerRows(player).getOrDefault(rowType, Collections.emptyList());
         for (Card card : cards) {
@@ -121,7 +119,6 @@ public class GameController implements Initializable, GameEventListener {
     private void updateHandUI() {
         playerHand.getChildren().clear();
 
-        // Prüfe, ob das Spiel vorbei ist
         if (gameService.isRoundOver()) {
             playerHand.setDisable(true);
             return;
@@ -132,17 +129,12 @@ public class GameController implements Initializable, GameEventListener {
 
         for (Card card : currentPlayer.getHand()) {
             VBox cardUI = createCardUI(card);
-            cardUI.setOnMouseClicked(e -> {
-                gameService.playCard(currentPlayer, card);
-            });
+            cardUI.setOnMouseClicked(e -> gameService.playCard(currentPlayer, card));
             playerHand.getChildren().add(cardUI);
         }
-
         Button passButton = new Button("Pass");
         passButton.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
-        passButton.setOnAction(e -> {
-            gameService.playerPass(currentPlayer);
-        });
+        passButton.setOnAction(e -> gameService.playerPass(currentPlayer));
         playerHand.getChildren().add(passButton);
     }
 
@@ -155,7 +147,8 @@ public class GameController implements Initializable, GameEventListener {
         };
     }
 
-    // Event-Handler-Implementierungen
+    // Methoden für die verschiedenen Events, werden von Gameservice aufgerufen
+
     @Override
     public void onGameInitialized() {
         newRoundButton.setDisable(false);

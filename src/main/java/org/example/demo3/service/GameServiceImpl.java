@@ -2,8 +2,7 @@ package org.example.demo3.service;
 import org.example.demo3.model.*;
 import org.example.demo3.model.enums.*;
 import java.util.*;
-
-
+// Hier nur Spiellogik und Spielzustand, man koennte Spiellogik noch separieren in extra Klasse GameEngine
     public class GameServiceImpl implements GameService {
         private GameBoard gameBoardState;
         private Player player1;
@@ -13,8 +12,8 @@ import java.util.*;
         private int player1Wins = 0;
         private int player2Wins = 0;
         private final int MAX_ROUNDS = 3;
-
-        private List<GameEventListener> listeners = new ArrayList<>();
+        // Hier speichern aller Listener, wenn wir ein Event ausloesen wird das fuer alle ausgefuehrt
+        private final List<EventListener> listeners = new ArrayList<>();
 
         @Override
         public void initializeGame() {
@@ -35,7 +34,7 @@ import java.util.*;
             }
 
             currentPlayer = player1;
-            notifyGameInitialized();
+            notifyGameInitialized(); // hier z.B. siehe Methode, alle Listener werden informiert und fuehren demnach eine Aktion aus
         }
 
         private List<Card> createStarterDeck(Faction faction) {
@@ -58,7 +57,7 @@ import java.util.*;
         @Override
         public void playCard(Player player, Card card) {
             if (player != currentPlayer || player.hasPassed()) {
-                return; // Ungültiger Zug
+                return;
             }
 
             player.playCard(card, gameBoardState);
@@ -180,52 +179,42 @@ import java.util.*;
         }
 
         @Override
-        public boolean isGameOver() {
-            return round >= MAX_ROUNDS;
-        }
-
-        @Override
-        public void registerListener(GameEventListener listener) {
+        public void registerListener(EventListener listener) {
             listeners.add(listener);
         }
 
-        @Override
-        public void unregisterListener(GameEventListener listener) {
-            listeners.remove(listener);
-        }
-
         private void notifyGameInitialized() {
-            for (GameEventListener listener : listeners) {
+            for (EventListener listener : listeners) {
                 listener.onGameInitialized();
             }
         }
 
         private void notifyCardPlayed(Player player, Card card) {
-            for (GameEventListener listener : listeners) {
+            for (EventListener listener : listeners) {
                 listener.onCardPlayed(player, card);
             }
         }
 
         private void notifyPlayerPassed(Player player) {
-            for (GameEventListener listener : listeners) {
+            for (EventListener listener : listeners) {
                 listener.onPlayerPassed(player);
             }
         }
 
         private void notifyRoundEnded(Player roundWinner, int p1Score, int p2Score) {
-            for (GameEventListener listener : listeners) {
+            for (EventListener listener : listeners) {
                 listener.onRoundEnded(roundWinner, p1Score, p2Score);
             }
         }
 
         private void notifyGameEnded(Player gameWinner, int p1Wins, int p2Wins) {
-            for (GameEventListener listener : listeners) {
+            for (EventListener listener : listeners) {
                 listener.onGameEnded(gameWinner, p1Wins, p2Wins);
             }
         }
 
         private void notifyPlayerChanged(Player newCurrentPlayer) {
-            for (GameEventListener listener : listeners) {
+            for (EventListener listener : listeners) {
                 listener.onPlayerChanged(newCurrentPlayer);
             }
         }
