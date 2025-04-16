@@ -3,17 +3,17 @@ package org.example.demo3;
 import org.example.demo3.model.*;
 import org.example.demo3.model.enums.*;
 import org.example.demo3.service.*;
+import org.example.demo3.event.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.geometry.*;
-import org.example.demo3.service.EventListener;
 
 import java.net.URL;
 import java.util.*;
 
-public class GameController implements Initializable, EventListener {
+public class GameController implements Initializable {
     @FXML private VBox player1Side;
     @FXML private VBox player2Side;
     @FXML private HBox playerHand;
@@ -25,15 +25,75 @@ public class GameController implements Initializable, EventListener {
     @FXML private Button restartGameButton;
 
     private GameService gameService;
+    private EventBus eventBus;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         gameService = new GameServiceImpl();
-        gameService.registerListener(this); // Registrieren des Frontends als Listener
+        eventBus = EventBus.getInstance();
+
+        // Event-Handler für spezifische Events registrieren
+        registerEventHandlers();
 
         newRoundButton.setOnAction(e -> gameService.startNewRound());
         restartGameButton.setOnAction(e -> gameService.restartGame());
         restartGameButton.setVisible(false);
+    }
+
+    private void registerEventHandlers() {
+        // Handler für GameInitializedEvent
+        eventBus.subscribe(InitEvent.class, event -> {
+            newRoundButton.setDisable(false);
+            playerHand.setDisable(false);
+            restartGameButton.setVisible(false);
+            updateUI();
+        });
+
+        // Handler für CardPlayedEvent
+        eventBus.subscribe(CardPlayedEvent.class, event -> updateUI());
+
+        // Handler für PlayerPassedEvent
+        eventBus.subscribe(PlayerPassedEvent.class, event -> updateUI());
+
+        // Handler für PlayerChangedEvent
+        eventBus.subscribe(PlayerChangedEvent.class, event -> updateUI());
+
+        // Handler für RoundEndedEvent
+        eventBus.subscribe(RoundEndedEvent.class, event -> {
+            playerHand.setDisable(true);
+            playerHand.getChildren().clear();
+
+            String winnerName = (event.getWinner() != null) ? event.getWinner().getName() : "Draw";
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Round Over");
+            alert.setHeaderText("Round " + gameService.getRound() + " finished");
+            alert.setContentText("Round Winner: " + winnerName + "\n" +
+                    gameService.getPlayer1().getName() + ": " + event.getPlayer1Score() +
+                    " (Wins: " + gameService.getPlayer1Wins() + ")\n" +
+                    gameService.getPlayer2().getName() + ": " + event.getPlayer2Score() +
+                    " (Wins: " + gameService.getPlayer2Wins() + ")");
+            alert.showAndWait();
+        });
+
+        // Handler für GameEndedEvent
+        eventBus.subscribe(GameEndedEvent.class, event -> {
+            String winnerName = (event.getWinner() != null) ? event.getWinner().getName() : "Draw - no clear winner";
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText("Match Finished");
+            alert.setContentText("Overall Winner: " + winnerName + "\n\n" +
+                    "Final Score:\n" +
+                    gameService.getPlayer1().getName() + ": " + event.getPlayer1Wins() + " wins\n" +
+                    gameService.getPlayer2().getName() + ": " + event.getPlayer2Wins() + " wins");
+            alert.showAndWait();
+
+            newRoundButton.setDisable(true);
+            playerHand.setDisable(true);
+            playerHand.getChildren().clear();
+            restartGameButton.setVisible(true);
+        });
     }
 
     public void initializeGame() {
@@ -145,67 +205,5 @@ public class GameController implements Initializable, EventListener {
             case SIEGE -> "#ddddff";
             default -> "#ffffff";
         };
-    }
-
-    // Methoden für die verschiedenen Events, werden von Gameservice aufgerufen
-
-    @Override
-    public void onGameInitialized() {
-        newRoundButton.setDisable(false);
-        playerHand.setDisable(false);
-        restartGameButton.setVisible(false);
-        updateUI();
-    }
-
-    @Override
-    public void onCardPlayed(Player player, Card card) {
-        updateUI();
-    }
-
-    @Override
-    public void onPlayerPassed(Player player) {
-        updateUI();
-    }
-
-    @Override
-    public void onRoundEnded(Player roundWinner, int p1Score, int p2Score) {
-        playerHand.setDisable(true);
-        playerHand.getChildren().clear();
-
-        String winnerName = (roundWinner != null) ? roundWinner.getName() : "Draw";
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Round Over");
-        alert.setHeaderText("Round " + gameService.getRound() + " finished");
-        alert.setContentText("Round Winner: " + winnerName + "\n" +
-                gameService.getPlayer1().getName() + ": " + p1Score +
-                " (Wins: " + gameService.getPlayer1Wins() + ")\n" +
-                gameService.getPlayer2().getName() + ": " + p2Score +
-                " (Wins: " + gameService.getPlayer2Wins() + ")");
-        alert.showAndWait();
-    }
-
-    @Override
-    public void onGameEnded(Player gameWinner, int p1Wins, int p2Wins) {
-        String winnerName = (gameWinner != null) ? gameWinner.getName() : "Draw - no clear winner";
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText("Match Finished");
-        alert.setContentText("Overall Winner: " + winnerName + "\n\n" +
-                "Final Score:\n" +
-                gameService.getPlayer1().getName() + ": " + p1Wins + " wins\n" +
-                gameService.getPlayer2().getName() + ": " + p2Wins + " wins");
-        alert.showAndWait();
-
-        newRoundButton.setDisable(true);
-        playerHand.setDisable(true);
-        playerHand.getChildren().clear();
-        restartGameButton.setVisible(true);
-    }
-
-    @Override
-    public void onPlayerChanged(Player newCurrentPlayer) {
-        updateUI();
     }
 }

@@ -1,5 +1,8 @@
 package org.example.demo3.service;
+
+import org.example.demo3.event.*;
 import org.example.demo3.model.*;
+import java.util.function.Consumer;
 
 public interface GameService {
 
@@ -13,15 +16,15 @@ public interface GameService {
 
     // Spielzustaende abfragen
     Player getCurrentPlayer();
-    Player getPlayer1();  // Hinzugefügt
-    Player getPlayer2();  // Hinzugefügt
+    Player getPlayer1();
+    Player getPlayer2();
     int getRound();
     int getPlayerScore(Player player);
     boolean isRoundOver();
-    int getPlayer1Wins();  // Hinzugefügt
-    int getPlayer2Wins();  // Hinzugefügt
-    GameBoard getGameBoard();  // Hinzugefügt
+    int getPlayer1Wins();
+    int getPlayer2Wins();
+    GameBoard getGameBoard();
 
-    // Event-Handling
-    void registerListener(EventListener listener);
+    // Event-Handling (korrigiert)
+    <T extends Event> void registerEventHandler(Class<T> eventType, Consumer<T> handler);
 }
