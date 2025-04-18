@@ -3,28 +3,31 @@ package org.example.demo3.event;
 import org.example.demo3.model.player.Player;
 
 public class RoundEndedEve extends Event {
+    private final int round;
     private final Player winner;
-    private final int player1Score;
-    private final int player2Score;
+    private final Player p1;
+    private final Player p2;
 
-    public RoundEndedEve(Player winner, int player1Score, int player2Score) {
+    public RoundEndedEve(int round, Player winner, Player p1, Player p2) {
+        this.round = round;
         this.winner = winner;
-        this.player1Score = player1Score;
-        this.player2Score = player2Score;
-
+        this.p1 = p1;
+        this.p2 = p2;
     }
 
     public Player getWinner() {
         return winner;
     }
 
-    public int getPlayer1Score() {
-        return player1Score;
+    public int getRound() {
+        return round;
     }
 
-    public int getPlayer2Score() {
-        return player2Score;
+    public Player getP1() {
+        return p1;
     }
 
+    public Player getP2() {
+        return p2;
+    }
 }
-

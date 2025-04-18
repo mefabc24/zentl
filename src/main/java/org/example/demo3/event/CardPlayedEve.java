@@ -1,9 +1,9 @@
 package org.example.demo3.event;
+
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.player.Player;
 
 public class CardPlayedEve extends Event {
-
     private final Player player;
     private final Card card;
 
@@ -12,7 +12,11 @@ public class CardPlayedEve extends Event {
         this.card = card;
     }
 
-    public Player getPlayer() { return player; }
-    public Card getCard() { return card; }
+    public Player getPlayer() {
+        return player;
+    }
 
+    public Card getCard() {
+        return card;
+    }
 }

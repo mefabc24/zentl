@@ -1,55 +1,61 @@
 package org.example.demo3.service;
 
 import org.example.demo3.event.*;
-import org.example.demo3.model.board.*;
-import org.example.demo3.model.cards.*;
-import org.example.demo3.model.enums.*;
-import org.example.demo3.logic.*;
-import org.example.demo3.model.player.*;
+import org.example.demo3.logic.GameEngine;
+import org.example.demo3.logic.GameEngineImpl;
+import org.example.demo3.model.board.GameBoard;
+import org.example.demo3.model.board.GameBoardImpl;
+import org.example.demo3.model.cards.Card;
+import org.example.demo3.model.cards.UnitCard;
+import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.player.Player;
+import org.example.demo3.model.player.PlayerImpl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GameServiceImpl implements GameService {
-
-    private GameBoard gameBoardState;
-    private Player player1;
-    private Player player2;
-    private Player currentPlayer;
-    private int round = 1;
-    private int player1Wins = 0;
-    private int player2Wins = 0;
-    private Player roundWinner;
     private final EventBus eventBus = EventBus.getInstance();
     private final GameEngine gameEngine;
+    private GameBoard board;
+    private Player p1;
+    private Player p2;
+    private Player currentPlayer;
+    private int round = 1;
+    private Player roundWinner;
 
     public GameServiceImpl() {
         this.gameEngine = new GameEngineImpl();
+        registerEventHandlers();
     }
 
-    @Override
+    private void registerEventHandlers() {
+        eventBus.subscribe(RestartEve.class, restartEve -> initializeGame());
+        eventBus.subscribe(PlayCardCommand.class, this::handlePlayCardCommand);
+        eventBus.subscribe(PassCommand.class, this::handlePassCommand);
+    }
+
     public void initializeGame() {
-        player1Wins = 0;
-        player2Wins = 0;
         round = 1;
-        gameBoardState = new GameBoardImpl();
-
-        List<Card> deck1 = createStarterDeck(Faction.NORTHERN_REALMS);
-        List<Card> deck2 = createStarterDeck(Faction.MONSTERS);
-
-        player1 = new PlayerImpl("Player 1", Faction.NORTHERN_REALMS, deck1);
-        player2 = new PlayerImpl("Player 2", Faction.MONSTERS, deck2);
-
+        board = new GameBoardImpl();
+        List<Card> deck1 = createStarterDeck(Fraction.KNIGHTS);
+        List<Card> deck2 = createStarterDeck(Fraction.MONSTER);
+        p1 = new PlayerImpl("Player 1", Fraction.KNIGHTS, deck1);
+        p2 = new PlayerImpl("Player 2", Fraction.MONSTER, deck2);
+        p1.setWins(0);
+        p2.setWins(0);
         for (int i = 0; i < 10; i++) {
-            player1.drawCard();
-            player2.drawCard();
+            p1.drawCard();
+            p2.drawCard();
         }
-
-        currentPlayer = player1;
-        eventBus.post(new InitEve(player1, player2));
+        currentPlayer = p1;
+        roundWinner = null;
+        updateAndPostState();
     }
 
-
-    private List<Card> createStarterDeck(Faction fraction) {
+    private List<Card> createStarterDeck(Fraction fraction) {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
             deck.add(new UnitCard("Soldier " + (i + 1), 5, "Basic soldier", fraction, RowType.MELEE));
@@ -60,62 +66,72 @@ public class GameServiceImpl implements GameService {
         for (int i = 0; i < 5; i++) {
             deck.add(new UnitCard("Catapult " + (i + 1), 6, "Basic siege", fraction, RowType.SIEGE));
         }
-        deck.add(new SpecialCard("Clear Weather", "Removes all weather effects", fraction));
-        deck.add(new SpecialCard("Scorch", "Destroys the strongest unit(s)", fraction));
         Collections.shuffle(deck);
         return deck;
     }
 
-    @Override
-    public void playCard(Player player, Card card) {
-        if (player != currentPlayer || player.hasPassed()) {
-            return;
-        }
-        player.playCard(card, gameBoardState);
-        eventBus.post(new CardPlayedEve(player, card));
-        switchPlayer();
+    private void handlePlayCardCommand(PlayCardCommand command) {
+        playCard(command.getPlayer(), command.getCard());
     }
 
-    @Override
+    private void handlePassCommand(PassCommand command) {
+        playerPass(command.getPlayer());
+    }
+
+    public void playCard(Player player, Card card) {
+        if (player != currentPlayer || player.hasPassed()) {
+            System.out.println("Invalid move: Not player's turn or player has passed.");
+            return;
+        }
+        if (!player.getHand().contains(card)) {
+            System.out.println("Invalid move: Player does not have card " + card.getName());
+            return;
+        }
+        player.playCard(card, board);
+        switchPlayer();
+        updateAndPostState();
+    }
+
     public void playerPass(Player player) {
         if (player != currentPlayer || player.hasPassed()) {
+            System.out.println("Invalid pass: Not player's turn or player already passed.");
             return;
         }
         player.pass();
-        eventBus.post(new PlayerPassedEve(player));
         switchPlayer();
+        updateAndPostState();
     }
 
     private void switchPlayer() {
-        if (player1.hasPassed() && player2.hasPassed()) {
+        if (p1.hasPassed() && p2.hasPassed()) {
             endRound();
         } else {
-            Player nextPlayer = (currentPlayer == player1) ? player2 : player1;
+            Player nextPlayer = (currentPlayer == p1) ? p2 : p1;
             if (!nextPlayer.hasPassed()) {
                 currentPlayer = nextPlayer;
-                eventBus.post(new PlayerChangedEve(currentPlayer));
             }
         }
     }
 
     private void endRound() {
-        int p1Score = getPlayerScore(player1);
-        int p2Score = getPlayerScore(player2);
-
-         roundWinner = gameEngine.determineRoundWinner(player1, player2, p1Score, p2Score);
-
-        if (roundWinner == player1) {
-            player1Wins++;
-        } else if (roundWinner == player2) {
-            player2Wins++;
+        int p1Score = board.calculateTotalPower(p1);
+        int p2Score = board.calculateTotalPower(p2);
+        p1.setScore(p1Score);
+        p2.setScore(p2Score);
+        roundWinner = gameEngine.determineRoundWinner(p1, p2);
+        int currentP1Wins = p1.getWins();
+        int currentP2Wins = p2.getWins();
+        if (roundWinner == p1) {
+            p1.setWins(currentP1Wins + 1);
+        } else if (roundWinner == p2) {
+            p2.setWins(currentP2Wins + 1);
         } else {
-            player1Wins++;
-            player2Wins++;
+            p1.setWins(currentP1Wins + 1);
+            p2.setWins(currentP2Wins + 1);
         }
-        eventBus.post(new RoundEndedEve(roundWinner, p1Score, p2Score));
-
+        eventBus.post(new RoundEndedEve(round, roundWinner, p1, p2));
         int BO = 2;
-        if (player1Wins >= BO || player2Wins >= BO) {
+        if (p1.getWins() >= BO || p2.getWins() >= BO) {
             endGame();
         } else {
             startNewRound();
@@ -123,74 +139,52 @@ public class GameServiceImpl implements GameService {
     }
 
     private void endGame() {
-        Player gameWinner = gameEngine.determineGameWinner(player1, player2, player1Wins, player2Wins);
+        Player gameWinner = gameEngine.determineGameWinner(p1, p2);
         System.out.println("Spiel beendet. Gesamtsieger: " + (gameWinner != null ? gameWinner.getName() : "Unentschieden"));
-        eventBus.post(new GameEndedEve(gameWinner, player1Wins, player2Wins));
+        eventBus.post(new GameEndedEve(gameWinner, p1.getWins(), p2.getWins(), p1.getName(), p2.getName()));
     }
 
-    @Override
     public void startNewRound() {
         round++;
-        gameBoardState.clearBoard();
-        player1.resetPass();
-        player2.resetPass();
-
-        for (int i = 0; i < 3; i++) {
-            if (!player1.getDeck().isEmpty()) player1.drawCard();
-            if (!player2.getDeck().isEmpty()) player2.drawCard();
+        board.clearBoard();
+        p1.resetPass();
+        p2.resetPass();
+        p1.setScore(0);
+        p2.setScore(0);
+        for (int i = 0; i < 2; i++) {
+            if (!p1.getDeck().isEmpty()) p1.drawCard();
+            if (!p2.getDeck().isEmpty()) p2.drawCard();
         }
-
-        currentPlayer = roundWinner == player1 ? player1 : player2;
-        eventBus.post(new InitEve(player1, player2));
+        currentPlayer = (roundWinner == p2) ? p2 : p1;
+        updateAndPostState();
     }
 
-    @Override
-    public void restartGame() {
-        initializeGame();
+    private void updateAndPostState() {
+        int currentP1Score = board.calculateTotalPower(p1);
+        int currentP2Score = board.calculateTotalPower(p2);
+        p1.setScore(currentP1Score);
+        p2.setScore(currentP2Score);
+        GameStateUpdateEve stateEvent = new GameStateUpdateEve(p1, p2, currentPlayer, round, board);
+        eventBus.post(stateEvent);
     }
 
-    @Override
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    @Override
     public int getRound() {
         return round;
     }
 
-    @Override
-    public int getPlayerScore(Player player) {
-        return gameBoardState.calculateTotalPower(player);
-    }
-
-    @Override
-    public boolean isRoundOver() {
-        return player1.hasPassed() && player2.hasPassed();
-    }
-
-    @Override
     public GameBoard getGameBoard() {
-        return gameBoardState;
+        return board;
     }
 
-    @Override
     public Player getPlayer1() {
-        return player1;
+        return p1;
     }
 
-    @Override
     public Player getPlayer2() {
-        return player2;
-    }
-
-    @Override
-    public int getPlayer1Wins() {
-        return player1Wins;
-    }
-
-    @Override
-    public int getPlayer2Wins() {
-        return player2Wins;
+        return p2;
     }
 }

@@ -1,44 +1,40 @@
 package org.example.demo3.model.cards;
 
 import org.example.demo3.model.enums.CardType;
-import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.enums.Fraction;
 
 public abstract class BaseCard implements Card {
     protected final String name;
     protected final int power;
     protected final String description;
     protected final CardType type;
-    protected final Faction faction;
+    protected final Fraction fraction;
 
-    public BaseCard(String name, int power, String description, CardType type, Faction faction) {
+    public BaseCard(String name, int power, String description, CardType type, Fraction fraction) {
         this.name = name;
         this.power = power;
         this.description = description;
         this.type = type;
-        this.faction = faction;
+        this.fraction = fraction;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public int getPower() {
         return power;
     }
 
-    @Override
     public String getDescription() {
         return description;
     }
 
-    @Override
     public CardType getType() {
         return type;
     }
 
-    public Faction getFaction() {
-        return faction;
+    public Fraction getfraction() {
+        return fraction;
     }
 }

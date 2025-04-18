@@ -1,4 +1,5 @@
 package org.example.demo3.event;
+
 import org.example.demo3.model.player.Player;
 
 public class InitEve extends Event {
@@ -10,7 +11,11 @@ public class InitEve extends Event {
         this.player2 = player2;
     }
 
-    public Player getPlayer1() { return player1; }
-    public Player getPlayer2() { return player2; }
+    public Player getPlayer1() {
+        return player1;
+    }
 
+    public Player getPlayer2() {
+        return player2;
+    }
 }
