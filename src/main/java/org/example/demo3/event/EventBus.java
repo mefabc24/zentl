@@ -25,7 +25,7 @@ public class EventBus {
             List<EventHandler<? extends Event>> eventListeners = new ArrayList<>(listeners.get(eventType));
             for (EventHandler<?extends Event> listener : eventListeners) {
                 try {
-                     listener.execute(event);
+                    ((EventHandler<Event>)listener).execute(event);
                 } catch (Exception error) {
                     System.out.println("Error fuer Event " + eventType + ": " + error.getMessage());
                 }

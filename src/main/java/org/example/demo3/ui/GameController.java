@@ -54,31 +54,29 @@ public class GameController implements Initializable {
     }
 
     private void registerEventHandlers() {
-        eventBus.subscribe(InitEve.class, event -> {
+        eventBus.subscribe(InitEve.class, initEve -> {
             playerHand.setDisable(false);
             restartGameButton.setVisible(false);
             updateUI();
         });
 
-        eventBus.subscribe(CardPlayedEve.class, event -> updateUI());
+        eventBus.subscribe(CardPlayedEve.class, cardPlayedEve -> updateUI());
 
-        eventBus.subscribe(PlayerPassedEve.class, event -> updateUI());
+        eventBus.subscribe(PlayerPassedEve.class, playerPassedEve -> updateUI());
 
-        eventBus.subscribe(PlayerChangedEve.class, event -> updateUI());
+        eventBus.subscribe(PlayerChangedEve.class, playerChangedEve -> updateUI());
 
-        eventBus.subscribe(RoundEndedEve.class, event -> {
-            if (event instanceof RoundEndedEve roundEndedEve) {
+        eventBus.subscribe(RoundEndedEve.class, roundEndedEve -> {
                 playerHand.setDisable(true);
                 playerHand.getChildren().clear();
                 String winnerName = (roundEndedEve.getWinner() != null) ? roundEndedEve.getWinner().getName() : "Draw";
                 Alert alert = getAlert(roundEndedEve, winnerName);
                 alert.showAndWait();
                 updateUI();
-            }
+
         });
 
-        eventBus.subscribe(GameEndedEve.class, event -> {
-            if (event instanceof GameEndedEve gameEndedEve) {
+        eventBus.subscribe(GameEndedEve.class, gameEndedEve -> {
                 String winnerName = (gameEndedEve.getWinner() != null) ? gameEndedEve.getWinner().getName() : "Draw - no clear winner";
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Game Over");
@@ -89,7 +87,6 @@ public class GameController implements Initializable {
                 playerHand.getChildren().clear();
                 restartGameButton.setVisible(true);
                 updateUI();
-            }
         });
     }
 
