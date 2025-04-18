@@ -1,13 +1,16 @@
 package org.example.demo3.service;
 
 import org.example.demo3.event.*;
-import org.example.demo3.model.*;
+import org.example.demo3.model.board.*;
+import org.example.demo3.model.cards.*;
 import org.example.demo3.model.enums.*;
-import java.util.*;
-import java.util.function.Consumer;
+import org.example.demo3.logic.*;
+import org.example.demo3.model.player.*;
 
-// Hier nur Spiellogik und Spielzustand, man könnte Spiellogik noch separieren in extra Klasse GameEngine
+import java.util.*;
+
 public class GameServiceImpl implements GameService {
+
     private GameBoard gameBoardState;
     private Player player1;
     private Player player2;
@@ -15,10 +18,13 @@ public class GameServiceImpl implements GameService {
     private int round = 1;
     private int player1Wins = 0;
     private int player2Wins = 0;
-    private final int MAX_ROUNDS = 3;
-
-    // EventBus statt direkter Listener-Liste verwenden
+    private Player roundWinner;
     private final EventBus eventBus = EventBus.getInstance();
+    private final GameEngine gameEngine;
+
+    public GameServiceImpl() {
+        this.gameEngine = new GameEngineImpl();
+    }
 
     @Override
     public void initializeGame() {
@@ -39,25 +45,24 @@ public class GameServiceImpl implements GameService {
         }
 
         currentPlayer = player1;
-
-        // Event posten statt Listener direkt zu benachrichtigen
-        eventBus.post(new InitEvent(player1, player2));
+        eventBus.post(new InitEve(player1, player2));
     }
 
-    private List<Card> createStarterDeck(Faction faction) {
+
+    private List<Card> createStarterDeck(Faction fraction) {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
-            deck.add(new UnitCard("Soldier " + (i + 1), 5, "Basic soldier", faction, RowType.MELEE));
+            deck.add(new UnitCard("Soldier " + (i + 1), 5, "Basic soldier", fraction, RowType.MELEE));
         }
         for (int i = 0; i < 10; i++) {
-            deck.add(new UnitCard("Archer " + (i + 1), 4, "Basic archer", faction, RowType.RANGED));
+            deck.add(new UnitCard("Archer " + (i + 1), 4, "Basic archer", fraction, RowType.RANGED));
         }
         for (int i = 0; i < 5; i++) {
-            deck.add(new UnitCard("Catapult " + (i + 1), 6, "Basic siege engine", faction, RowType.SIEGE));
+            deck.add(new UnitCard("Catapult " + (i + 1), 6, "Basic siege", fraction, RowType.SIEGE));
         }
-
-        deck.add(new SpecialCard("Clear Weather", "Removes all weather effects", faction));
-        deck.add(new SpecialCard("Scorch", "Destroys the strongest unit(s)", faction));
+        deck.add(new SpecialCard("Clear Weather", "Removes all weather effects", fraction));
+        deck.add(new SpecialCard("Scorch", "Destroys the strongest unit(s)", fraction));
+        Collections.shuffle(deck);
         return deck;
     }
 
@@ -66,12 +71,8 @@ public class GameServiceImpl implements GameService {
         if (player != currentPlayer || player.hasPassed()) {
             return;
         }
-
         player.playCard(card, gameBoardState);
-
-        // Event posten statt Listener direkt zu benachrichtigen
-        eventBus.post(new CardPlayedEvent(player, card));
-
+        eventBus.post(new CardPlayedEve(player, card));
         switchPlayer();
     }
 
@@ -80,12 +81,8 @@ public class GameServiceImpl implements GameService {
         if (player != currentPlayer || player.hasPassed()) {
             return;
         }
-
         player.pass();
-
-        // Event posten statt Listener direkt zu benachrichtigen
-        eventBus.post(new PlayerPassedEvent(player));
-
+        eventBus.post(new PlayerPassedEve(player));
         switchPlayer();
     }
 
@@ -93,83 +90,58 @@ public class GameServiceImpl implements GameService {
         if (player1.hasPassed() && player2.hasPassed()) {
             endRound();
         } else {
-            currentPlayer = (currentPlayer == player1) ? player2 : player1;
-
-            // Event posten statt Listener direkt zu benachrichtigen
-            eventBus.post(new PlayerChangedEvent(currentPlayer));
+            Player nextPlayer = (currentPlayer == player1) ? player2 : player1;
+            if (!nextPlayer.hasPassed()) {
+                currentPlayer = nextPlayer;
+                eventBus.post(new PlayerChangedEve(currentPlayer));
+            }
         }
     }
 
     private void endRound() {
-        int p1Score = gameBoardState.calculateTotalPower(player1);
-        int p2Score = gameBoardState.calculateTotalPower(player2);
+        int p1Score = getPlayerScore(player1);
+        int p2Score = getPlayerScore(player2);
 
-        Player roundWinner;
-        if (p1Score > p2Score) {
+         roundWinner = gameEngine.determineRoundWinner(player1, player2, p1Score, p2Score);
+
+        if (roundWinner == player1) {
             player1Wins++;
-            roundWinner = player1;
-        } else if (p2Score > p1Score) {
+        } else if (roundWinner == player2) {
             player2Wins++;
-            roundWinner = player2;
         } else {
-            roundWinner = null;
+            player1Wins++;
+            player2Wins++;
         }
+        eventBus.post(new RoundEndedEve(roundWinner, p1Score, p2Score));
 
-        // Event posten statt Listener direkt zu benachrichtigen
-        eventBus.post(new RoundEndedEvent(roundWinner, p1Score, p2Score));
-
-        if (round >= MAX_ROUNDS) {
+        int BO = 2;
+        if (player1Wins >= BO || player2Wins >= BO) {
             endGame();
+        } else {
+            startNewRound();
         }
     }
 
     private void endGame() {
-        Player gameWinner;
-        if (player1Wins > player2Wins) {
-            gameWinner = player1;
-        } else if (player2Wins > player1Wins) {
-            gameWinner = player2;
-        } else {
-            gameWinner = null;
-        }
-
-        // Event posten statt Listener direkt zu benachrichtigen
-        eventBus.post(new GameEndedEvent(gameWinner, player1Wins, player2Wins));
+        Player gameWinner = gameEngine.determineGameWinner(player1, player2, player1Wins, player2Wins);
+        System.out.println("Spiel beendet. Gesamtsieger: " + (gameWinner != null ? gameWinner.getName() : "Unentschieden"));
+        eventBus.post(new GameEndedEve(gameWinner, player1Wins, player2Wins));
     }
 
     @Override
     public void startNewRound() {
-        if (round >= MAX_ROUNDS) {
-            endGame();
-            return;
-        }
-
         round++;
         gameBoardState.clearBoard();
-
-        List<Card> p1AllCards = new ArrayList<>();
-        p1AllCards.addAll(player1.getHand());
-        p1AllCards.addAll(player1.getDeck());
-
-        List<Card> p2AllCards = new ArrayList<>();
-        p2AllCards.addAll(player2.getHand());
-        p2AllCards.addAll(player2.getDeck());
-
-        player1 = new PlayerImpl(player1.getName(), player1.getFaction(), p1AllCards);
-        player2 = new PlayerImpl(player2.getName(), player2.getFaction(), p2AllCards);
-
         player1.resetPass();
         player2.resetPass();
 
-        for (int i = 0; i < 10; i++) {
-            player1.drawCard();
-            player2.drawCard();
+        for (int i = 0; i < 3; i++) {
+            if (!player1.getDeck().isEmpty()) player1.drawCard();
+            if (!player2.getDeck().isEmpty()) player2.drawCard();
         }
 
-        currentPlayer = player1;
-
-        // Event posten statt Listener direkt zu benachrichtigen
-        eventBus.post(new InitEvent(player1, player2));
+        currentPlayer = roundWinner == player1 ? player1 : player2;
+        eventBus.post(new InitEve(player1, player2));
     }
 
     @Override
@@ -197,28 +169,27 @@ public class GameServiceImpl implements GameService {
         return player1.hasPassed() && player2.hasPassed();
     }
 
-    // Neue Methode zur flexiblen Event-Handler-Registrierung
     @Override
-    public <T extends Event> void registerEventHandler(Class<T> eventType, Consumer<T> handler) {
-        eventBus.subscribe(eventType, handler);
-    }
-
     public GameBoard getGameBoard() {
         return gameBoardState;
     }
 
+    @Override
     public Player getPlayer1() {
         return player1;
     }
 
+    @Override
     public Player getPlayer2() {
         return player2;
     }
 
+    @Override
     public int getPlayer1Wins() {
         return player1Wins;
     }
 
+    @Override
     public int getPlayer2Wins() {
         return player2Wins;
     }

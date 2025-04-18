@@ -1,4 +1,4 @@
-package org.example.demo3.model;
+package org.example.demo3.model.cards;
 
 import org.example.demo3.model.enums.CardType;
 import org.example.demo3.model.enums.Faction;

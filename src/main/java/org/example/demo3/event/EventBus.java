@@ -1,41 +1,35 @@
 package org.example.demo3.event;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class EventBus {
-    private static EventBus instance;
-    private final Map<Class<? extends Event>, List<Consumer<? extends Event>>> listeners = new HashMap<>();
+    private static final EventBus instanz = new EventBus();
 
-    private EventBus() {}
+    // Event ist ein funkt. Interface, es nimmt genau ein arg entgegen und gibt nix zurueck => funktioniert ueber side-effects => bekommt Event Info und fuehrt Aktion aus
+    private final Map<EventType, List<EventHandler>> listeners = new HashMap<>();
 
-    public static synchronized EventBus getInstance() {
-        if (instance == null) {
-            instance = new EventBus();
-        }
-        return instance;
+    private EventBus(){
     }
 
-    // Methode zum Registrieren eines Listeners für einen bestimmten Event-Typ
-    public <T extends Event> void subscribe(Class<T> eventType, Consumer<T> listener) {
-        listeners.computeIfAbsent(eventType, k -> new ArrayList<>())
-                .add(listener);
+    public static EventBus getInstance(){
+         return instanz;
     }
 
-    // Methode zum Abmelden eines Listeners
-    public <T extends Event> void unsubscribe(Class<T> eventType, Consumer<T> listener) {
+    public void subscribe(EventType eventType, EventHandler listener){
+        List<EventHandler> list = listeners.computeIfAbsent(eventType, eventTyp -> new ArrayList<>());
+        list.add(listener);
+    }
+
+    public void post(Event event){
+        EventType eventType = event.getEventType();
         if (listeners.containsKey(eventType)) {
-            listeners.get(eventType).remove(listener);
-        }
-    }
-
-    // Methode zum Veröffentlichen eines Events
-    @SuppressWarnings("unchecked")
-    public <T extends Event> void post(T event) {
-        if (listeners.containsKey(event.getClass())) {
-            List<Consumer<? extends Event>> eventListeners = listeners.get(event.getClass());
-            for (Consumer<? extends Event> listener : eventListeners) {
-                ((Consumer<T>) listener).accept(event);
+            List<EventHandler> eventListeners = new ArrayList<>(listeners.get(eventType));
+            for (EventHandler listener : eventListeners) {
+                try {
+                     listener.execute(event);
+                } catch (Exception error) {
+                    System.out.println("Error fuer Event " + eventType + ": " + error.getMessage());
+                }
             }
         }
     }

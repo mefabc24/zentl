@@ -1,5 +1,7 @@
-package org.example.demo3.model;
+package org.example.demo3.model.board;
 
+import org.example.demo3.model.cards.Card;
+import org.example.demo3.model.player.Player;
 import org.example.demo3.model.enums.RowType;
 import java.util.*;
 

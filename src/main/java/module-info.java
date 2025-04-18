@@ -3,8 +3,6 @@ module org.example.demo3 {
     requires javafx.fxml;
     requires javafx.web;
 
-    exports org.example.demo3.model;
-    exports org.example.demo3.model.enums;
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
     requires net.synedra.validatorfx;
@@ -12,7 +10,13 @@ module org.example.demo3 {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires annotations;
 
-    opens org.example.demo3 to javafx.fxml;
-    exports org.example.demo3;
+    exports org.example.demo3.ui;
+    opens org.example.demo3.ui to javafx.fxml;
+    exports org.example.demo3.model.board;
+    exports org.example.demo3.model.cards;
+    exports org.example.demo3.model.player;
+    exports org.example.demo3.model.enums;
+
 }

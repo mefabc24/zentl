@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.GameController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.ui.GameController">
     <center>
         <HBox fx:id="gameBoard" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
             <VBox fx:id="player1Side" spacing="10" alignment="CENTER"/>
@@ -23,7 +23,6 @@
             <Label fx:id="currentPlayerLabel" text="Current: " style="-fx-font-size: 14px;"/>
             <Label fx:id="p1Score" text="Player 1 score: 0"/>
             <Label fx:id="p2Score" text="Player 2 score: 0"/>
-            <Button fx:id="newRoundButton" text="New Round" style="-fx-padding: 5px 15px;"/>
             <Button fx:id="restartGameButton" text="Restart Game" style="-fx-padding: 5px 15px;"/>
         </VBox>
     </right>

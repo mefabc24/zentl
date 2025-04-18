@@ -1,28 +1,47 @@
-package org.example.demo3;
+package org.example.demo3.ui;
 
-import org.example.demo3.model.*;
-import org.example.demo3.model.enums.*;
-import org.example.demo3.service.*;
-import org.example.demo3.event.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.geometry.*;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import org.example.demo3.event.EventBus;
+import org.example.demo3.event.EventType;
+import org.example.demo3.event.GameEndedEve;
+import org.example.demo3.event.RoundEndedEve;
+import org.example.demo3.model.board.GameBoard;
+import org.example.demo3.model.cards.Card;
+import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.player.Player;
+import org.example.demo3.service.GameService;
+import org.example.demo3.service.GameServiceImpl;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-    @FXML private VBox player1Side;
-    @FXML private VBox player2Side;
-    @FXML private HBox playerHand;
-    @FXML private Label roundLabel;
-    @FXML private Label currentPlayerLabel;
-    @FXML private Label p1Score;
-    @FXML private Label p2Score;
-    @FXML private Button newRoundButton;
-    @FXML private Button restartGameButton;
+    @FXML
+    private VBox player1Side;
+    @FXML
+    private VBox player2Side;
+    @FXML
+    private HBox playerHand;
+    @FXML
+    private Label roundLabel;
+    @FXML
+    private Label currentPlayerLabel;
+    @FXML
+    private Label p1Score;
+    @FXML
+    private Label p2Score;
+    @FXML
+    private Button restartGameButton;
 
     private GameService gameService;
     private EventBus eventBus;
@@ -31,69 +50,59 @@ public class GameController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         gameService = new GameServiceImpl();
         eventBus = EventBus.getInstance();
-
-        // Event-Handler für spezifische Events registrieren
         registerEventHandlers();
 
-        newRoundButton.setOnAction(e -> gameService.startNewRound());
         restartGameButton.setOnAction(e -> gameService.restartGame());
         restartGameButton.setVisible(false);
     }
 
     private void registerEventHandlers() {
-        // Handler für GameInitializedEvent
-        eventBus.subscribe(InitEvent.class, event -> {
-            newRoundButton.setDisable(false);
+        eventBus.subscribe(EventType.Init, event -> {
             playerHand.setDisable(false);
             restartGameButton.setVisible(false);
             updateUI();
         });
 
-        // Handler für CardPlayedEvent
-        eventBus.subscribe(CardPlayedEvent.class, event -> updateUI());
+        eventBus.subscribe(EventType.CardPlayed, event -> updateUI());
 
-        // Handler für PlayerPassedEvent
-        eventBus.subscribe(PlayerPassedEvent.class, event -> updateUI());
+        eventBus.subscribe(EventType.PlayerPassed, event -> updateUI());
 
-        // Handler für PlayerChangedEvent
-        eventBus.subscribe(PlayerChangedEvent.class, event -> updateUI());
+        eventBus.subscribe(EventType.PlayerChanged, event -> updateUI());
 
-        // Handler für RoundEndedEvent
-        eventBus.subscribe(RoundEndedEvent.class, event -> {
-            playerHand.setDisable(true);
-            playerHand.getChildren().clear();
-
-            String winnerName = (event.getWinner() != null) ? event.getWinner().getName() : "Draw";
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Round Over");
-            alert.setHeaderText("Round " + gameService.getRound() + " finished");
-            alert.setContentText("Round Winner: " + winnerName + "\n" +
-                    gameService.getPlayer1().getName() + ": " + event.getPlayer1Score() +
-                    " (Wins: " + gameService.getPlayer1Wins() + ")\n" +
-                    gameService.getPlayer2().getName() + ": " + event.getPlayer2Score() +
-                    " (Wins: " + gameService.getPlayer2Wins() + ")");
-            alert.showAndWait();
+        eventBus.subscribe(EventType.RoundEnded, event -> {
+            if (event instanceof RoundEndedEve roundEndedEve) {
+                playerHand.setDisable(true);
+                playerHand.getChildren().clear();
+                String winnerName = (roundEndedEve.getWinner() != null) ? roundEndedEve.getWinner().getName() : "Draw";
+                Alert alert = getAlert(roundEndedEve, winnerName);
+                alert.showAndWait();
+                updateUI();
+            }
         });
 
-        // Handler für GameEndedEvent
-        eventBus.subscribe(GameEndedEvent.class, event -> {
-            String winnerName = (event.getWinner() != null) ? event.getWinner().getName() : "Draw - no clear winner";
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game Over");
-            alert.setHeaderText("Match Finished");
-            alert.setContentText("Overall Winner: " + winnerName + "\n\n" +
-                    "Final Score:\n" +
-                    gameService.getPlayer1().getName() + ": " + event.getPlayer1Wins() + " wins\n" +
-                    gameService.getPlayer2().getName() + ": " + event.getPlayer2Wins() + " wins");
-            alert.showAndWait();
-
-            newRoundButton.setDisable(true);
-            playerHand.setDisable(true);
-            playerHand.getChildren().clear();
-            restartGameButton.setVisible(true);
+        eventBus.subscribe(EventType.GameEnded, event -> {
+            if (event instanceof GameEndedEve gameEndedEve) {
+                String winnerName = (gameEndedEve.getWinner() != null) ? gameEndedEve.getWinner().getName() : "Draw - no clear winner";
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Game Over");
+                alert.setHeaderText("Match Finished");
+                alert.setContentText("Overall Winner: " + winnerName + "\n\n" + "Final Score:\n" + gameService.getPlayer1().getName() + ": " + gameEndedEve.getPlayer1Wins() + " wins\n" + gameService.getPlayer2().getName() + ": " + gameEndedEve.getPlayer2Wins() + " wins");
+                alert.showAndWait();
+                playerHand.setDisable(true);
+                playerHand.getChildren().clear();
+                restartGameButton.setVisible(true);
+                updateUI();
+            }
         });
+    }
+
+    @NotNull
+    private Alert getAlert(RoundEndedEve roundEndedEve, String winnerName) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Round Over");
+        alert.setHeaderText("Round " + gameService.getRound() + " finished");
+        alert.setContentText("Round Winner: " + winnerName + "\n" + gameService.getPlayer1().getName() + ": " + roundEndedEve.getPlayer1Score() + " (Wins: " + gameService.getPlayer1Wins() + ")\n" + gameService.getPlayer2().getName() + ": " + roundEndedEve.getPlayer2Score() + " (Wins: " + gameService.getPlayer2Wins() + ")");
+        return alert;
     }
 
     public void initializeGame() {
@@ -189,13 +198,18 @@ public class GameController implements Initializable {
 
         for (Card card : currentPlayer.getHand()) {
             VBox cardUI = createCardUI(card);
-            cardUI.setOnMouseClicked(e -> gameService.playCard(currentPlayer, card));
+            if (!currentPlayer.hasPassed()) {
+                cardUI.setOnMouseClicked(e -> gameService.playCard(currentPlayer, card));
+            }
             playerHand.getChildren().add(cardUI);
         }
-        Button passButton = new Button("Pass");
-        passButton.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
-        passButton.setOnAction(e -> gameService.playerPass(currentPlayer));
-        playerHand.getChildren().add(passButton);
+
+        if (!currentPlayer.hasPassed()) {
+            Button passButton = new Button("Pass");
+            passButton.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
+            passButton.setOnAction(e -> gameService.playerPass(currentPlayer));
+            playerHand.getChildren().add(passButton);
+        }
     }
 
     private String getRowColor(RowType rowType) {
