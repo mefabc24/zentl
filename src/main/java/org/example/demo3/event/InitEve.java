@@ -13,8 +13,4 @@ public class InitEve extends Event {
     public Player getPlayer1() { return player1; }
     public Player getPlayer2() { return player2; }
 
-    @Override
-    public EventType getEventType(){
-        return EventType.Init;
-    }
 }

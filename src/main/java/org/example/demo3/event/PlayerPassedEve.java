@@ -9,10 +9,8 @@ public class PlayerPassedEve extends Event {
         this.player = player;
     }
 
-    public Player getPlayer() { return player; }
-
-    @Override
-    public EventType getEventType(){
-        return EventType.PlayerPassed;
+    public Player getPlayer() {
+        return player;
     }
+
 }

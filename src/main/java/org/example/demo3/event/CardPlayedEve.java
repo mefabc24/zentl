@@ -15,8 +15,4 @@ public class CardPlayedEve extends Event {
     public Player getPlayer() { return player; }
     public Card getCard() { return card; }
 
-    @Override
-    public EventType getEventType(){
-         return EventType.CardPlayed;
-    }
 }

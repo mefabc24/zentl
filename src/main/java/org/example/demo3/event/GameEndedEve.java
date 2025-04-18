@@ -22,8 +22,4 @@ public class GameEndedEve extends Event {
         return player2Wins;
     }
 
-    @Override
-    public EventType getEventType(){
-        return EventType.GameEnded;
-    }
 }

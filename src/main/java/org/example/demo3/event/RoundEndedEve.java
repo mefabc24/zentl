@@ -26,9 +26,5 @@ public class RoundEndedEve extends Event {
         return player2Score;
     }
 
-    @Override
-    public EventType getEventType(){
-        return EventType.RoundEnded;
-    }
 }
 

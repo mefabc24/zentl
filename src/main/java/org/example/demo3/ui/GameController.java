@@ -8,10 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.example.demo3.event.EventBus;
-import org.example.demo3.event.EventType;
-import org.example.demo3.event.GameEndedEve;
-import org.example.demo3.event.RoundEndedEve;
+import org.example.demo3.event.*;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.enums.RowType;
@@ -57,19 +54,19 @@ public class GameController implements Initializable {
     }
 
     private void registerEventHandlers() {
-        eventBus.subscribe(EventType.Init, event -> {
+        eventBus.subscribe(InitEve.class, event -> {
             playerHand.setDisable(false);
             restartGameButton.setVisible(false);
             updateUI();
         });
 
-        eventBus.subscribe(EventType.CardPlayed, event -> updateUI());
+        eventBus.subscribe(CardPlayedEve.class, event -> updateUI());
 
-        eventBus.subscribe(EventType.PlayerPassed, event -> updateUI());
+        eventBus.subscribe(PlayerPassedEve.class, event -> updateUI());
 
-        eventBus.subscribe(EventType.PlayerChanged, event -> updateUI());
+        eventBus.subscribe(PlayerChangedEve.class, event -> updateUI());
 
-        eventBus.subscribe(EventType.RoundEnded, event -> {
+        eventBus.subscribe(RoundEndedEve.class, event -> {
             if (event instanceof RoundEndedEve roundEndedEve) {
                 playerHand.setDisable(true);
                 playerHand.getChildren().clear();
@@ -80,7 +77,7 @@ public class GameController implements Initializable {
             }
         });
 
-        eventBus.subscribe(EventType.GameEnded, event -> {
+        eventBus.subscribe(GameEndedEve.class, event -> {
             if (event instanceof GameEndedEve gameEndedEve) {
                 String winnerName = (gameEndedEve.getWinner() != null) ? gameEndedEve.getWinner().getName() : "Draw - no clear winner";
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);

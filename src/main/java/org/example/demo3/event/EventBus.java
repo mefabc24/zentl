@@ -5,8 +5,7 @@ import java.util.*;
 public class EventBus {
     private static final EventBus instanz = new EventBus();
 
-    // Event ist ein funkt. Interface, es nimmt genau ein arg entgegen und gibt nix zurueck => funktioniert ueber side-effects => bekommt Event Info und fuehrt Aktion aus
-    private final Map<EventType, List<EventHandler>> listeners = new HashMap<>();
+    private final Map<Class<? extends Event>, List<EventHandler<? extends Event>>> listeners = new HashMap<>();
 
     private EventBus(){
     }
@@ -15,16 +14,16 @@ public class EventBus {
          return instanz;
     }
 
-    public void subscribe(EventType eventType, EventHandler listener){
-        List<EventHandler> list = listeners.computeIfAbsent(eventType, eventTyp -> new ArrayList<>());
+    public <T extends Event>void subscribe(Class<T> eventType, EventHandler<T> listener){
+        List<EventHandler<?extends Event>> list = listeners.computeIfAbsent(eventType, eventTyp -> new ArrayList<>());
         list.add(listener);
     }
 
     public void post(Event event){
-        EventType eventType = event.getEventType();
+        Class<?> eventType = event.getClass();
         if (listeners.containsKey(eventType)) {
-            List<EventHandler> eventListeners = new ArrayList<>(listeners.get(eventType));
-            for (EventHandler listener : eventListeners) {
+            List<EventHandler<? extends Event>> eventListeners = new ArrayList<>(listeners.get(eventType));
+            for (EventHandler<?extends Event> listener : eventListeners) {
                 try {
                      listener.execute(event);
                 } catch (Exception error) {
