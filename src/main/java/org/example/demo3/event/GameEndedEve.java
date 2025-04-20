@@ -10,6 +10,7 @@ public class GameEndedEve extends Event {
     private final String player2Name;
 
     public GameEndedEve(Player winner, int player1Wins, int player2Wins, String player1Name, String player2Name) {
+        this.name = "GameEnded";
         this.winner = winner;
         this.player1Wins = player1Wins;
         this.player2Wins = player2Wins;

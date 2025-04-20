@@ -2,11 +2,12 @@ package org.example.demo3.event;
 
 import org.example.demo3.model.player.Player;
 
-public class PassCommand extends Event {
+public class PlayerPassed extends Event {
     private final Player player;
 
-    public PassCommand(Player player) {
+    public PlayerPassed(Player player) {
         this.player = player;
+        this.name = "PlayerPassed";
     }
 
     public Player getPlayer() {

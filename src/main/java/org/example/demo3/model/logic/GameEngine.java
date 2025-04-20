@@ -1,8 +1,8 @@
-package org.example.demo3.logic;
+package org.example.demo3.model.logic;
 
 import org.example.demo3.model.player.Player;
 
-public class GameEngineImpl implements GameEngine {
+public class GameEngine implements Engine {
     public Player determineRoundWinner(Player player1, Player player2) {
         int score1 = player1.getScore();
         int score2 = player2.getScore();

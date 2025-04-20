@@ -3,13 +3,14 @@ package org.example.demo3.event;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.player.Player;
 
-public class PlayCardCommand extends Event {
+public class PlayCardRequest extends Event {
     private final Player player;
     private final Card card;
 
-    public PlayCardCommand(Player player, Card card) {
+    public PlayCardRequest(Player player, Card card) {
         this.player = player;
         this.card = card;
+        this.name = "PlayCardRequest";
     }
 
     public Player getPlayer() {
@@ -18,5 +19,5 @@ public class PlayCardCommand extends Event {
 
     public Card getCard() {
         return card;
-    }
+}
 }

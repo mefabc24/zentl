@@ -13,6 +13,7 @@ public class RoundEndedEve extends Event {
         this.winner = winner;
         this.p1 = p1;
         this.p2 = p2;
+        this.name = "RoundEndedEve";
     }
 
     public Player getWinner() {

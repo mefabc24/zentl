@@ -1,6 +1,6 @@
 package org.example.demo3.model.player;
 
-import org.example.demo3.model.board.GameBoard;
+import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
 import org.example.demo3.model.enums.Fraction;
@@ -68,7 +68,7 @@ public class PlayerImpl implements Player {
         }
     }
 
-    public void playCard(Card card, GameBoard board) {
+    public void playCard(Card card, Board board) {
         if (hand.contains(card)) {
             hand.remove(card);
             if (card instanceof UnitCard) {

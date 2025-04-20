@@ -1,6 +1,6 @@
 package org.example.demo3.model.player;
 
-import org.example.demo3.model.board.GameBoard;
+import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.enums.Fraction;
 
@@ -15,7 +15,7 @@ public interface Player {
 
     void drawCard();
 
-    void playCard(Card card, GameBoard board);
+    void playCard(Card card, Board board);
 
     void pass();
 

@@ -1,6 +1,6 @@
 package org.example.demo3.event;
 
-import org.example.demo3.model.board.GameBoard;
+import org.example.demo3.model.board.Board;
 import org.example.demo3.model.player.Player;
 
 public class GameStateUpdateEve extends Event {
@@ -8,9 +8,10 @@ public class GameStateUpdateEve extends Event {
     private final Player player2;
     private final Player currentPlayer;
     private final int round;
-    private final GameBoard gameBoard;
+    private final Board gameBoard;
 
-    public GameStateUpdateEve(Player player1, Player player2, Player currentPlayer, int round, GameBoard gameBoard) {
+    public GameStateUpdateEve(Player player1, Player player2, Player currentPlayer, int round, Board gameBoard) {
+        this.name = "GameStateUpdate";
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = currentPlayer;
@@ -34,7 +35,7 @@ public class GameStateUpdateEve extends Event {
         return round;
     }
 
-    public GameBoard getGameBoard() {
+    public Board getGameBoard() {
         return gameBoard;
     }
 }

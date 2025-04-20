@@ -4,17 +4,32 @@ import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.Player;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public interface GameBoard {
-    void addCardToRow(Card card, RowType row, Player player);
+public class GameBoard implements Board {
+    private final Map<Player, Map<RowType, List<Card>>> board;
 
-    int calculateRowPower(RowType row, Player player);
+    public GameBoard() {
+        this.board = new HashMap<>();
+    }
 
-    int calculateTotalPower(Player player);
+    public void addCardToRow(Card card, RowType row, Player player) {
+        board.computeIfAbsent(player, p -> new EnumMap<>(RowType.class)).computeIfAbsent(row, r -> new ArrayList<>()).add(card);
+    }
 
-    void clearBoard();
+    public int calculateRowPower(RowType row, Player player) {
+        return board.getOrDefault(player, Collections.emptyMap()).getOrDefault(row, Collections.emptyList()).stream().mapToInt(Card::getPower).sum();
+    }
 
-    Map<RowType, List<Card>> getPlayerRows(Player player);
+    public int calculateTotalPower(Player player) {
+        return Arrays.stream(RowType.values()).filter(r -> r != RowType.ANY).mapToInt(r -> calculateRowPower(r, player)).sum();
+    }
+
+    public void clearBoard() {
+        board.clear();
+    }
+
+    public Map<RowType, List<Card>> getPlayerRows(Player player) {
+        return Collections.unmodifiableMap(board.getOrDefault(player, Collections.emptyMap()));
+    }
 }

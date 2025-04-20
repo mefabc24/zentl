@@ -5,9 +5,9 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.ui.GameController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.view.GameController">
     <center>
-        <HBox fx:id="gameBoard" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
+        <HBox fx:id="Board" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
             <VBox fx:id="player1Side" spacing="10" alignment="CENTER"/>
             <VBox fx:id="player2Side" spacing="10" alignment="CENTER"/>
         </HBox>
