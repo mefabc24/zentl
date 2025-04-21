@@ -1,13 +1,13 @@
 package org.example.demo3.model.service;
 
 import org.example.demo3.event.*;
-import org.example.demo3.model.logic.Engine;
-import org.example.demo3.model.logic.GameEngine;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
 import org.example.demo3.model.enums.Fraction;
 import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.logic.Engine;
+import org.example.demo3.model.logic.GameEngine;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.player.PlayerImpl;
 
@@ -30,10 +30,11 @@ public class GameService implements Service {
         subscribeToEvents();
     }
 
+    @SuppressWarnings("Convert2MethodRef")
     private void subscribeToEvents() {
         eventBus.subscribe(RestartEve.class, restartEve -> newGame());
-        eventBus.subscribe(PlayCardRequest.class, this::CardPlayed);
-        eventBus.subscribe(PlayerPassed.class, this::PlayerPassed);
+        eventBus.subscribe(PlayCardRequest.class, event -> CardPlayed(event));
+        eventBus.subscribe(PlayerPassed.class, event -> PlayerPassed(event));
     }
 
     public void newGame() {
@@ -45,6 +46,21 @@ public class GameService implements Service {
         dealInitialHands();
         currentPlayer = p1;
         postGameState();
+    }
+
+    private void postGameState() {
+        updateScores();
+        eventBus.post(new GameStateUpdateEve(p1, p2, currentPlayer, round, board));
+    }
+
+    private void endGame() {
+        Player winner = gameEngine.determineGameWinner(p1, p2);
+        eventBus.post(new GameEndedEve(p1, p2, winner, p1.getWins(), p2.getWins(), p1.getName(), p2.getName()));
+    }
+
+    private void updateScores() {
+        p1.setScore(board.calculateTotalPower(p1));
+        p2.setScore(board.calculateTotalPower(p2));
     }
 
     private Player createPlayer(String name, Fraction fraction) {
@@ -64,11 +80,11 @@ public class GameService implements Service {
     private List<Card> generateDeck(Fraction fraction) {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++)
-            deck.add(new UnitCard("Soldier " + (i + 1), 5, "Basic soldier", fraction, RowType.MELEE));
+            deck.add(new UnitCard("Soldier " + (i + 1), 5, "", fraction, RowType.MELEE));
         for (int i = 0; i < 10; i++)
-            deck.add(new UnitCard("Archer " + (i + 1), 4, "Basic archer", fraction, RowType.RANGED));
+            deck.add(new UnitCard("Archer " + (i + 1), 4, "", fraction, RowType.RANGED));
         for (int i = 0; i < 5; i++)
-            deck.add(new UnitCard("Catapult " + (i + 1), 6, "Basic siege", fraction, RowType.SIEGE));
+            deck.add(new UnitCard("Catapult " + (i + 1), 6, "", fraction, RowType.SIEGE));
         Collections.shuffle(deck);
         return deck;
     }
@@ -106,13 +122,13 @@ public class GameService implements Service {
         }
         eventBus.post(new RoundEndedEve(round, roundWinner, p1, p2));
         if (p1.getWins() < BEST_OF - 1 && p2.getWins() < BEST_OF - 1) {
-            prepareNextRound();
+            nextRound();
         } else {
             endGame();
         }
     }
 
-    private void prepareNextRound() {
+    private void nextRound() {
         round++;
         board.clearBoard();
         p1.resetPass();
@@ -127,18 +143,4 @@ public class GameService implements Service {
         postGameState();
     }
 
-    private void endGame() {
-        Player winner = gameEngine.determineGameWinner(p1, p2);
-        eventBus.post(new GameEndedEve(winner, p1.getWins(), p2.getWins(), p1.getName(), p2.getName()));
-    }
-
-    private void postGameState() {
-        updateScores();
-        eventBus.post(new GameStateUpdateEve(p1, p2, currentPlayer, round, board));
-    }
-
-    private void updateScores() {
-        p1.setScore(board.calculateTotalPower(p1));
-        p2.setScore(board.calculateTotalPower(p2));
-    }
 }

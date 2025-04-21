@@ -22,8 +22,8 @@ public class PlayerImpl implements Player {
     public PlayerImpl(String name, Fraction fraction, List<Card> deck) {
         this.name = name;
         this.fraction = fraction;
-        this.deck = new ArrayList<>(deck);
-        this.hand = new ArrayList<>();
+        this.deck = new ArrayList<Card>(deck);
+        this.hand = new ArrayList<Card>();
         this.passed = false;
         Collections.shuffle(this.deck);
         this.score = 0;
@@ -64,7 +64,7 @@ public class PlayerImpl implements Player {
 
     public void drawCard() {
         if (!deck.isEmpty()) {
-            hand.add(deck.remove(0));
+            hand.add(deck.removeFirst());
         }
     }
 

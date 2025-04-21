@@ -13,7 +13,10 @@ public class EventBus {
     public static EventBus getInstance() {
         return instanz;
     }
-
+/*
+Die HashMap bildet Klassenobjekte, die vom typ Event oder einem subtyp davon sind, auf listen ab, die handler enthalten,
+die jeweils einen (beliebigen) Subtyp von Event verarbeiten können. (siehe EventHandler)
+ */
     private final Map<Class<? extends Event>, List<EventHandler<? extends Event>>> listeners = new HashMap<>();
 
     public <T extends Event> void subscribe(Class<T> eventType, EventHandler<T> listener) {

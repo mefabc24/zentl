@@ -4,5 +4,5 @@ public enum RowType {
     MELEE,
     RANGED,
     SIEGE,
-    ANY
+    ANY,
 }

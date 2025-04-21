@@ -14,15 +14,24 @@ public class GameBoard implements Board {
     }
 
     public void addCardToRow(Card card, RowType row, Player player) {
-        board.computeIfAbsent(player, p -> new EnumMap<>(RowType.class)).computeIfAbsent(row, r -> new ArrayList<>()).add(card);
+        board.computeIfAbsent(player, p -> new EnumMap<>(RowType.class))
+                .computeIfAbsent(row, r -> new ArrayList<>())
+                .add(card);
     }
 
     public int calculateRowPower(RowType row, Player player) {
-        return board.getOrDefault(player, Collections.emptyMap()).getOrDefault(row, Collections.emptyList()).stream().mapToInt(Card::getPower).sum();
+        return board.getOrDefault(player, Collections.emptyMap())
+                .getOrDefault(row, Collections.emptyList())
+                .stream()
+                .mapToInt(Card::getPower)
+                .sum();
     }
 
     public int calculateTotalPower(Player player) {
-        return Arrays.stream(RowType.values()).filter(r -> r != RowType.ANY).mapToInt(r -> calculateRowPower(r, player)).sum();
+        return Arrays.stream(RowType.values())
+                .filter(r -> r != RowType.ANY)
+                .mapToInt(r -> calculateRowPower(r, player))
+                .sum();
     }
 
     public void clearBoard() {
