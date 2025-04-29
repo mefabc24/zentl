@@ -19,5 +19,5 @@ public class PlayCardRequest extends Event {
 
     public Card getCard() {
         return card;
-}
+    }
 }
