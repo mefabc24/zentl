@@ -1,6 +1,7 @@
 package org.example.demo3.model.service;
 
 import org.example.demo3.event.*;
+import org.example.demo3.model.board.Board;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
@@ -143,4 +144,24 @@ public class GameService implements Service {
         postGameState();
     }
 
+    // nur fuer Tests!
+    public Player getP1() {
+        return p1;
+    }
+
+    public Player getP2() {
+        return p2;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
 }
