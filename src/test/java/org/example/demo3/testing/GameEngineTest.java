@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 // Wir nutzen JUnit5 und Mockito fuer unsere Unit Tests
 @ExtendWith(MockitoExtension.class)
 public class GameEngineTest {
+    // man @Mock wenn man die Logik des Objekts nicht braucht und man das Objekt nur simulieren will
     @Mock
     private Player p1Mock;
     @Mock
@@ -28,15 +29,13 @@ public class GameEngineTest {
 
     @Test
     void testP1RoundWinner() {
-        // wir legen fest was beim Test returned werden soll
+        // wir legen fest was bei getScore() returned werden soll, p1 ist ein Mock, kein echter Player
         when(p1Mock.getScore()).thenReturn(23);
         when(p2Mock.getScore()).thenReturn(22);
 
         Player winner = gameEngine.determineRoundWinner(p1Mock, p2Mock);
-        // Ergebniss ueberpruefen
         assertNotNull(winner);
         assertEquals(p1Mock, winner);
-        // Test bestanden wenn winner,equals(p1Mock) true ist
     }
 
     @Test

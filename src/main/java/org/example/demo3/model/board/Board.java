@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface Board {
-    void addCardToRow(Card card, RowType row, Player player);
+    void addCardToRow(Card card, Player player);
 
     int calculateRowPower(RowType row, Player player);
 
@@ -17,4 +17,5 @@ public interface Board {
     void clearBoard();
 
     Map<RowType, List<Card>> getPlayerRows(Player player);
+
 }

@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-    private final EventBus eventBus = EventBus.getInstance();
+
+    private final EventBus eventBus = EventBus.getInstanz();
     @FXML
     private VBox player1Side;
     @FXML
@@ -37,6 +38,7 @@ public class GameController implements Initializable {
     private Label p2Score;
     @FXML
     private Button restartGameButton;
+
     private Player p1;
     private Player p2;
     private int round;
@@ -46,6 +48,7 @@ public class GameController implements Initializable {
 
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToEvents();
+
         restartGameButton.setOnAction(e -> {
             gameEnded = false;
             eventBus.post(new RestartEve());
@@ -66,6 +69,7 @@ public class GameController implements Initializable {
         this.currentPlayer = event.getCurrentPlayer();
         this.round = event.getRound();
         this.gameBoard = event.getGameBoard();
+
         if (gameEnded) return;
         playerHand.setDisable(false);
         restartGameButton.setVisible(false);
@@ -75,11 +79,14 @@ public class GameController implements Initializable {
     private void updatePlayerHand() {
         playerHand.getChildren().clear();
         boolean roundOver = p1.hasPassed() && p2.hasPassed();
+
         if (roundOver || gameEnded) {
             playerHand.setDisable(true);
             return;
         }
+
         playerHand.setDisable(currentPlayer.hasPassed());
+
         for (Card card : currentPlayer.getHand()) {
             VBox cardUI = createCardUI(card);
             if (!currentPlayer.hasPassed()) {
@@ -87,12 +94,14 @@ public class GameController implements Initializable {
             }
             playerHand.getChildren().add(cardUI);
         }
+
         if (!currentPlayer.hasPassed()) {
             Button passBtn = new Button("Pass");
             passBtn.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
             passBtn.setOnAction(e -> eventBus.post(new PlayerPassed(currentPlayer)));
             playerHand.getChildren().add(passBtn);
         }
+
     }
 
     private VBox createRowUI(RowType rowType, Player player) {

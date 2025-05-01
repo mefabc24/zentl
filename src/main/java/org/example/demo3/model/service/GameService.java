@@ -17,8 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class GameService implements Service {
+
     private static final int BEST_OF = 3;
-    private final EventBus eventBus = EventBus.getInstance();
+    private final EventBus eventBus = EventBus.getInstanz();
     private final Engine gameEngine = new GameEngine();
     private GameBoard board;
     private Player p1;
@@ -44,8 +45,9 @@ public class GameService implements Service {
         p2 = createPlayer("Player 2", Fraction.MONSTER);
         round = 1;
         roundWinner = null;
-        dealInitialHands();
         currentPlayer = p1;
+
+        dealInitialHands();
         postGameState();
     }
 
@@ -110,18 +112,24 @@ public class GameService implements Service {
             }
             postGameState();
         }
+
     }
 
     private void finishRound() {
         updateScores();
         roundWinner = gameEngine.determineRoundWinner(p1, p2);
-        if (roundWinner == p1) p1.setWins(p1.getWins() + 1);
-        else if (roundWinner == p2) p2.setWins(p2.getWins() + 1);
-        else {
+
+        if (roundWinner == p1) {
+            p1.setWins(p1.getWins() + 1);
+        } else if (roundWinner == p2) {
+            p2.setWins(p2.getWins() + 1);
+        } else {
             p1.setWins(p1.getWins() + 1);
             p2.setWins(p2.getWins() + 1);
         }
+
         eventBus.post(new RoundEndedEve(round, roundWinner, p1, p2));
+
         if (p1.getWins() < BEST_OF - 1 && p2.getWins() < BEST_OF - 1) {
             nextRound();
         } else {
@@ -144,6 +152,7 @@ public class GameService implements Service {
         postGameState();
 
     }
+
 
     // nur fuer Tests!
     public Player getP1() {

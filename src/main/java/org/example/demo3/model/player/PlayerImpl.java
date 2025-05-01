@@ -2,9 +2,7 @@ package org.example.demo3.model.player;
 
 import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.cards.UnitCard;
 import org.example.demo3.model.enums.Fraction;
-import org.example.demo3.model.enums.RowType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,16 +64,13 @@ public class PlayerImpl implements Player {
         if (!deck.isEmpty()) {
             hand.add(deck.removeFirst());
         }
+
     }
 
     public void playCard(Card card, Board board) {
         if (hand.contains(card)) {
             hand.remove(card);
-            if (card instanceof UnitCard) {
-                board.addCardToRow(card, ((UnitCard) card).getRow(), this);
-            } else {
-                board.addCardToRow(card, RowType.ANY, this);
-            }
+            board.addCardToRow(card, this);
         }
     }
 
@@ -94,4 +89,5 @@ public class PlayerImpl implements Player {
     public void resetPass() {
         passed = false;
     }
+
 }

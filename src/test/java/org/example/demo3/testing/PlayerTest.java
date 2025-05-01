@@ -37,6 +37,7 @@ public class PlayerTest {
 
     @Test
     void testDrawCardsFromDeck() {
+        // Deck: 30 Karten, Hand: 0 Karten
         player.drawCard();
 
         assertEquals(1, player.getHand().size());
@@ -49,6 +50,7 @@ public class PlayerTest {
         assertEquals(30, player.getHand().size());
         assertEquals(0, player.getDeck().size());
 
+        // Karte ziehen bei leerem Deck
         player.drawCard();
 
         assertEquals(30, player.getHand().size());
@@ -70,7 +72,7 @@ public class PlayerTest {
     }
 
     @Test
-    void testPassAndResetPass() {
+    void testPass() {
         assertFalse(player.hasPassed());
 
         player.pass();
@@ -79,4 +81,19 @@ public class PlayerTest {
         player.resetPass();
         assertFalse(player.hasPassed());
     }
+
+    @Test
+    void testPlayCardNotInHand() {
+        Board board = new GameBoard();
+        Card secretCard = new UnitCard("", 12312, "", Fraction.KNIGHTS, RowType.MELEE);
+        player.drawCard();
+
+        assertFalse(player.getHand().contains(secretCard));
+
+        player.playCard(secretCard, board);
+
+        assertEquals(1, player.getHand().size());
+        assertTrue(board.getPlayerRows(player).isEmpty());
+    }
+
 }

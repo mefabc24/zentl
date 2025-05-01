@@ -13,4 +13,5 @@ public class PlayerPassed extends Event {
     public Player getPlayer() {
         return player;
     }
+
 }

@@ -18,7 +18,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         GameService service = new GameService();
         service.newGame();
-        stage.setTitle("Card Game");
+        stage.setTitle("Gwent");
         stage.setScene(scene);
         stage.show();
     }

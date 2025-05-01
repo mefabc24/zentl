@@ -8,4 +8,5 @@ public class SpecialCard extends BaseCard {
     public SpecialCard(String name, String description, Fraction fraction, RowType rowType) {
         super(name, 0, description, CardType.SPECIAL, fraction, rowType);
     }
+
 }

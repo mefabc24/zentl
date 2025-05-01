@@ -10,7 +10,7 @@ public class EventBus {
     private EventBus() {
     }
 
-    public static EventBus getInstance() {
+    public static EventBus getInstanz() {
         return instanz;
     }
 
