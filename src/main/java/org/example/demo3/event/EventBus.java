@@ -4,6 +4,7 @@ import java.util.*;
 
 // Event System aktuell overkill, aber Grundlage fuer den Lan Multiplayer
 public class EventBus {
+
     private static final EventBus instanz = new EventBus();
     private final Map<Class<? extends Event>, List<EventHandler<? extends Event>>> listeners = new HashMap<>();
 

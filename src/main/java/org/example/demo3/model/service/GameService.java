@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class GameService implements Service {
-
     private static final int BEST_OF = 3;
     private final EventBus eventBus = EventBus.getInstanz();
     private final Engine gameEngine = new GameEngine();

@@ -3,6 +3,7 @@ package org.example.demo3.event;
 import org.example.demo3.model.player.Player;
 
 public class GameEndedEve extends Event {
+
     private final Player p1;
     private final Player p2;
     private final Player winner;
