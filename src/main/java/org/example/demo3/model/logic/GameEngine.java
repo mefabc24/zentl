@@ -13,6 +13,7 @@ public class GameEngine implements Engine {
         } else {
             return null;
         }
+
     }
 
     public Player determineGameWinner(Player player1, Player player2) {
@@ -26,4 +27,5 @@ public class GameEngine implements Engine {
             return null;
         }
     }
+
 }

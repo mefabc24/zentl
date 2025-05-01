@@ -31,4 +31,5 @@ public class RoundEndedEve extends Event {
     public Player getP2() {
         return p2;
     }
+
 }

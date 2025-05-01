@@ -26,27 +26,27 @@ public class GameEndedEve extends Event {
         return winner;
     }
 
-    public int getPlayer1Wins() {
+    public int getPl1Wins() {
         return player1Wins;
     }
 
-    public int getPlayer2Wins() {
+    public int getP2Wins() {
         return player2Wins;
     }
 
-    public String getPlayer1Name() {
+    public String getP1Name() {
         return player1Name;
     }
 
-    public String getPlayer2Name() {
+    public String getP2Name() {
         return player2Name;
     }
 
-    public Player getP1(){
+    public Player getP1() {
         return p1;
     }
 
-    public Player getP2(){
+    public Player getP2() {
         return p2;
     }
 }

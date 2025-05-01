@@ -41,4 +41,6 @@ public class GameBoard implements Board {
     public Map<RowType, List<Card>> getPlayerRows(Player player) {
         return Collections.unmodifiableMap(board.getOrDefault(player, Collections.emptyMap()));
     }
+
+
 }

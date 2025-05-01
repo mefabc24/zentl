@@ -142,6 +142,7 @@ public class GameService implements Service {
         }
         currentPlayer = (roundWinner == p2) ? p2 : p1;
         postGameState();
+
     }
 
     // nur fuer Tests!
@@ -164,4 +165,5 @@ public class GameService implements Service {
     public Board getBoard() {
         return board;
     }
+
 }

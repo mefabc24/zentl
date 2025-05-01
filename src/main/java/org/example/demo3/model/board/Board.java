@@ -15,6 +15,6 @@ public interface Board {
     int calculateTotalPower(Player player);
 
     void clearBoard();
-    
+
     Map<RowType, List<Card>> getPlayerRows(Player player);
 }

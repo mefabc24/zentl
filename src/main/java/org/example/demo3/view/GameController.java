@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
+    private final EventBus eventBus = EventBus.getInstance();
     @FXML
     private VBox player1Side;
     @FXML
@@ -36,14 +37,12 @@ public class GameController implements Initializable {
     private Label p2Score;
     @FXML
     private Button restartGameButton;
-
     private Player p1;
     private Player p2;
     private int round;
     private Player currentPlayer;
     private Board gameBoard;
     private boolean gameEnded = false;
-    private final EventBus eventBus = EventBus.getInstance();
 
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToEvents();
@@ -139,10 +138,9 @@ public class GameController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Round over");
         alert.setHeaderText("Round " + event.getRound() + " over");
-        if(winner.equals("Draw: Counts as win for both")){
-            alert.setContentText( winner + "\n\n" + event.getP1().getName() + ": " + event.getP1().getScore() + " (Wins: " + event.getP1().getWins() + ")\n" + event.getP2().getName() + ": " + event.getP2().getScore() + " (Wins: " + event.getP2().getWins() + ")");
-        }
-        else{
+        if (winner.equals("Draw: Counts as win for both")) {
+            alert.setContentText(winner + "\n\n" + event.getP1().getName() + ": " + event.getP1().getScore() + " (Wins: " + event.getP1().getWins() + ")\n" + event.getP2().getName() + ": " + event.getP2().getScore() + " (Wins: " + event.getP2().getWins() + ")");
+        } else {
             alert.setContentText("Round Winner: " + winner + "\n\n" + event.getP1().getName() + ": " + event.getP1().getScore() + " (Wins: " + event.getP1().getWins() + ")\n" + event.getP2().getName() + ": " + event.getP2().getScore() + " (Wins: " + event.getP2().getWins() + ")");
         }
         alert.showAndWait();
@@ -150,17 +148,16 @@ public class GameController implements Initializable {
 
     private void displayGameOver(GameEndedEve event) {
         gameEnded = true;
-        p1Score.setText(event.getPlayer1Name() + " Score: " + event.getP1().getScore() + " (Wins: " + event.getPlayer1Wins() + ")");
-        p2Score.setText(event.getPlayer2Name() + " score: " + event.getP2().getScore() + " (Wins: " + event.getPlayer2Wins() + ")");
+        p1Score.setText(event.getP1Name() + " Score: " + event.getP1().getScore() + " (Wins: " + event.getPl1Wins() + ")");
+        p2Score.setText(event.getP2Name() + " score: " + event.getP2().getScore() + " (Wins: " + event.getP2Wins() + ")");
         String winner = (event.getWinner() != null) ? event.getWinner().getName() : "Draw";
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Game Over");
-        if(winner.equals("Draw")){
-            alert.setContentText( winner + "\n\nFinal Score:\n" + event.getPlayer1Name() + ": " + event.getPlayer1Wins() + " Wins\n" + event.getPlayer2Name() + ": " + event.getPlayer2Wins() + " Wins\n");
-        }
-        else {
-            alert.setContentText("Winner: " + winner + "\nFinal Score:\n" + event.getPlayer1Name() + ": " + event.getPlayer1Wins() + " Wins\n" + event.getPlayer2Name() + ": " + event.getPlayer2Wins() + " Wins\n");
+        if (winner.equals("Draw")) {
+            alert.setContentText(winner + "\n\nFinal Score:\n" + event.getP1Name() + ": " + event.getPl1Wins() + " Wins\n" + event.getP2Name() + ": " + event.getP2Wins() + " Wins\n");
+        } else {
+            alert.setContentText("Winner: " + winner + "\nFinal Score:\n" + event.getP1Name() + ": " + event.getPl1Wins() + " Wins\n" + event.getP2Name() + ": " + event.getP2Wins() + " Wins\n");
         }
         alert.showAndWait();
         currentPlayerLabel.setText("Game Over");
@@ -177,6 +174,7 @@ public class GameController implements Initializable {
             default -> "#ffffff";
         };
     }
+
     private void updateUI() {
         updatePlayerUI(player1Side, p1);
         updatePlayerUI(player2Side, p2);

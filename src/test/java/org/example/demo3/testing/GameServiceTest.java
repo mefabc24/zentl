@@ -15,12 +15,12 @@ public class GameServiceTest {
     private GameService gameService;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         gameService = new GameService();
     }
 
     @Test
-    void testNewGame(){
+    void testNewGame() {
         gameService.newGame();
 
         assertNotNull(gameService.getP1());
@@ -30,8 +30,9 @@ public class GameServiceTest {
         assertEquals(gameService.getP1(), gameService.getCurrentPlayer());
 
     }
+
     @Test
-    void testHands(){
+    void testHands() {
         gameService.newGame();
         Player p1 = gameService.getP1();
         Player p2 = gameService.getP2();
@@ -42,4 +43,6 @@ public class GameServiceTest {
         assertTrue(p1.getDeck().size() < 30);
 
     }
+
+
 }

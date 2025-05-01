@@ -38,4 +38,5 @@ public class GameStateUpdateEve extends Event {
     public Board getGameBoard() {
         return gameBoard;
     }
+
 }
