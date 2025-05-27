@@ -4,6 +4,8 @@ import org.example.demo3.model.enums.CardType;
 import org.example.demo3.model.enums.Fraction;
 import org.example.demo3.model.enums.RowType;
 
+//Test
+
 public abstract class BaseCard implements Card {
     protected final String name;
     protected final int power;
