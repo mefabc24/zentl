@@ -4,6 +4,7 @@ import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
 import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.player.PlayerImpl;
@@ -30,7 +31,8 @@ public class GameBoardTest {
 
     @Test
     void testAddCardToRow() {
-        Card card = new UnitCard("Soldier ", 5, "", Faction.KNIGHTS, RowType.MELEE);
+        Card card = new UnitCard(1, 12, "Soldier ", "Test Description", Faction.KNIGHTS, RowType.MELEE,
+                Rarity.EPIC, "test/paths/ImagePath/", true);
         board.addCardToRow(card, p1);
 
         // wurde Karte hinzugefuegt?
@@ -47,10 +49,14 @@ public class GameBoardTest {
     @Test
     void testCalcPower() {
 
-        Card card1 = new UnitCard("a ", 3, "", Faction.KNIGHTS, RowType.MELEE);
-        Card card2 = new UnitCard("b ", 4, "", Faction.KNIGHTS, RowType.RANGED);
-        Card card3 = new UnitCard("b ", 7, "", Faction.KNIGHTS, RowType.MELEE);
-        Card card4 = new UnitCard("b ", 8, "", Faction.KNIGHTS, RowType.SIEGE);
+        Card card1 = new UnitCard(2, 3, "a " , "Desc", Faction.KNIGHTS, RowType.MELEE,
+                Rarity.COMMON, "test/paths/ImagePath/", true);
+        Card card2 = new UnitCard(3, 4, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
+                Rarity.COMMON, "test/paths/ImagePath/", true);
+        Card card3 = new UnitCard(4, 7, "c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
+                Rarity.RARE, "test/paths/ImagePath/", true);
+        Card card4 = new UnitCard(5, 8, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
+                Rarity.RARE, "test/paths/ImagePath/", true);
 
         board.addCardToRow(card1, p1);
         board.addCardToRow(card2, p1);
