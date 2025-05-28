@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import org.example.demo3.model.service.GameService;
 import org.example.demo3.model.service.NavigationService;
 
 import static org.example.demo3.model.constants.InventoryConstants.*;
@@ -35,6 +36,14 @@ public class MainMenuController {
         if (navigationService != null) {
             navigationService.navigateTo(FXML_GAME_PATH, "Gwent", (GameController controller) -> {
                 controller.setNavigationService(navigationService);
+
+                GameService gameService = new GameService();
+                if (gameService != null) {
+                    System.out.println("MainMenuController: Requesting new game from GameService.");
+                    gameService.newGame();
+                } else {
+                    System.err.println("GameService not available in HelloApplication when trying to start a new game.");
+                }
             });
         } else {
             System.err.println("NavigationService not initialized in GameController.");
