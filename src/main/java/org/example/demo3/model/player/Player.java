@@ -2,7 +2,7 @@ package org.example.demo3.model.player;
 
 import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public interface Player {
 
     boolean hasPassed();
 
-    Fraction getfraction();
+    Faction getfraction();
 
     boolean canPlay();
 

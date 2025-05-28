@@ -5,14 +5,51 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.GameService;
+import org.example.demo3.model.service.NavigationService;
+
+import static org.example.demo3.model.constants.InventoryConstants.*;
 
 import java.io.IOException;
 
 public class HelloApplication extends Application {
+    private static NavigationService navigationService;
+
+    public static NavigationService getNavigationService() { return navigationService; }
+
+
     public static void main(String[] args) {
         launch(args);
     }
 
+    @Override
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(FXML_MAINMENU_PATH));
+        Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+
+        navigationService = new NavigationService(scene, stage);
+
+        MainMenuController mainMenuController = fxmlLoader.getController();
+        if (mainMenuController != null) {
+            mainMenuController.setNavigationService(navigationService);
+            mainMenuController.setStage(stage);
+        } else {
+            System.err.println("MainMenuController konnte nicht geladen werden!");
+        }
+
+        // CSS
+        String css = getClass().getResource(CSS_PATH).toExternalForm();
+        if (css == null) {
+            System.err.println("WARNUNG: styles.css nicht gefunden");
+        } else {
+            scene.getStylesheets().add(css);
+        }
+
+        stage.setTitle("GWENT");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    /*
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/org/example/demo3/hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
@@ -22,4 +59,5 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+     */
 }

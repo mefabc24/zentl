@@ -3,7 +3,7 @@ package org.example.demo3.testing;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.player.PlayerImpl;
@@ -24,13 +24,13 @@ public class GameBoardTest {
     @BeforeEach
     void setUp() {
         board = new GameBoard();
-        p1 = new PlayerImpl("a", Fraction.KNIGHTS, new ArrayList<>());
-        p2 = new PlayerImpl("b", Fraction.KNIGHTS, new ArrayList<>());
+        p1 = new PlayerImpl("a", Faction.KNIGHTS, new ArrayList<>());
+        p2 = new PlayerImpl("b", Faction.KNIGHTS, new ArrayList<>());
     }
 
     @Test
     void testAddCardToRow() {
-        Card card = new UnitCard("Soldier ", 5, "", Fraction.KNIGHTS, RowType.MELEE);
+        Card card = new UnitCard("Soldier ", 5, "", Faction.KNIGHTS, RowType.MELEE);
         board.addCardToRow(card, p1);
 
         // wurde Karte hinzugefuegt?
@@ -47,10 +47,10 @@ public class GameBoardTest {
     @Test
     void testCalcPower() {
 
-        Card card1 = new UnitCard("a ", 3, "", Fraction.KNIGHTS, RowType.MELEE);
-        Card card2 = new UnitCard("b ", 4, "", Fraction.KNIGHTS, RowType.RANGED);
-        Card card3 = new UnitCard("b ", 7, "", Fraction.KNIGHTS, RowType.MELEE);
-        Card card4 = new UnitCard("b ", 8, "", Fraction.KNIGHTS, RowType.SIEGE);
+        Card card1 = new UnitCard("a ", 3, "", Faction.KNIGHTS, RowType.MELEE);
+        Card card2 = new UnitCard("b ", 4, "", Faction.KNIGHTS, RowType.RANGED);
+        Card card3 = new UnitCard("b ", 7, "", Faction.KNIGHTS, RowType.MELEE);
+        Card card4 = new UnitCard("b ", 8, "", Faction.KNIGHTS, RowType.SIEGE);
 
         board.addCardToRow(card1, p1);
         board.addCardToRow(card2, p1);

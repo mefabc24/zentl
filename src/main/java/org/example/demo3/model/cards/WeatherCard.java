@@ -5,14 +5,15 @@ import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 
-public class UnitCard extends BaseCard {
-    public UnitCard() {
+public class WeatherCard extends BaseCard {
+    public WeatherCard() {
         super();
-        this.cardType = CardType.UNIT;
+        this.cardType = CardType.WEATHER;
     }
 
-    public UnitCard(int id, int power, String name, String description, Faction faction, RowType rowType,
-                    Rarity rarity, String imagePath, boolean isUnlocked) {
+    public WeatherCard(int id, int power, String name, String description, Faction faction, RowType rowType,
+                       Rarity rarity, String imagePath, boolean isUnlocked) {
         super(id, power, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, isUnlocked);
     }
 }
+

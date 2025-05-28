@@ -5,7 +5,8 @@ import org.example.demo3.model.board.Board;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.logic.Engine;
 import org.example.demo3.model.logic.GameEngine;
@@ -40,8 +41,8 @@ public class GameService implements Service {
 
     public void newGame() {
         board = new GameBoard();
-        p1 = createPlayer("Player 1", Fraction.KNIGHTS);
-        p2 = createPlayer("Player 2", Fraction.MONSTER);
+        p1 = createPlayer("Player 1", Faction.KNIGHTS);
+        p2 = createPlayer("Player 2", Faction.MONSTERS);
         round = 1;
         roundWinner = null;
         currentPlayer = p1;
@@ -65,7 +66,7 @@ public class GameService implements Service {
         p2.setScore(board.calculateTotalPower(p2));
     }
 
-    private Player createPlayer(String name, Fraction fraction) {
+    private Player createPlayer(String name, Faction fraction) {
         List<Card> deck = generateDeck(fraction);
         Player player = new PlayerImpl(name, fraction, deck);
         player.setWins(0);
@@ -79,7 +80,61 @@ public class GameService implements Service {
         }
     }
 
-    private List<Card> generateDeck(Fraction fraction) {
+
+    private List<Card> generateDeck(Faction faction) { // Typ auf Interface ändern
+        List<Card> deck = new ArrayList<>();
+
+        int id = 1;
+        String defaultDescription = "Eine automatisch generierte Karte.";
+        String defaultImagePath = "";
+        Rarity defaultRarity = Rarity.COMMON;
+        boolean defaultIsUnlocked = true;
+
+        for (int i = 0; i < 15; i++) {
+            deck.add(new UnitCard(
+                    id++, // Eindeutige ID
+                    5,                           // Power
+                    "Soldier " + (i + 1),        // Name
+                    defaultDescription,          // Description
+                    faction,                     // Faction
+                    RowType.MELEE,               // RowType
+                    defaultRarity,               // Rarity
+                    defaultImagePath,            // ImagePath
+                    defaultIsUnlocked            // isUnlocked
+            ));
+        }
+        for (int i = 0; i < 10; i++) {
+            deck.add(new UnitCard(
+                    id++,
+                    4,
+                    "Archer " + (i + 1),
+                    defaultDescription,
+                    faction,
+                    RowType.RANGED,
+                    defaultRarity,
+                    defaultImagePath,
+                    defaultIsUnlocked
+            ));
+        }
+        for (int i = 0; i < 5; i++) {
+            deck.add(new UnitCard(
+                    id++,
+                    6,
+                    "Catapult " + (i + 1),
+                    defaultDescription,
+                    faction,
+                    RowType.SIEGE,
+                    defaultRarity,
+                    defaultImagePath,
+                    defaultIsUnlocked
+            ));
+        }
+        Collections.shuffle(deck);
+        return deck;
+    }
+
+    /*
+    private List<Card> generateDeck(Faction fraction) {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++)
             deck.add(new UnitCard("Soldier " + (i + 1), 5, "", fraction, RowType.MELEE));
@@ -89,7 +144,7 @@ public class GameService implements Service {
             deck.add(new UnitCard("Catapult " + (i + 1), 6, "", fraction, RowType.SIEGE));
         Collections.shuffle(deck);
         return deck;
-    }
+    }*/
 
     private void CardPlayed(PlayCardRequest event) {
         event.getPlayer().playCard(event.getCard(), board);

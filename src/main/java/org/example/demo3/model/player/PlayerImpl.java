@@ -2,7 +2,7 @@ package org.example.demo3.model.player;
 
 import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,12 +12,12 @@ public class PlayerImpl implements Player {
     private final String name;
     private final List<Card> deck;
     private final List<Card> hand;
-    private final Fraction fraction;
+    private final Faction fraction;
     private int score;
     private int wins;
     private boolean passed;
 
-    public PlayerImpl(String name, Fraction fraction, List<Card> deck) {
+    public PlayerImpl(String name, Faction fraction, List<Card> deck) {
         this.name = name;
         this.fraction = fraction;
         this.deck = new ArrayList<Card>(deck);
@@ -48,7 +48,7 @@ public class PlayerImpl implements Player {
         return name;
     }
 
-    public Fraction getfraction() {
+    public Faction getfraction() {
         return fraction;
     }
 

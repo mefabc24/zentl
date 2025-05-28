@@ -4,7 +4,7 @@ import org.example.demo3.model.board.Board;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.PlayerImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +24,14 @@ public class PlayerTest {
     void setUp() {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++)
-            deck.add(new UnitCard("Soldier " + (i + 1), 5, "", Fraction.KNIGHTS, RowType.MELEE));
+            deck.add(new UnitCard("Soldier " + (i + 1), 5, "", Faction.KNIGHTS, RowType.MELEE));
         for (int i = 0; i < 10; i++)
-            deck.add(new UnitCard("Archer " + (i + 1), 4, "", Fraction.KNIGHTS, RowType.RANGED));
+            deck.add(new UnitCard("Archer " + (i + 1), 4, "", Faction.KNIGHTS, RowType.RANGED));
         for (int i = 0; i < 5; i++)
-            deck.add(new UnitCard("Catapult " + (i + 1), 6, "", Fraction.KNIGHTS, RowType.SIEGE));
+            deck.add(new UnitCard("Catapult " + (i + 1), 6, "", Faction.KNIGHTS, RowType.SIEGE));
         Collections.shuffle(deck);
 
-        player = new PlayerImpl("a", Fraction.KNIGHTS, deck);
+        player = new PlayerImpl("a", Faction.KNIGHTS, deck);
 
     }
 
@@ -85,7 +85,7 @@ public class PlayerTest {
     @Test
     void testPlayCardNotInHand() {
         Board board = new GameBoard();
-        Card secretCard = new UnitCard("", 12312, "", Fraction.KNIGHTS, RowType.MELEE);
+        Card secretCard = new UnitCard("", 12312, "", Faction.KNIGHTS, RowType.MELEE);
         player.drawCard();
 
         assertFalse(player.getHand().contains(secretCard));

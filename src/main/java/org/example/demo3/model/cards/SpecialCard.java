@@ -1,12 +1,18 @@
 package org.example.demo3.model.cards;
 
 import org.example.demo3.model.enums.CardType;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 
 public class SpecialCard extends BaseCard {
-    public SpecialCard(String name, String description, Fraction fraction, RowType rowType) {
-        super(name, 0, description, CardType.SPECIAL, fraction, rowType);
+    public SpecialCard() {
+        super();
+        this.cardType = CardType.SPECIAL;
     }
 
+    public SpecialCard(int id, int power, String name, String description, Faction faction, RowType rowType,
+                       Rarity rarity, String imagePath, boolean isUnlocked) {
+        super(id, power, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, isUnlocked);
+    }
 }
