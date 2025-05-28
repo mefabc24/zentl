@@ -2,13 +2,11 @@ package org.example.demo3.view;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.demo3.model.service.GameService;
 import org.example.demo3.model.service.NavigationService;
 
-import static org.example.demo3.model.constants.InventoryConstants.*;
+import static org.example.demo3.model.constants.Config.*;
 
 import java.io.IOException;
 

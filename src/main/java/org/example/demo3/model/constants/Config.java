@@ -2,9 +2,9 @@ package org.example.demo3.model.constants;
 
 import javafx.geometry.Pos;
 
-public final class InventoryConstants {
+public final class Config {
 
-    private InventoryConstants() {}
+    private Config() {}
 
     // UI Constants
     public static final Pos FLOWPANE_ALIGNMENT_ALL_CARDS = Pos.CENTER_LEFT;

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.example.demo3.model.constants.InventoryConstants.*;
+import static org.example.demo3.model.constants.Config.*;
 
 public class NavigationService {
 

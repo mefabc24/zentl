@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.demo3.model.constants.InventoryConstants.*;
+import static org.example.demo3.model.constants.Config.*;
 
 public class InventoryController {
 

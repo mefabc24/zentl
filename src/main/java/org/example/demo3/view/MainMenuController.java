@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import org.example.demo3.model.service.GameService;
 import org.example.demo3.model.service.NavigationService;
 
-import static org.example.demo3.model.constants.InventoryConstants.*;
+import static org.example.demo3.model.constants.Config.*;
 
 
 public class MainMenuController {

@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.example.demo3.model.constants.InventoryConstants.*;
+import static org.example.demo3.model.constants.Config.*;
 
 public class FactionTabController {
 

@@ -12,7 +12,7 @@ import org.example.demo3.model.service.NavigationService;
 
 import java.util.function.UnaryOperator;
 
-import static org.example.demo3.model.constants.InventoryConstants.*;
+import static org.example.demo3.model.constants.Config.*;
 
 public class EditorController {
 
