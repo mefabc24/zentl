@@ -338,10 +338,7 @@ public class FactionTabController {
         }
     }
 
-    /**
-     * Zeichnet die Karten-Buttons im Haupt-FlowPane.
-     * @param cardsToDisplay Die Liste der anzuzeigenden Karten.
-     */
+
     private void displayCardsInTab(List<Card> cardsToDisplay) {
         tabAllCardsFP.getChildren().clear();
         tabAllCardsFP.setPadding(new Insets(10));
@@ -350,63 +347,63 @@ public class FactionTabController {
         tabAllCardsFP.setAlignment(FLOWPANE_ALIGNMENT_ALL_CARDS);
 
         for (Card card : cardsToDisplay) {
-            Button cardButton = new Button();
-            cardButton.setUserData(card); // Wichtig für spätere Identifizierung
+            for (int i = 0; i < card.getAmount(); i++) {
+                Button cardButton = new Button();
+                cardButton.setUserData(card);
 
-            // StackPane für das Kartenbild und ggf. das Overlay
-            StackPane cardVisualPane = new StackPane();
-            cardVisualPane.setAlignment(Pos.CENTER); // Sicherstellen, dass Kinder zentriert sind
-            // Setze die bevorzugte Größe des StackPanes, damit der Button die richtige Größe hat
-            cardVisualPane.setPrefSize(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT);
+                StackPane cardVisualPane = new StackPane();
+                cardVisualPane.setAlignment(Pos.CENTER);
+                cardVisualPane.setPrefSize(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT);
 
 
-            // Kartenbild
-            Image image = card.getImage(); // getImage() sollte das Bild laden
-            Node cardDisplayNode; // Wird entweder ImageView oder Platzhalter
+                // Kartenbild
+                Image image = card.getImage();
+                Node cardDisplayNode;
 
-            if (image != null && !image.isError()) {
-                ImageView cardImageView = new ImageView(image);
-                cardImageView.setFitWidth(CARD_PREVIEW_WIDTH);
-                cardImageView.setFitHeight(CARD_PREVIEW_HEIGHT);
-                cardImageView.setPreserveRatio(false); // Beibehaltung des Seitenverhältnisses ist meistens gut
-                cardDisplayNode = cardImageView;
-            } else {
-                if (image != null && image.getException() != null) {
-                    System.err.println("Fehler beim Laden des Bildes für Karte " + card.getName() + ": " + image.getException().getMessage());
+                if (image != null && !image.isError()) {
+                    ImageView cardImageView = new ImageView(image);
+                    cardImageView.setFitWidth(CARD_PREVIEW_WIDTH);
+                    cardImageView.setFitHeight(CARD_PREVIEW_HEIGHT);
+                    cardImageView.setPreserveRatio(false); //
+                    cardDisplayNode = cardImageView;
+                } else {
+                    if (image != null && image.getException() != null) {
+                        System.err.println("Fehler beim Laden des Bildes für Karte " + card.getName() + ": " + image.getException().getMessage());
+                    }
+                    Label noImageLabel = new Label("Bild\nfehlt");
+                    noImageLabel.setWrapText(true);
+                    noImageLabel.setStyle("-fx-text-alignment: center; -fx-text-fill: black; -fx-font-weight: bold;");
+                    Rectangle placeholderRect = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT);
+                    placeholderRect.setFill(Color.LIGHTGREY);
+                    placeholderRect.setStroke(Color.DARKGREY);
+                    cardDisplayNode = new StackPane(placeholderRect, noImageLabel);
+                    StackPane.setAlignment(noImageLabel, Pos.CENTER);
                 }
-                Label noImageLabel = new Label("Bild\nfehlt");
-                noImageLabel.setWrapText(true);
-                noImageLabel.setStyle("-fx-text-alignment: center; -fx-text-fill: black; -fx-font-weight: bold;");
-                Rectangle placeholderRect = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT);
-                placeholderRect.setFill(Color.LIGHTGREY);
-                placeholderRect.setStroke(Color.DARKGREY);
-                cardDisplayNode = new StackPane(placeholderRect, noImageLabel);
-                StackPane.setAlignment(noImageLabel, Pos.CENTER);
+                cardVisualPane.getChildren().add(cardDisplayNode);
+
+                // Overlay für gesperrte Karten
+                if (!card.isUnlocked() && this.lockedOverlayImage != null && !this.lockedOverlayImage.isError()) {
+                    ImageView overlayImageView = new ImageView(this.lockedOverlayImage);
+
+                    cardVisualPane.getChildren().add(overlayImageView);
+                } else if (!card.isUnlocked() && (this.lockedOverlayImage == null || this.lockedOverlayImage.isError())) {
+                    // Fallback, falls das Overlay-Bild nicht geladen werden konnte
+                    Rectangle lockFallbackOverlay = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT, Color.rgb(0,0,0,0.5)); // Halbtransparent schwarz
+                    Label lockedLabel = new Label("LOCKED");
+                    lockedLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;");
+                    StackPane.setAlignment(lockedLabel, Pos.CENTER);
+                    cardVisualPane.getChildren().addAll(lockFallbackOverlay, lockedLabel);
+                }
+
+                cardButton.setGraphic(cardVisualPane);
+                cardButton.setPadding(Insets.EMPTY);
+
+                cardButton.getStyleClass().clear();
+                cardButton.getStyleClass().add("card-button");
+
+                setupCardButtonInTab(cardButton, card);
+                tabAllCardsFP.getChildren().add(cardButton);
             }
-            cardVisualPane.getChildren().add(cardDisplayNode);
-
-            // Overlay für gesperrte Karten
-            if (!card.isUnlocked() && this.lockedOverlayImage != null && !this.lockedOverlayImage.isError()) {
-                ImageView overlayImageView = new ImageView(this.lockedOverlayImage);
-
-                cardVisualPane.getChildren().add(overlayImageView);
-            } else if (!card.isUnlocked() && (this.lockedOverlayImage == null || this.lockedOverlayImage.isError())) {
-                // Fallback, falls das Overlay-Bild nicht geladen werden konnte
-                Rectangle lockFallbackOverlay = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT, Color.rgb(0,0,0,0.5)); // Halbtransparent schwarz
-                Label lockedLabel = new Label("LOCKED");
-                lockedLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;");
-                StackPane.setAlignment(lockedLabel, Pos.CENTER);
-                cardVisualPane.getChildren().addAll(lockFallbackOverlay, lockedLabel);
-            }
-
-            cardButton.setGraphic(cardVisualPane);
-            cardButton.setPadding(Insets.EMPTY);
-
-            cardButton.getStyleClass().clear();
-            cardButton.getStyleClass().add("card-button");
-
-            setupCardButtonInTab(cardButton, card);
-            tabAllCardsFP.getChildren().add(cardButton);
         }
     }
 

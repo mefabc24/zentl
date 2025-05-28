@@ -73,6 +73,8 @@ public abstract class BaseCard implements Card {
     // Setter
     public void setId(int id) { this.id = id; }
     public void setPower(int power) { this.power = power; }
+    public void setAmount(int amount) { this.amount = amount; }
+    public void setMaxAmount(int maxAmount) { this.maxAmount = maxAmount; }
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
     public void setFaction(Faction faction) { this.faction = faction; }
@@ -104,7 +106,7 @@ public abstract class BaseCard implements Card {
                         this.cardImage = null;
                     }
                 } else {
-                    System.err.println("Bildresource nicht gefunden: " + this.imagePath + " für Karte " + this.name);
+                    System.err.println("Bildressource nicht gefunden: " + this.imagePath + " für Karte " + this.name);
                 }
             } catch (Exception e) {
                 System.err.println("Fehler beim Laden des Bildes '" + this.imagePath + "' für Karte " + this.name + ": " + e.getMessage());
