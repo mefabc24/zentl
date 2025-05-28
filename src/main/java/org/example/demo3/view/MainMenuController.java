@@ -45,7 +45,7 @@ public class MainMenuController {
     private void handleInventoryButtonAction(ActionEvent event) {
         System.out.println("Inventory button clicked");
         if (navigationService != null) {
-            navigationService.navigateTo(FXML_HELLO_PATH, "Card Inventory", (InventoryController controller) -> {
+            navigationService.navigateTo(FXML_INVENTORY_PATH, "Card Inventory", (InventoryController controller) -> {
                 controller.setNavigationService(navigationService);
 
             });

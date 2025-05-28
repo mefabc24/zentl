@@ -13,7 +13,7 @@ public class WeatherCard extends BaseCard {
 
     public WeatherCard(int id, int power, String name, String description, Faction faction, RowType rowType,
                        Rarity rarity, String imagePath, boolean isUnlocked) {
-        super(id, power, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, isUnlocked);
+        super(id, power, name, description, faction, rowType, CardType.WEATHER, rarity, imagePath, isUnlocked);
     }
 }
 

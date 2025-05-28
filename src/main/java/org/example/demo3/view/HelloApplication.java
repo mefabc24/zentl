@@ -2,6 +2,7 @@ package org.example.demo3.view;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.GameService;
@@ -37,12 +38,7 @@ public class HelloApplication extends Application {
         }
 
         // CSS
-        String css = getClass().getResource(CSS_PATH).toExternalForm();
-        if (css == null) {
-            System.err.println("WARNUNG: styles.css nicht gefunden");
-        } else {
-            scene.getStylesheets().add(css);
-        }
+        navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
 
         stage.setTitle("GWENT");
         stage.setScene(scene);
