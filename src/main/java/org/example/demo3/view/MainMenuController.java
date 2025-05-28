@@ -7,8 +7,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.NavigationService;
 
-import static org.example.demo3.model.constants.InventoryConstants.FXML_EDITOR_PATH;
-import static org.example.demo3.model.constants.InventoryConstants.FXML_HELLO_PATH;
+import static org.example.demo3.model.constants.InventoryConstants.*;
 
 
 public class MainMenuController {
@@ -33,6 +32,13 @@ public class MainMenuController {
     @FXML
     private void handlePlayButtonAction(ActionEvent event) {
         System.out.println("Play button clicked - Not implemented yet");
+        if (navigationService != null) {
+            navigationService.navigateTo(FXML_GAME_PATH, "Gwent", (GameController controller) -> {
+                controller.setNavigationService(navigationService);
+            });
+        } else {
+            System.err.println("NavigationService not initialized in GameController.");
+        }
     }
 
     @FXML

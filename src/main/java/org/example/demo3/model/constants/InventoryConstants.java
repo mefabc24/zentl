@@ -37,6 +37,7 @@ public final class InventoryConstants {
     public static final String FXML_FACTION_TAB_PATH = FXML_PATH + "faction-tab-content.fxml";
     public static final String FXML_HELLO_PATH = FXML_PATH + "inventory-view.fxml";
     public static final String FXML_MAINMENU_PATH = FXML_PATH + "MainMenu.fxml";
+    public static final String FXML_GAME_PATH = FXML_PATH + "hello-view.fxml";
 
     public static final String JSON_PATH = RESOURCE_PATH + "cards.json";
     public static final String CSS_PATH = RESOURCE_PATH + "styles.css";
