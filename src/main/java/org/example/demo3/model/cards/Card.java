@@ -11,6 +11,8 @@ public interface Card {
     // Getter
     int getId();
     int getPower();
+    int getAmount();
+    int getMaxAmount();
 
     String getName();
     String getDescription();

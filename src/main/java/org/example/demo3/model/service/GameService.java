@@ -93,20 +93,24 @@ public class GameService implements Service {
         for (int i = 0; i < 15; i++) {
             deck.add(new UnitCard(
                     id++, // Eindeutige ID
-                    5,                           // Power
-                    "Soldier " + (i + 1),        // Name
-                    defaultDescription,          // Description
-                    faction,                     // Faction
-                    RowType.MELEE,               // RowType
-                    defaultRarity,               // Rarity
-                    defaultImagePath,            // ImagePath
-                    defaultIsUnlocked            // isUnlocked
+                    5,                          // Power
+                    1,                          // Amount
+                    1,                          // MaxAmount
+                    "Soldier " + (i + 1),       // Name
+                    defaultDescription,         // Description
+                    faction,                    // Faction
+                    RowType.MELEE,              // RowType
+                    defaultRarity,              // Rarity
+                    defaultImagePath,           // ImagePath
+                    defaultIsUnlocked           // isUnlocked
             ));
         }
         for (int i = 0; i < 10; i++) {
             deck.add(new UnitCard(
                     id++,
                     4,
+                    1,
+                    1,
                     "Archer " + (i + 1),
                     defaultDescription,
                     faction,
@@ -120,6 +124,8 @@ public class GameService implements Service {
             deck.add(new UnitCard(
                     id++,
                     6,
+                    1,
+                    1,
                     "Catapult " + (i + 1),
                     defaultDescription,
                     faction,

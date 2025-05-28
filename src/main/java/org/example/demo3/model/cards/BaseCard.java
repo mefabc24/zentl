@@ -18,6 +18,9 @@ public abstract class BaseCard implements Card {
 
     protected int id;
     protected int power;
+    protected int amount;
+    protected int maxAmount;
+
     protected String name;
     protected String description;
     protected String imagePath;
@@ -36,10 +39,12 @@ public abstract class BaseCard implements Card {
         this.isSelected = false;
     }
 
-    protected BaseCard(int id, int power, String name, String description, Faction faction, RowType rowType,
+    protected BaseCard(int id, int power, int amount, int maxAmount, String name, String description, Faction faction, RowType rowType,
                        CardType cardType, Rarity rarity, String imagePath, boolean isUnlocked) {
         this.id = id;
         this.power = power;
+        this.amount = amount;
+        this.maxAmount = maxAmount;
         this.name = name;
         this.faction = faction;
         this.rowType = rowType;
@@ -53,6 +58,8 @@ public abstract class BaseCard implements Card {
     // Getter
     @Override public int getId() { return id; }
     @Override public int getPower() { return power; }
+    @Override public int getAmount() { return amount; }
+    @Override public int getMaxAmount() { return maxAmount; }
     @Override public String getName() { return name; }
     @Override public String getDescription() { return description; }
     @Override public String getImagePath() { return imagePath; }

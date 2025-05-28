@@ -31,7 +31,7 @@ public class GameBoardTest {
 
     @Test
     void testAddCardToRow() {
-        Card card = new UnitCard(1, 12, "Soldier ", "Test Description", Faction.KNIGHTS, RowType.MELEE,
+        Card card = new UnitCard(1, 12, 1, 1, "Soldier ", "Test Description", Faction.KNIGHTS, RowType.MELEE,
                 Rarity.EPIC, "test/paths/ImagePath/", true);
         board.addCardToRow(card, p1);
 
@@ -49,13 +49,13 @@ public class GameBoardTest {
     @Test
     void testCalcPower() {
 
-        Card card1 = new UnitCard(2, 3, "a " , "Desc", Faction.KNIGHTS, RowType.MELEE,
+        Card card1 = new UnitCard(2, 3, 1, 1, "a " , "Desc", Faction.KNIGHTS, RowType.MELEE,
                 Rarity.COMMON, "test/paths/ImagePath/", true);
-        Card card2 = new UnitCard(3, 4, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
+        Card card2 = new UnitCard(3, 4, 1, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
                 Rarity.COMMON, "test/paths/ImagePath/", true);
-        Card card3 = new UnitCard(4, 7, "c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
+        Card card3 = new UnitCard(4, 7, 1, 1,"c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
                 Rarity.RARE, "test/paths/ImagePath/", true);
-        Card card4 = new UnitCard(5, 8, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
+        Card card4 = new UnitCard(5, 8, 1, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
                 Rarity.RARE, "test/paths/ImagePath/", true);
 
         board.addCardToRow(card1, p1);

@@ -11,8 +11,8 @@ public class UnitCard extends BaseCard {
         this.cardType = CardType.UNIT;
     }
 
-    public UnitCard(int id, int power, String name, String description, Faction faction, RowType rowType,
+    public UnitCard(int id, int power, int amount, int maxAmount, String name, String description, Faction faction, RowType rowType,
                     Rarity rarity, String imagePath, boolean isUnlocked) {
-        super(id, power, name, description, faction, rowType, CardType.UNIT, rarity, imagePath, isUnlocked);
+        super(id, power, amount, maxAmount, name, description, faction, rowType, CardType.UNIT, rarity, imagePath, isUnlocked);
     }
 }

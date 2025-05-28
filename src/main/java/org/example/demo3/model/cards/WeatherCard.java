@@ -11,9 +11,9 @@ public class WeatherCard extends BaseCard {
         this.cardType = CardType.WEATHER;
     }
 
-    public WeatherCard(int id, int power, String name, String description, Faction faction, RowType rowType,
+    public WeatherCard(int id, int power, int amount, int maxAmount, String name, String description, Faction faction, RowType rowType,
                        Rarity rarity, String imagePath, boolean isUnlocked) {
-        super(id, power, name, description, faction, rowType, CardType.WEATHER, rarity, imagePath, isUnlocked);
+        super(id, power, amount, maxAmount, name, description, faction, rowType, CardType.WEATHER, rarity, imagePath, isUnlocked);
     }
 }
 
