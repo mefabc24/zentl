@@ -4,7 +4,8 @@ public enum RowType {
     MELEE (0),
     RANGED (1),
     SIEGE (2),
-    ANY (3);
+    ANY (3),
+    WEATHER (4); // Oder NONE
 
     private final int sortID;
 
