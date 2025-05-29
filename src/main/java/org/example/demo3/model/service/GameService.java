@@ -95,7 +95,6 @@ public class GameService implements Service {
                     id++, // Eindeutige ID
                     5,                          // Power
                     1,                          // Amount
-                    1,                          // MaxAmount
                     "Soldier " + (i + 1),       // Name
                     defaultDescription,         // Description
                     faction,                    // Faction
@@ -110,7 +109,6 @@ public class GameService implements Service {
                     id++,
                     4,
                     1,
-                    1,
                     "Archer " + (i + 1),
                     defaultDescription,
                     faction,
@@ -124,7 +122,6 @@ public class GameService implements Service {
             deck.add(new UnitCard(
                     id++,
                     6,
-                    1,
                     1,
                     "Catapult " + (i + 1),
                     defaultDescription,

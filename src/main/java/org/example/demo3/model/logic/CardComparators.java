@@ -1,61 +1,36 @@
 package org.example.demo3.model.logic;
 
 import org.example.demo3.model.cards.Card;
+import org.example.demo3.model.cards.CardInstance; // Importieren
+
 import java.util.Comparator;
 
 public class CardComparators {
-    private static final Comparator<Card> BY_UNLOCKED_STATUS =
-            Comparator.comparingInt(card -> card.isUnlocked() ? 0 : 1);
 
-    // By Power
-    public static final Comparator<Card> BY_POWER_ASC =
-            BY_UNLOCKED_STATUS.thenComparingInt(Card::getPower);
-    public static final Comparator<Card> BY_POWER_DESC =
-            BY_UNLOCKED_STATUS.thenComparing(Comparator.comparingInt(Card::getPower).reversed());
+    // Beispiel: BY_RARITY_ASC für CardInstance
+    public static final Comparator<CardInstance> BY_RARITY_ASC_INSTANCE =
+            Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getRarity().getSortID());
 
-    // By Rarity
-    public static final Comparator<Card> BY_RARITY_ASC =
-            Comparator.comparingInt((Card card) -> card.isUnlocked() ? 1 : 0)
-                    .thenComparingInt(card -> card.getRarity().getSortID());
-    public static final Comparator<Card> BY_RARITY_DESC =
-            BY_UNLOCKED_STATUS.thenComparing(Comparator.comparingInt((Card card) -> card.getRarity().getSortID()).reversed());
+    // Beispiel: BY_POWER_ASC für CardInstance
+    public static final Comparator<CardInstance> BY_POWER_ASC_INSTANCE =
+            Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getPower());
 
-    // By CardType
-    public static final Comparator<Card> BY_CARDTYPE_ASC =
-            BY_UNLOCKED_STATUS
-                    .thenComparingInt(card -> card.getCardType().getSortID())
-                    .thenComparingInt(card -> card.getRarity().getSortID());
-    public static final Comparator<Card> BY_CARDTYPE_DESC =
-            BY_UNLOCKED_STATUS
-                    .thenComparing(Comparator.comparingInt((Card card) -> card.getCardType().getSortID()).reversed())
-                    .thenComparing(Comparator.comparingInt((Card card) -> card.getRarity().getSortID()).reversed());
+    public static final Comparator<CardInstance> BY_ROWTYPE_ASC_INSTANCE =
+            Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getRowType().getSortID());
 
-    // By RowType
-    public static final Comparator<Card> BY_ROWTYPE_ASC =
-            BY_UNLOCKED_STATUS
-                    .thenComparingInt(card -> card.getRowType().getSortID());
-    public static final Comparator<Card> BY_ROWTYPE_DESC =
-            BY_UNLOCKED_STATUS
-                    .thenComparing(Comparator.comparingInt((Card card) -> card.getRowType().getSortID()).reversed());
+    public static final Comparator<CardInstance> BY_CARDTYPE_ASC_INSTANCE =
+            Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getCardType().getSortID());
 
-    // By Name
-    public static final Comparator<Card> BY_NAME_ASC =
-            BY_UNLOCKED_STATUS
-                    .thenComparing(Card::getName, String.CASE_INSENSITIVE_ORDER);
-    public static final Comparator<Card> BY_NAME_DESC =
-            BY_UNLOCKED_STATUS
-                    .thenComparing(Comparator.comparing(Card::getName, String.CASE_INSENSITIVE_ORDER).reversed());
+    // Wichtig für stabile Sortierung
+    public static final Comparator<CardInstance> BY_ID_ASC_INSTANCE =
+            Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getId())
+                    .thenComparing(CardInstance::getInstanceId); // Zusätzliche Stabilität durch InstanceId
 
-    // By ID
+    // Alte Komparatoren für Card-Prototypen kannst du ggf. behalten, wenn sie anderswo noch gebraucht werden
+    public static final Comparator<Card> BY_RARITY_ASC = Comparator.comparing(Card::getRarity);
+    public static final Comparator<Card> BY_POWER_ASC = Comparator.comparingInt(Card::getPower);
+    public static final Comparator<Card> BY_ROWTYPE_ASC = Comparator.comparing(Card::getRowType);
+    public static final Comparator<Card> BY_CARDTYPE_ASC = Comparator.comparing(Card::getCardType);
     public static final Comparator<Card> BY_ID_ASC = Comparator.comparingInt(Card::getId);
-
-
-
-
-
-
-
-
-
 
 }

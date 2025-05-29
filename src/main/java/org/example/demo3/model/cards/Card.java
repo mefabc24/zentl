@@ -12,6 +12,7 @@ public interface Card {
     int getId();
     int getPower();
     int getAmount();
+    int getSelectedAmount();
     int getMaxAmount();
 
     String getName();
@@ -24,13 +25,9 @@ public interface Card {
     CardType getCardType();
     RowType getRowType();
 
-    boolean isSelected();
     boolean isUnlocked();
 
     // Setter
-    void setSelected(boolean selected);
     void setUnlocked(boolean unlocked);
-
-    // Toggle
-    void toggleSelected();
+    void setSelectedAmount(int selectedAmount);
 }

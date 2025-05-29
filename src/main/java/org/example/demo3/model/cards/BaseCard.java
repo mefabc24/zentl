@@ -19,6 +19,7 @@ public abstract class BaseCard implements Card {
     protected int id;
     protected int power;
     protected int amount;
+    protected int selectedAmount;
     protected int maxAmount;
 
     protected String name;
@@ -31,34 +32,33 @@ public abstract class BaseCard implements Card {
     protected Rarity rarity;
 
     protected transient Image cardImage;
-
-    protected boolean isSelected;
     protected boolean isUnlocked;
 
-    protected BaseCard() {
-        this.isSelected = false;
-    }
+    protected BaseCard() { this.selectedAmount = 0; }
 
-    protected BaseCard(int id, int power, int amount, int maxAmount, String name, String description, Faction faction, RowType rowType,
-                       CardType cardType, Rarity rarity, String imagePath, boolean isUnlocked) {
+    protected BaseCard(int id, int power, int amount, String name, String description,
+                       Faction faction, RowType rowType, CardType cardType, Rarity rarity, String imagePath, boolean isUnlocked) {
         this.id = id;
         this.power = power;
         this.amount = amount;
-        this.maxAmount = maxAmount;
         this.name = name;
+        this.description = description;
         this.faction = faction;
         this.rowType = rowType;
         this.cardType = cardType;
         this.rarity = rarity;
         this.imagePath = imagePath;
         this.isUnlocked = isUnlocked;
-        this.isSelected = false;
+
+        this.selectedAmount = 0;
+        this.maxAmount = this.rarity.getMaxAmount();
     }
 
     // Getter
     @Override public int getId() { return id; }
     @Override public int getPower() { return power; }
     @Override public int getAmount() { return amount; }
+    @Override public int getSelectedAmount() { return selectedAmount; }
     @Override public int getMaxAmount() { return maxAmount; }
     @Override public String getName() { return name; }
     @Override public String getDescription() { return description; }
@@ -67,7 +67,6 @@ public abstract class BaseCard implements Card {
     @Override public RowType getRowType() { return rowType; }
     @Override public CardType getCardType() { return cardType; }
     @Override public Rarity getRarity() { return rarity; }
-    @Override public boolean isSelected() { return isSelected; }
     @Override public boolean isUnlocked() { return isUnlocked; }
 
     // Setter
@@ -87,11 +86,8 @@ public abstract class BaseCard implements Card {
         this.cardImage = null; // Bild zurücksetzen, damit es neu geladen wird
     }
 
-    @Override public void setSelected(boolean selected) { this.isSelected = selected; }
+    @Override public void setSelectedAmount(int selectedAmount) { this.selectedAmount = selectedAmount; }
     @Override public void setUnlocked(boolean unlocked) { this.isUnlocked = unlocked; }
-
-    // Toggle
-    @Override public void toggleSelected() { this.isSelected = !this.isSelected; }
 
     // Bild bei Bedarf laden (Lazy Loading)
     @Override
@@ -120,6 +116,6 @@ public abstract class BaseCard implements Card {
     public String toString() {
         String statusColor = this.isUnlocked ? GREEN : RED;
 
-        return statusColor + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selected" + isUnlocked + "/" + isSelected + RESET;
+        return statusColor + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + selectedAmount + RESET;
     }
 }

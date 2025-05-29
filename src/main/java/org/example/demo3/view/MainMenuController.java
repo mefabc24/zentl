@@ -19,13 +19,12 @@ public class MainMenuController {
     @FXML private Button quitButton;
 
     private Stage primaryStage;
-    private NavigationService navigationService; // Referenz zum NavigationService
+    private NavigationService navigationService;
 
     public void setStage(Stage stage) {
         this.primaryStage = stage;
     }
 
-    // Neue Methode, um den NavigationService zu setzen
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
     }
@@ -65,7 +64,7 @@ public class MainMenuController {
 
     @FXML
     private void handleEditorButtonAction(ActionEvent event) {
-        System.out.println("Editor button clicked - Not implemented yet");
+        System.out.println("Editor button clicked.");
 
         if (navigationService != null) {
             navigationService.navigateTo(FXML_EDITOR_PATH, "Editor", (EditorController controller) -> {

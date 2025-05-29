@@ -56,7 +56,7 @@ public class CardRepository {
 
     public List<Card> getSelectedCards() {
         return allCards.stream()
-                .filter(Card::isSelected)
+                .filter(card -> card.getSelectedAmount() > 0)
                 .collect(Collectors.toList());
     }
 
@@ -68,7 +68,7 @@ public class CardRepository {
 
     public List<Card> getSelectedFactionCards(Faction faction) {
         return allCards.stream()
-                .filter(Card::isSelected)
+                .filter(card -> card.getSelectedAmount() > 0)
                 .filter(card -> card.getFaction() == faction)
                 .collect(Collectors.toList());
     }
@@ -81,7 +81,7 @@ public class CardRepository {
 
     public List<Card> getSelectedCardsByType(CardType cardType) {
         return allCards.stream()
-                .filter(Card::isSelected)
+                .filter(card -> card.getSelectedAmount() > 0)
                 .filter(card -> card.getCardType() == cardType)
                 .collect(Collectors.toList());
     }
@@ -194,18 +194,6 @@ public class CardRepository {
                     e.printStackTrace();
                 }
                 return;
-            }
-
-            System.out.println("Versuche Karten zu speichern in (bestätigt): " + outputPath.toAbsolutePath());
-            System.out.println("DEBUG: Anzahl Karten in 'allCards' vor dem Speichern: " + (this.allCards != null ? this.allCards.size() : "null"));
-            if (this.allCards != null && !this.allCards.isEmpty()) {
-                this.allCards.stream()
-                        .filter(card -> card != null && card.getId() == 18)
-                        .findFirst()
-                        .ifPresentOrElse(
-                                card -> System.out.println("DEBUG: Zustand der Karte ID 18 vor dem Speichern: " + card.getName() + ", Selected: " + card.isSelected() + ", Unlocked: " + card.isUnlocked()),
-                                () -> System.out.println("DEBUG: Karte mit ID 18 nicht in 'allCards' zum Speichern gefunden.")
-                        );
             }
 
             try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {

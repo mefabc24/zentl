@@ -11,8 +11,8 @@ public class SpecialCard extends BaseCard {
         this.cardType = CardType.SPECIAL;
     }
 
-    public SpecialCard(int id, int power, int amount, int maxAmount, String name, String description, Faction faction, RowType rowType,
+    public SpecialCard(int id, int power, int amount, String name, String description, Faction faction, RowType rowType,
                        Rarity rarity, String imagePath, boolean isUnlocked) {
-        super(id, power, amount, maxAmount, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, isUnlocked);
+        super(id, power, amount, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, isUnlocked);
     }
 }

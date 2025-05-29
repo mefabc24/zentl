@@ -2342,6 +2342,9 @@
   {
     "id": 181,
     "power": 12,
+    "amount": 5,
+    "selectedAmount": 0,
+    "maxAmount": 5,
     "name": "Geralt von Riva",
     "description": "Ein legendärer Hexer, Monsterjäger und Schwertmeister.",
     "imagePath": "/org/example/demo3/assets/Geralt.png",
@@ -2355,6 +2358,9 @@
   {
     "id": 182,
     "power": 9,
+    "amount": 1,
+    "selectedAmount": 0,
+    "maxAmount": 2,
     "name": "Berserk",
     "description": "Ein wilder Berserker, dessen Stärke im Kampf unermesslich wächst.",
     "imagePath": "/org/example/demo3/assets/Berserk.png",
@@ -2368,6 +2374,9 @@
   {
     "id": 183,
     "power": 18,
+    "amount": 3,
+    "selectedAmount": 0,
+    "maxAmount": 3,
     "name": "Dark Knight",
     "description": "Ein finsterer Ritter, gehüllt in Schatten und Mysterien.",
     "imagePath": "/org/example/demo3/assets/DarkKnight.png",
@@ -2381,6 +2390,9 @@
   {
     "id": 184,
     "power": 3,
+    "amount": 2,
+    "selectedAmount": 0,
+    "maxAmount": 2,
     "name": "Archer",
     "description": "Ein geschickter Bogenschütze, der seine Pfeile mit tödlicher Präzision abschießt.",
     "imagePath": "/org/example/demo3/assets/Archer.png",

@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import org.example.demo3.model.cards.Card;
+import org.example.demo3.model.cards.CardInstance;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
@@ -15,6 +16,7 @@ import org.example.demo3.model.service.NavigationService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.example.demo3.model.constants.Config.*;
 
@@ -26,7 +28,11 @@ public class InventoryController {
 
     private CardRepository cardRepository;
     private List<Card> allCardsMasterList;
-    private ObservableList<Card> selectedCardsList;
+    private ObservableList<CardInstance> selectedCardInstanceList;
+
+    public ObservableList<CardInstance> getSelectedCardInstanceList() {
+        return selectedCardInstanceList;
+    }
 
     private NavigationService navigationService;
 
@@ -38,12 +44,12 @@ public class InventoryController {
     public void initialize() {
         System.out.println("--- Initializing Inventory UI (HelloController) and Loading Cards ---");
 
-        selectedCardsList = FXCollections.observableArrayList();
+        selectedCardInstanceList  = FXCollections.observableArrayList();
 
         this.cardRepository = new CardRepository(JSON_PATH);
-        List<Card> loadedCards = this.cardRepository.getAllCards();
+        List<Card> loadedPrototypes = this.cardRepository.getAllCards();
 
-        if (loadedCards == null || loadedCards.isEmpty()) {
+        if (loadedPrototypes == null || loadedPrototypes.isEmpty()) {
             System.err.println("FEHLER: Keine Karten zum Anzeigen geladen im HelloController.");
 
             Tab errorTab = new Tab("Error");
@@ -54,13 +60,24 @@ public class InventoryController {
             return;
         }
 
-        this.allCardsMasterList = new ArrayList<>(loadedCards);
+        this.allCardsMasterList = new ArrayList<>(loadedPrototypes);
 
-        for (Card card : this.allCardsMasterList) {
-            if (card.isSelected()) {
-                if (!selectedCardsList.contains(card)) {
-                    selectedCardsList.add(card);
+        for (Card prototype : this.allCardsMasterList) {
+            if (prototype.isUnlocked()) { // Nur freigeschaltete Karten können ausgewählt sein
+                for (int i = 0; i < prototype.getSelectedAmount(); i++) {
+                    // Stelle sicher, dass nicht mehr als maxAmount ausgewählt werden
+                    if (i < prototype.getMaxAmount()) {
+                        selectedCardInstanceList.add(new CardInstance(prototype));
+                    } else {
+                        System.out.println("Warnung: selectedAmount für Karte " + prototype.getName() +
+                                " (" + prototype.getSelectedAmount() +
+                                ") ist größer als maxAmount (" + prototype.getMaxAmount() +
+                                "). Nur maxAmount Instanzen werden geladen.");
+                        break;
+                    }
                 }
+            } else {
+                prototype.setSelectedAmount(0); // Gesperrte Karten können nicht ausgewählt sein
             }
         }
 
@@ -84,7 +101,7 @@ public class InventoryController {
                 Parent tabContentRoot = loader.load();
 
                 FactionTabController factionController = loader.getController();
-                factionController.initializeData(faction, this.allCardsMasterList, this.selectedCardsList, this);
+                factionController.initializeData(faction, this.allCardsMasterList, this.selectedCardInstanceList, this);
 
                 Tab factionTab = new Tab(faction.name());
                 factionTab.setContent(tabContentRoot);
@@ -100,11 +117,22 @@ public class InventoryController {
         }
     }
 
+
+
+
     @FXML
     private void handleSaveButtonAction() {
-        if (this.cardRepository != null) {
-            this.cardRepository.save();
-            System.out.println("Aktueller Zustand aller Karten (isSelected, isUnlocked) gespeichert.");
+        if (this.cardRepository != null && this.allCardsMasterList != null) {
+            // Aktualisiere 'selectedAmount' in den Prototypen vor dem Speichern
+            for (Card prototype : this.allCardsMasterList) {
+                long count = selectedCardInstanceList.stream()
+                        .filter(instance -> instance.getCardDefinition().equals(prototype))
+                        .count();
+                prototype.setSelectedAmount((int) count);
+            }
+
+            this.cardRepository.save(); // CardRepository speichert allCardsMasterList
+            System.out.println("Aktueller Zustand aller Karten (inkl. selectedAmount) gespeichert.");
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Speichern erfolgreich");

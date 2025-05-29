@@ -4,42 +4,19 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
 
 
 <?import javafx.scene.layout.Region?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.demo3.view.InventoryController" prefWidth="1820" prefHeight="1140">
     <top>
-        <!-- Optional: Ein globaler Bereich oben, z.B. für den Save-Button -->
-        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;"> <!-- HBox-Ausrichtung jetzt CENTER_LEFT -->
-            <!-- Back Button (links) -->
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
             <Button fx:id="backToMenuButton" text="BACK TO MENU" onAction="#handleBackToMenuButtonAction" styleClass="secondary-action-button"/>
-
-            <!-- Abstandshalter, der den verfügbaren Platz einnimmt -->
             <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- Save Button (rechts) -->
             <Button fx:id="globalSaveButton" text="SAVE ALL CHANGES" onAction="#handleSaveButtonAction" styleClass="primary-action-button"/>
         </HBox>
     </top>
     <center>
         <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE">
-            <!-- Tabs werden dynamisch vom HelloController hinzugefügt -->
-            <!-- Du kannst hier einen "Lade..." Tab als Platzhalter lassen, wenn du möchtest,
-                 aber er wird von createFactionTabs() sowieso geleert. -->
-            <!--
-            <Tab text="Lade Fraktionen...">
-                <Label text="Inhalte werden geladen..."/>
-            </Tab>
-            -->
         </TabPane>
     </center>
-    <!-- Optional: Ein globaler Bereich unten, z.B. für eine Statusleiste -->
-    <!--
-    <bottom>
-        <HBox style="-fx-background-color: lightgray; -fx-padding: 5;">
-            <Label text="Status: Bereit"/>
-        </HBox>
-    </bottom>
-    -->
 </BorderPane>
