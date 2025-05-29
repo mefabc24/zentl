@@ -25,13 +25,13 @@ public class PlayerTest {
     void setUp() {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++)
-            deck.add(new UnitCard(i, 4, 1, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
+            deck.add(new UnitCard(i, 4, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
                     Rarity.COMMON, "test/paths/ImagePath/", true));
         for (int i = 0; i < 10; i++)
-            deck.add(new UnitCard(i+20, 7, 1, 1, "c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
+            deck.add(new UnitCard(i+20, 7, 1, "c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
                     Rarity.RARE, "test/paths/ImagePath/", true));
         for (int i = 0; i < 5; i++)
-            deck.add(new UnitCard(i+100, 8, 1, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
+            deck.add(new UnitCard(i+100, 8, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
                     Rarity.RARE, "test/paths/ImagePath/", true));
         Collections.shuffle(deck);
 
@@ -89,7 +89,7 @@ public class PlayerTest {
     @Test
     void testPlayCardNotInHand() {
         Board board = new GameBoard();
-        Card secretCard = new UnitCard(53, 12312, 1, 1, "", "", Faction.KNIGHTS, RowType.MELEE, Rarity.EPIC,
+        Card secretCard = new UnitCard(53, 12312, 1, "", "", Faction.KNIGHTS, RowType.MELEE, Rarity.EPIC,
                 "test/paths/ImagePath/", true);
         player.drawCard();
 
