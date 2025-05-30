@@ -83,7 +83,7 @@ public abstract class BaseCard implements Card {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-        this.cardImage = null; // Bild zurücksetzen, damit es neu geladen wird
+        this.cardImage = null; // Bild zurücksetzen zum neu laden
     }
 
     @Override public void setSelectedAmount(int selectedAmount) { this.selectedAmount = selectedAmount; }
@@ -95,7 +95,7 @@ public abstract class BaseCard implements Card {
         }
     }
 
-    // Bild bei Bedarf laden (Lazy Loading)
+    // Bild laden
     @Override
     public Image getImage() {
         if (this.cardImage == null && this.imagePath != null && !this.imagePath.isEmpty()) {

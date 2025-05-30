@@ -1,32 +1,35 @@
 package org.example.demo3.model.logic;
 
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.cards.CardInstance; // Importieren
+import org.example.demo3.model.cards.CardInstance;
 
 import java.util.Comparator;
 
 public class CardComparators {
 
-    // Beispiel: BY_RARITY_ASC für CardInstance
+    // by Rarity (CardInstance)
     public static final Comparator<CardInstance> BY_RARITY_ASC_INSTANCE =
             Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getRarity().getSortID());
 
-    // Beispiel: BY_POWER_ASC für CardInstance
+    // by Power (CardInstance)
     public static final Comparator<CardInstance> BY_POWER_ASC_INSTANCE =
             Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getPower());
 
+    // by RowType (CardInstance)
     public static final Comparator<CardInstance> BY_ROWTYPE_ASC_INSTANCE =
             Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getRowType().getSortID());
 
+    // by CardType (CardInstance)
     public static final Comparator<CardInstance> BY_CARDTYPE_ASC_INSTANCE =
             Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getCardType().getSortID());
 
-    // Wichtig für stabile Sortierung
+    // by ID (CardInstance)
     public static final Comparator<CardInstance> BY_ID_ASC_INSTANCE =
             Comparator.comparingInt((CardInstance ci) -> ci.getCardDefinition().getId())
-                    .thenComparing(CardInstance::getInstanceId); // Zusätzliche Stabilität durch InstanceId
+                    .thenComparing(CardInstance::getInstanceId);
 
-    // Alte Komparatoren für Card-Prototypen kannst du ggf. behalten, wenn sie anderswo noch gebraucht werden
+
+    // Sortierung für Card
     public static final Comparator<Card> BY_RARITY_ASC = Comparator.comparing(Card::getRarity);
     public static final Comparator<Card> BY_POWER_ASC = Comparator.comparingInt(Card::getPower);
     public static final Comparator<Card> BY_ROWTYPE_ASC = Comparator.comparing(Card::getRowType);

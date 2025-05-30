@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip; // Expliziter Import für JavaFX Tooltip
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
@@ -22,7 +22,7 @@ import javafx.scene.text.Font;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.CardInstance;
 import org.example.demo3.model.enums.Faction;
-import org.example.demo3.model.logic.CardComparators; // Stelle sicher, dass dies deine angepassten Comparators sind
+import org.example.demo3.model.logic.CardComparators;
 
 import java.io.InputStream;
 import java.util.*;
@@ -47,11 +47,12 @@ public class FactionTabController {
     @FXML private Button tabRandomizeButton;
 
     private Faction currentFaction;
-    private List<CardInstance> factionDisplayableInstances; // Alle Instanzen (amount * Karten) für diesen Tab
-    private List<CardInstance> currentlyDisplayedInstancesInTab; // Gefilterte/Sortierte Instanzen
-    private ObservableList<CardInstance> globalSelectedCardInstancesList; // Globale Liste der ausgewählten Instanzen
+    private List<CardInstance> factionDisplayableInstances;
+    private List<CardInstance> currentlyDisplayedInstancesInTab;
+    private ObservableList<CardInstance> globalSelectedCardInstancesList;
 
-    private Comparator<CardInstance> currentSortOrderInTab = CardComparators.BY_ID_ASC_INSTANCE; // Default Sortierung
+    // Default Sortierung
+    private Comparator<CardInstance> currentSortOrderInTab = CardComparators.BY_ID_ASC_INSTANCE;
     private boolean sortAscendingInTab = true;
 
     private boolean showLockedCards = false;
@@ -89,7 +90,7 @@ public class FactionTabController {
         this.globalSelectedCardInstancesList.addListener((ListChangeListener<CardInstance>) change -> {
             updateTabSelectedCardsDisplay();
             updateSelectedCountLabel();
-            refreshAllCardsDisplayStyles(); // Wichtig, um Button-Styles im Hauptbereich zu aktualisieren
+            refreshAllCardsDisplayStyles();
         });
 
         updateTabSelectedCardsDisplay();
@@ -156,10 +157,10 @@ public class FactionTabController {
                 removeButton.setPadding(Insets.EMPTY);
                 removeButton.getStyleClass().clear();
                 removeButton.getStyleClass().add("selected-card-preview-button");
-                removeButton.setUserData(instance); // Die Instanz dem Button zuweisen
+                removeButton.setUserData(instance);
 
                 removeButton.setOnAction(e -> {
-                    handleCardSelectionToggleInTab(instance, null); // Kein direkter Button im Hauptbereich
+                    handleCardSelectionToggleInTab(instance, null);
                 });
                 Tooltip.install(removeButton, new Tooltip(cardDef.getName() + " (Entfernen)"));
                 tabSelectedCardsFP.getChildren().add(removeButton);

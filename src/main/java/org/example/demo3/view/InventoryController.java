@@ -63,9 +63,8 @@ public class InventoryController {
         this.allCardsMasterList = new ArrayList<>(loadedPrototypes);
 
         for (Card prototype : this.allCardsMasterList) {
-            if (prototype.isUnlocked()) { // Nur freigeschaltete Karten können ausgewählt sein
+            if (prototype.isUnlocked()) {
                 for (int i = 0; i < prototype.getSelectedAmount(); i++) {
-                    // Stelle sicher, dass nicht mehr als maxAmount ausgewählt werden
                     if (i < prototype.getMaxAmount()) {
                         selectedCardInstanceList.add(new CardInstance(prototype));
                     } else {
@@ -77,7 +76,7 @@ public class InventoryController {
                     }
                 }
             } else {
-                prototype.setSelectedAmount(0); // Gesperrte Karten können nicht ausgewählt sein
+                prototype.setSelectedAmount(0);
             }
         }
 
@@ -123,7 +122,7 @@ public class InventoryController {
     @FXML
     private void handleSaveButtonAction() {
         if (this.cardRepository != null && this.allCardsMasterList != null) {
-            // Aktualisiere 'selectedAmount' in den Prototypen vor dem Speichern
+
             for (Card prototype : this.allCardsMasterList) {
                 long count = selectedCardInstanceList.stream()
                         .filter(instance -> instance.getCardDefinition().equals(prototype))
@@ -131,7 +130,7 @@ public class InventoryController {
                 prototype.setSelectedAmount((int) count);
             }
 
-            this.cardRepository.save(); // CardRepository speichert allCardsMasterList
+            this.cardRepository.save();
             System.out.println("Aktueller Zustand aller Karten (inkl. selectedAmount) gespeichert.");
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

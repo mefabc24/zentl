@@ -36,7 +36,7 @@
         <HBox alignment="CENTER_LEFT" GridPane.columnIndex="0">
             <Label text="SORT BY">
                 <HBox.margin>
-                    <Insets right="10"/> <!-- Abstand rechts vom Label -->
+                    <Insets right="10"/>
                 </HBox.margin>
             </Label>
             <Button fx:id="tabRaritySortButton" text="RARITY" onAction="#handleTabSortByRarity"/>
@@ -75,7 +75,7 @@
         </center>
     </BorderPane>
 
-    <!-- Bereich für alle Karten (scrollfähig) -->
+    <!-- Bereich für alle Karten -->
     <ScrollPane fx:id="tabCardScrollPane" GridPane.rowIndex="2" GridPane.columnIndex="0" fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED">
         <content>
             <FlowPane fx:id="tabAllCardsFP">

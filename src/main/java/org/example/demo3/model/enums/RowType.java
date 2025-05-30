@@ -5,7 +5,7 @@ public enum RowType {
     RANGED (1),
     SIEGE (2),
     ANY (3),
-    WEATHER (4); // Oder NONE
+    WEATHER (4); // Oder wir machen NONE
 
     private final int sortID;
 
