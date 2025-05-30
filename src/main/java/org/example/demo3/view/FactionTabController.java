@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -51,7 +51,6 @@ public class FactionTabController {
     private List<CardInstance> currentlyDisplayedInstancesInTab;
     private ObservableList<CardInstance> globalSelectedCardInstancesList;
 
-    // Default Sortierung
     private Comparator<CardInstance> currentSortOrderInTab = CardComparators.BY_ID_ASC_INSTANCE;
     private boolean sortAscendingInTab = true;
 
@@ -59,6 +58,9 @@ public class FactionTabController {
 
     private InventoryController mainController;
     private Image lockedOverlayImage;
+
+    private Node draggedItemFromSelectedCardsFP = null;
+    private static final String DRAG_SELECTED_CARD_CSS_CLASS = "drag-over-selected-card";
 
     public void initializeData(Faction faction, List<Card> allCardPrototypes, ObservableList<CardInstance> globalSelectedInstances, InventoryController mainController) {
         this.currentFaction = faction;
@@ -144,8 +146,15 @@ public class FactionTabController {
         tabSelectedCardsFP.getChildren().clear();
         tabSelectedCardsFP.setAlignment(FLOWPANE_ALIGNMENT_SELECTED_CARDS);
 
-        for (CardInstance instance : globalSelectedCardInstancesList) {
+        List<CardInstance> cardsForThisFactionInSelection = globalSelectedCardInstancesList.stream()
+                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction &&
+                        instance.getCardDefinition().isUnlocked())
+                .collect(Collectors.toList());
+
+
+        for (CardInstance instance : cardsForThisFactionInSelection) {
             Card cardDef = instance.getCardDefinition();
+
             if (cardDef.getFaction() == this.currentFaction && cardDef.isUnlocked()) {
                 ImageView imageView = new ImageView(cardDef.getImage());
                 imageView.setFitWidth(SELECTED_CARD_PREVIEW_WIDTH);
@@ -163,6 +172,9 @@ public class FactionTabController {
                     handleCardSelectionToggleInTab(instance, null);
                 });
                 Tooltip.install(removeButton, new Tooltip(cardDef.getName() + " (Entfernen)"));
+
+                setupDragAndDropForSelectedCard(removeButton);
+
                 tabSelectedCardsFP.getChildren().add(removeButton);
             }
         }
@@ -271,6 +283,76 @@ public class FactionTabController {
         displayCardInstancesInTab(this.currentlyDisplayedInstancesInTab);
     }
 
+    private void setupDragAndDropForSelectedCard(Node cardNode) {
+        cardNode.setOnDragDetected(event -> {
+            if (!tabSelectedCardsFP.getChildren().contains(cardNode) || !(cardNode.getUserData() instanceof CardInstance)) {
+                return;
+            }
+            draggedItemFromSelectedCardsFP = cardNode;
+            Dragboard db = cardNode.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("movingSelectedCard:" + ((CardInstance)cardNode.getUserData()).getCardDefinition().getId());
+            db.setContent(content);
+            cardNode.setOpacity(0.4);
+            event.consume();
+        });
+
+        cardNode.setOnDragOver(event -> {
+            if (draggedItemFromSelectedCardsFP != null &&
+                    draggedItemFromSelectedCardsFP != cardNode &&
+                    event.getGestureSource() == draggedItemFromSelectedCardsFP) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        cardNode.setOnDragEntered(event -> {
+            if (draggedItemFromSelectedCardsFP != null &&
+                    draggedItemFromSelectedCardsFP != cardNode &&
+                    event.getGestureSource() == draggedItemFromSelectedCardsFP) {
+                cardNode.getStyleClass().add(DRAG_SELECTED_CARD_CSS_CLASS);
+            }
+        });
+
+        cardNode.setOnDragExited(event -> {
+            cardNode.getStyleClass().remove(DRAG_SELECTED_CARD_CSS_CLASS);
+        });
+
+        cardNode.setOnDragDropped(event -> {
+            boolean success = false;
+            if (draggedItemFromSelectedCardsFP != null &&
+                    draggedItemFromSelectedCardsFP != cardNode &&
+                    event.getGestureSource() == draggedItemFromSelectedCardsFP) {
+
+                ObservableList<Node> items = tabSelectedCardsFP.getChildren();
+                int sourceIndex = items.indexOf(draggedItemFromSelectedCardsFP);
+                int targetIndex = items.indexOf(cardNode);
+
+                if (sourceIndex != -1 && targetIndex != -1) {
+                    Node temp = items.remove(sourceIndex);
+                    if (targetIndex >= items.size()) {
+                        items.add(temp);
+                    } else {
+                        items.add(targetIndex, temp);
+                    }
+
+                    success = true;
+                }
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
+        cardNode.setOnDragDone(event -> {
+            if (draggedItemFromSelectedCardsFP != null) {
+                draggedItemFromSelectedCardsFP.setOpacity(1.0);
+            }
+
+            draggedItemFromSelectedCardsFP = null;
+            event.consume();
+        });
+    }
+
     @FXML private void handleTabSortByRarity() { sortAndRefreshCardInstancesInTab(CardComparators.BY_RARITY_ASC_INSTANCE); }
     @FXML private void handleTabSortByPower() { sortAndRefreshCardInstancesInTab(CardComparators.BY_POWER_ASC_INSTANCE); }
     @FXML private void handleTabSortByRowType() { sortAndRefreshCardInstancesInTab(CardComparators.BY_ROWTYPE_ASC_INSTANCE); }
@@ -293,13 +375,14 @@ public class FactionTabController {
                         instance.getCardDefinition().isUnlocked())
                 .collect(Collectors.toList());
 
+        globalSelectedCardInstancesList.removeAll(instancesToUnselectInThisFaction);
+
         for (CardInstance instance : instancesToUnselectInThisFaction) {
             Button mainButton = findButtonForCardInstanceInTab(instance);
             if (mainButton != null) {
                 updateButtonSelectionStyleInTab(mainButton, false);
             }
         }
-        globalSelectedCardInstancesList.removeAll(instancesToUnselectInThisFaction);
     }
 
     @FXML
@@ -320,39 +403,37 @@ public class FactionTabController {
         Collections.shuffle(potentialRandomCandidates, new Random());
 
         int cardsSuccessfullySelected = 0;
+        List<CardInstance> toAdd = new ArrayList<>();
+
         for (CardInstance instanceToSelect : potentialRandomCandidates) {
             if (globalSelectedCardInstancesList.contains(instanceToSelect)) {
                 continue;
             }
-
             long currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
                     .filter(selectedInst -> selectedInst.getCardDefinition().getFaction() == this.currentFaction &&
                             selectedInst.getCardDefinition().isUnlocked())
-                    .count();
+                    .count() + toAdd.stream().filter(selectedInst -> selectedInst.getCardDefinition().getFaction() == this.currentFaction &&
+                    selectedInst.getCardDefinition().isUnlocked()).count();
+
             if (currentFactionSelectedCount >= MAX_SELECTION) break;
 
             long countOfThisCardTypeSelected = globalSelectedCardInstancesList.stream()
                     .filter(inst -> inst.getCardDefinition().getId() == instanceToSelect.getCardDefinition().getId() &&
                             inst.getCardDefinition().isUnlocked())
-                    .count();
+                    .count() + toAdd.stream().filter(inst -> inst.getCardDefinition().getId() == instanceToSelect.getCardDefinition().getId() &&
+                    inst.getCardDefinition().isUnlocked()).count();
+
             if (countOfThisCardTypeSelected >= instanceToSelect.getCardDefinition().getMaxAmount()) {
                 continue;
             }
 
-
-            int previousGlobalSelectedCount = globalSelectedCardInstancesList.size();
-            handleCardSelectionToggleInTab(instanceToSelect, findButtonForCardInstanceInTab(instanceToSelect));
-
-            if (globalSelectedCardInstancesList.size() > previousGlobalSelectedCount && globalSelectedCardInstancesList.contains(instanceToSelect)) {
-                cardsSuccessfullySelected++;
-            }
-
+            toAdd.add(instanceToSelect);
+            cardsSuccessfullySelected++;
             if (cardsSuccessfullySelected >= RANDOMIZER_CARD_AMOUNT) break;
-            currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
-                    .filter(selectedInst -> selectedInst.getCardDefinition().getFaction() == this.currentFaction &&
-                            selectedInst.getCardDefinition().isUnlocked())
-                    .count();
-            if (currentFactionSelectedCount >= MAX_SELECTION) break;
+        }
+
+        for(CardInstance instance : toAdd) {
+            handleCardSelectionToggleInTab(instance, findButtonForCardInstanceInTab(instance));
         }
     }
 
@@ -398,6 +479,8 @@ public class FactionTabController {
             if (!cardDef.isUnlocked()) {
                 if (this.lockedOverlayImage != null && !this.lockedOverlayImage.isError()) {
                     ImageView overlayImageView = new ImageView(this.lockedOverlayImage);
+                    overlayImageView.setFitWidth(CARD_PREVIEW_WIDTH);
+                    overlayImageView.setFitHeight(CARD_PREVIEW_HEIGHT);
                     cardVisualPane.getChildren().add(overlayImageView);
                 } else {
                     Rectangle lockFallbackOverlay = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT, Color.rgb(0, 0, 0, 0.5));
