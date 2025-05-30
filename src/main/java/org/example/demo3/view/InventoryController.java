@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import org.example.demo3.model.Toast;
+import org.example.demo3.model.effect.Toast;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.CardInstance;
 import org.example.demo3.model.enums.Faction;

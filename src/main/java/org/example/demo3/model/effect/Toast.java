@@ -1,4 +1,4 @@
-package org.example.demo3.model;
+package org.example.demo3.model.effect;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
