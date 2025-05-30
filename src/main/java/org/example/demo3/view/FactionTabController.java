@@ -190,14 +190,6 @@ public class FactionTabController {
 
         for (int i = 0; i < items.size(); i++) {
             Node child = items.get(i);
-            if (child == draggedItemFromSelectedCardsFP) {
-                if (i == 0 && sceneX < child.localToScene(0,0).getX() + child.getBoundsInLocal().getWidth() / 2 ) {
-
-                    insertIndex = i;
-                } else {
-                    continue;
-                }
-            }
 
             Point2D childCenterInScene = child.localToScene(child.getBoundsInLocal().getWidth() / 2, 0);
 
