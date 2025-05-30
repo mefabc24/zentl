@@ -89,6 +89,12 @@ public abstract class BaseCard implements Card {
     @Override public void setSelectedAmount(int selectedAmount) { this.selectedAmount = selectedAmount; }
     @Override public void setUnlocked(boolean unlocked) { this.isUnlocked = unlocked; }
 
+    public void initMaxAmount() {
+        if (this.rarity != null) {
+            this.maxAmount = this.rarity.getMaxAmount();
+        }
+    }
+
     // Bild bei Bedarf laden (Lazy Loading)
     @Override
     public Image getImage() {
@@ -116,6 +122,6 @@ public abstract class BaseCard implements Card {
     public String toString() {
         String statusColor = this.isUnlocked ? GREEN : RED;
 
-        return statusColor + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + selectedAmount + RESET;
+        return statusColor + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + "DEBUG maxAmount: " + maxAmount + selectedAmount + RESET;
     }
 }

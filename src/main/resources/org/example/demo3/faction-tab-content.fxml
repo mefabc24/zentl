@@ -18,9 +18,9 @@
         <ColumnConstraints percentWidth="100"/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints prefHeight="60" minHeight="60"/>    <!-- Top-Container -->
-        <RowConstraints prefHeight="320" minHeight="320"/>   <!-- Ausgewählte Karten -->
-        <RowConstraints vgrow="ALWAYS"/>      <!-- Alle Karten (scrollfähig) -->
+        <RowConstraints prefHeight="60" minHeight="60"/>
+        <RowConstraints prefHeight="320" minHeight="320"/>
+        <RowConstraints vgrow="ALWAYS"/>
     </rowConstraints>
 
     <!-- Top Container -->
@@ -48,6 +48,7 @@
             <TextField promptText="SEARCH..." fx:id="tabSearchTextField"/>
         </StackPane>
         <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2">
+            <Button fx:id="tabToggleVisibilityButton" text="SHOW LOCKED" onAction="#handleTabToggleVisibility"/>
             <Button fx:id="tabUnselectAllButton" text="UNSELECT ALL" onAction="#handleTabUnselectAll"/>
             <Button fx:id="tabRandomizeButton" text="RANDOMIZE" onAction="#handleTabRandomize" />
         </HBox>

@@ -42,6 +42,7 @@ public class FactionTabController {
     @FXML private Button tabPowerSortButton;
     @FXML private Button tabRowTypeSortButton;
     @FXML private Button tabCardTypeSortButton;
+    @FXML private Button tabToggleVisibilityButton;
     @FXML private Button tabUnselectAllButton;
     @FXML private Button tabRandomizeButton;
 
@@ -52,6 +53,8 @@ public class FactionTabController {
 
     private Comparator<CardInstance> currentSortOrderInTab = CardComparators.BY_ID_ASC_INSTANCE; // Default Sortierung
     private boolean sortAscendingInTab = true;
+
+    private boolean showLockedCards = false;
 
     private InventoryController mainController;
     private Image lockedOverlayImage;
@@ -187,10 +190,9 @@ public class FactionTabController {
 
         boolean wasSelected = globalSelectedCardInstancesList.contains(instanceToToggle);
 
-        if (wasSelected) { // Karte soll deselektiert werden
+        if (wasSelected) {
             globalSelectedCardInstancesList.remove(instanceToToggle);
-        } else { // Karte soll selektiert werden
-            // 1. Prüfe Gesamtlimit für die Fraktion
+        } else {
             long selectedCountForThisFaction = globalSelectedCardInstancesList.stream()
                     .filter(inst -> inst.getCardDefinition().getFaction() == this.currentFaction &&
                             inst.getCardDefinition().isUnlocked())
@@ -206,9 +208,8 @@ public class FactionTabController {
                 return;
             }
 
-            // 2. Prüfe Limit für diesen spezifischen Kartentyp (maxAmount)
             long countOfThisCardTypeSelected = globalSelectedCardInstancesList.stream()
-                    .filter(inst -> inst.getCardDefinition().getId() == cardDef.getId() && // Gleiche Karten-ID (Prototyp)
+                    .filter(inst -> inst.getCardDefinition().getId() == cardDef.getId() &&
                             inst.getCardDefinition().isUnlocked())
                     .count();
 
@@ -263,9 +264,9 @@ public class FactionTabController {
         this.currentSortOrderInTab = comparator;
 
         Comparator<CardInstance> finalComparator = this.sortAscendingInTab ? comparator : comparator.reversed();
-        finalComparator = finalComparator.thenComparing(CardComparators.BY_ID_ASC_INSTANCE); // Stabile Sortierung
+        finalComparator = finalComparator.thenComparing(CardComparators.BY_ID_ASC_INSTANCE);
 
-        this.currentlyDisplayedInstancesInTab.sort(finalComparator); // Verwende List.sort
+        this.currentlyDisplayedInstancesInTab.sort(finalComparator);
         displayCardInstancesInTab(this.currentlyDisplayedInstancesInTab);
     }
 
@@ -274,6 +275,16 @@ public class FactionTabController {
     @FXML private void handleTabSortByRowType() { sortAndRefreshCardInstancesInTab(CardComparators.BY_ROWTYPE_ASC_INSTANCE); }
     @FXML private void handleTabSortByCardType() { sortAndRefreshCardInstancesInTab(CardComparators.BY_CARDTYPE_ASC_INSTANCE); }
 
+    @FXML private void handleTabToggleVisibility() {
+        this.showLockedCards = !this.showLockedCards;
+
+        if (tabToggleVisibilityButton != null) {
+            tabToggleVisibilityButton.setText(this.showLockedCards ? "HIDE LOCKED" : "SHOW LOCKED");
+        }
+
+        displayCardInstancesInTab(this.currentlyDisplayedInstancesInTab);
+    }
+
     @FXML
     private void handleTabUnselectAll() {
         List<CardInstance> instancesToUnselectInThisFaction = globalSelectedCardInstancesList.stream()
@@ -281,21 +292,19 @@ public class FactionTabController {
                         instance.getCardDefinition().isUnlocked())
                 .collect(Collectors.toList());
 
-        // Style der Buttons im Hauptbereich direkt aktualisieren, bevor aus globaler Liste entfernt wird
         for (CardInstance instance : instancesToUnselectInThisFaction) {
             Button mainButton = findButtonForCardInstanceInTab(instance);
             if (mainButton != null) {
                 updateButtonSelectionStyleInTab(mainButton, false);
             }
         }
-        globalSelectedCardInstancesList.removeAll(instancesToUnselectInThisFaction); // Löst Listener aus
+        globalSelectedCardInstancesList.removeAll(instancesToUnselectInThisFaction);
     }
 
     @FXML
     private void handleTabRandomize() {
         handleTabUnselectAll();
 
-        // Potenzielle Kandidaten für Randomize: alle anzeigbaren Instanzen dieser Fraktion, die freigeschaltet sind
         List<CardInstance> potentialRandomCandidates = this.factionDisplayableInstances.stream()
                 .filter(instance -> instance.getCardDefinition().isUnlocked())
                 .collect(Collectors.toList());
@@ -311,26 +320,22 @@ public class FactionTabController {
 
         int cardsSuccessfullySelected = 0;
         for (CardInstance instanceToSelect : potentialRandomCandidates) {
-            // Prüfe, ob diese spezifische Instanz bereits ausgewählt ist (sollte nicht der Fall sein nach unselectAll)
-            // aber sicherheitshalber oder falls Logik sich ändert
             if (globalSelectedCardInstancesList.contains(instanceToSelect)) {
                 continue;
             }
 
-            // Prüfe Gesamtlimit Fraktion (handleCardSelectionToggleInTab macht das, aber hier nochmal vorab)
             long currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
                     .filter(selectedInst -> selectedInst.getCardDefinition().getFaction() == this.currentFaction &&
                             selectedInst.getCardDefinition().isUnlocked())
                     .count();
             if (currentFactionSelectedCount >= MAX_SELECTION) break;
 
-            // Prüfe Limit pro Kartentyp (handleCardSelectionToggleInTab macht das, aber hier nochmal vorab)
             long countOfThisCardTypeSelected = globalSelectedCardInstancesList.stream()
                     .filter(inst -> inst.getCardDefinition().getId() == instanceToSelect.getCardDefinition().getId() &&
                             inst.getCardDefinition().isUnlocked())
                     .count();
             if (countOfThisCardTypeSelected >= instanceToSelect.getCardDefinition().getMaxAmount()) {
-                continue; // Nächste Instanz versuchen, da dieser Kartentyp voll ist
+                continue;
             }
 
 
@@ -342,7 +347,6 @@ public class FactionTabController {
             }
 
             if (cardsSuccessfullySelected >= RANDOMIZER_CARD_AMOUNT) break;
-            // Erneute Prüfung des Fraktionslimits, falls RANDOMIZER_CARD_AMOUNT sehr hoch ist
             currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
                     .filter(selectedInst -> selectedInst.getCardDefinition().getFaction() == this.currentFaction &&
                             selectedInst.getCardDefinition().isUnlocked())
@@ -359,10 +363,11 @@ public class FactionTabController {
         tabAllCardsFP.setAlignment(FLOWPANE_ALIGNMENT_ALL_CARDS);
 
         for (CardInstance instance : instancesToDisplay) {
+            if (!showLockedCards && !instance.getCardDefinition().isUnlocked()) continue;
             Card cardDef = instance.getCardDefinition();
 
             Button cardButton = new Button();
-            cardButton.setUserData(instance); // Die spezifische Instanz speichern
+            cardButton.setUserData(instance);
 
             StackPane cardVisualPane = new StackPane();
             cardVisualPane.setAlignment(Pos.CENTER);
@@ -427,7 +432,7 @@ public class FactionTabController {
                         "Seltenheit: " + cardDef.getRarity() + "\n" +
                         "Status: " + (cardDef.isUnlocked() ? "Freigeschaltet" : "Gesperrt")
         );
-        tooltip.setFont(new Font("System", 20)); // Passende Schriftgröße für den Tooltip
+        tooltip.setFont(new Font("System", 20));
         cardButton.setTooltip(tooltip);
     }
 
@@ -439,14 +444,13 @@ public class FactionTabController {
         Card cardDef = instance.getCardDefinition();
 
         if (button.getParent() == tabAllCardsFP) {
-            button.getStyleClass().remove("selected"); // Immer zuerst entfernen
+            button.getStyleClass().remove("selected");
             if (isThisInstanceSelected && cardDef.isUnlocked()) {
                 button.getStyleClass().add("selected");
             }
         }
-        // Für "selected-card-preview-button" ist der Style fix, wird bei Deselektion entfernt.
 
-        button.getStyleClass().remove("locked-card-visual"); // Immer zuerst entfernen
+        button.getStyleClass().remove("locked-card-visual");
         if (!cardDef.isUnlocked()) {
             button.getStyleClass().add("locked-card-visual");
         }

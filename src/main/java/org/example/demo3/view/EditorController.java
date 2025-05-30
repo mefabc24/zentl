@@ -8,6 +8,7 @@ import org.example.demo3.model.enums.CardType;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
 
 import java.util.function.UnaryOperator;
@@ -16,8 +17,8 @@ import static org.example.demo3.model.constants.Config.*;
 
 public class EditorController {
 
-    @FXML private TextField idText;
     @FXML private TextField powerText;
+    @FXML private TextField amountText;
     @FXML private TextField nameText;
     @FXML private TextField descText;
     @FXML private TextField imagePathText;
@@ -25,14 +26,13 @@ public class EditorController {
     @FXML private ComboBox<CardType> cardTypeComboBox;
     @FXML private ComboBox<Faction> factionComboBox;
     @FXML private ComboBox<Rarity> rarityComboBox;
-    @FXML private CheckBox isSelectedCheckBox;
-    @FXML private CheckBox isUnlockedCheckBox;
 
     @FXML private Button generateButton;
     @FXML private Button backButton;
     @FXML private TextArea outputArea;
 
     private NavigationService navigationService;
+    private final CardRepository cardRepository = new CardRepository();
 
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
@@ -49,7 +49,6 @@ public class EditorController {
         cardTypeComboBox.setValue(CardType.UNIT);
         factionComboBox.setValue(Faction.KNIGHTS);
         rarityComboBox.setValue(Rarity.COMMON);
-        isUnlockedCheckBox.setSelected(true);
 
         UnaryOperator<TextFormatter.Change> integerFilter = change -> {
             String newText = change.getControlNewText();
@@ -59,7 +58,6 @@ public class EditorController {
             return null;
         };
 
-        idText.setTextFormatter(new TextFormatter<>(integerFilter));
         powerText.setTextFormatter(new TextFormatter<>(integerFilter));
 
         outputArea.setText("Fülle die Felder aus und klicke auf 'Generate JSON'.");
@@ -68,19 +66,25 @@ public class EditorController {
     @FXML
     void handleGenerateAction(ActionEvent event) {
         try {
-            int id;
-            try {
-                id = Integer.parseInt(idText.getText());
-            } catch (NumberFormatException e) {
-                outputArea.setText("Fehler: ID muss eine gültige ganze Zahl sein.");
-                return;
-            }
+            int id = cardRepository.getLastID() + 1;
 
             int power;
             try {
                 power = Integer.parseInt(powerText.getText());
             } catch (NumberFormatException e) {
                 outputArea.setText("Fehler: Stärke muss eine gültige ganze Zahl sein.");
+                return;
+            }
+
+            int amount;
+            try {
+                amount = Integer.parseInt(amountText.getText());
+
+                if (amount < 0) {
+                    amount = 0;
+                }
+            } catch (NumberFormatException e) {
+                outputArea.setText("Fehler: Amount muss eine gültige ganze Zahl sein.");
                 return;
             }
 
@@ -118,26 +122,31 @@ public class EditorController {
                 return;
             }
 
-            boolean isSelected = isSelectedCheckBox.isSelected();
-            boolean isUnlocked = isUnlockedCheckBox.isSelected();
-
+            if (cardType == CardType.WEATHER) {
+                rowType = RowType.WEATHER;
+            } else if (rowType == RowType.WEATHER) {
+                cardType = CardType.WEATHER;
+            }
 
             String jsonOutput = String.format(java.util.Locale.US,
                     "{\n" +
                             "    \"id\": %d,\n" +
                             "    \"power\": %d,\n" +
+                            "    \"amount\": %d,\n" +
+                            "    \"selectedAmount\": %d,\n" +
                             "    \"name\": \"%s\",\n" +
-                            "    \"desc\": \"%s\",\n" +
+                            "    \"description\": \"%s\",\n" +
                             "    \"imagePath\": \"%s%s\",\n" +
                             "    \"rowType\": \"%s\",\n" +
                             "    \"cardType\": \"%s\",\n" +
                             "    \"faction\": \"%s\",\n" +
                             "    \"rarity\": \"%s\",\n" +
-                            "    \"isSelected\": %b,\n" +
-                            "    \"isUnlocked\": %b\n" +
+                            "    \"isUnlocked\": \"%b\",\n" +
                             "}",
                     id,
                     power,
+                    amount,
+                    0,
                     escapeJsonString(name),
                     escapeJsonString(desc),
                     IMAGE_PATH,
@@ -146,8 +155,7 @@ public class EditorController {
                     cardType.name(),
                     faction.name(),
                     rarity.name(),
-                    isSelected,
-                    isUnlocked
+                    true
             );
 
             outputArea.setText(jsonOutput);
@@ -175,7 +183,7 @@ public class EditorController {
     void handleBackAction(ActionEvent event) {
         if (navigationService != null) {
 
-            navigationService.navigateTo(FXML_MAINMENU_PATH, "My Awesome Card Game - Main Menu", (MainMenuController controller) -> {
+            navigationService.navigateTo(FXML_MAINMENU_PATH, "Main Menu", (MainMenuController controller) -> {
                 controller.setNavigationService(navigationService);
             });
         } else {

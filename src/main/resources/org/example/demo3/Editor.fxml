@@ -25,13 +25,14 @@
             <ColumnConstraints hgrow="ALWAYS" prefWidth="280"/> <!-- Für Eingabefelder -->
         </columnConstraints>
 
-        <!-- ID -->
-        <Label text="ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-        <TextField fx:id="idText" promptText="Ganze Zahl" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
         <!-- Power -->
-        <Label text="Stärke:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="powerText" promptText="Ganze Zahl" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Stärke:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="powerText" promptText="Ganze Zahl" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Amount -->
+        <Label text="Amount:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="amountText" promptText="Kartenanzahl (0 == !unlocked)" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
         <!-- Name -->
         <Label text="Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
@@ -39,11 +40,11 @@
 
         <!-- Description -->
         <Label text="Beschreibung:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-        <TextField fx:id="descText" promptText="Kartenname" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        <TextField fx:id="descText" promptText="Kartenbeschreibung" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
         <!-- ImagePath -->
         <Label text="Bildpfad:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-        <TextField fx:id="imagePathText" promptText="z.B. Legendary.png" GridPane.rowIndex="4"
+        <TextField fx:id="imagePathText" promptText="z.B. Geralt.png" GridPane.rowIndex="4"
                    GridPane.columnIndex="1"/>
 
         <!-- RowType -->
@@ -65,14 +66,6 @@
         <Label text="Seltenheit:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
         <ComboBox fx:id="rarityComboBox" promptText="Seltenheit auswählen" GridPane.rowIndex="8"
                   GridPane.columnIndex="1" prefWidth="Infinity"/>
-
-        <!-- Is Unlocked -->
-        <Label text="Freigeschaltet:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
-        <CheckBox fx:id="isUnlockedCheckBox" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
-
-        <!-- Is Selected (oft nicht direkt im Editor gesetzt, sondern dynamisch) -->
-        <Label text="Ausgewählt:" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
-        <CheckBox fx:id="isSelectedCheckBox" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
 
         <VBox.margin>
             <Insets bottom="20.0"/> <!-- Abstand unter dem GridPane -->

@@ -1060,7 +1060,7 @@
     "imagePath": "/org/example/demo3/assets/Frost.png",
     "rowType": "WEATHER",
     "cardType": "WEATHER",
-    "faction": "NEUTRAL",
+    "faction": "KNIGHTS",
     "rarity": "WEATHER",
     "isUnlocked": true,
     "weatherType": "FROST"
@@ -1075,7 +1075,7 @@
     "imagePath": "/org/example/demo3/assets/Fog.png",
     "rowType": "WEATHER",
     "cardType": "WEATHER",
-    "faction": "NEUTRAL",
+    "faction": "KNIGHTS",
     "rarity": "WEATHER",
     "isUnlocked": true,
     "weatherType": "FOG"
@@ -1090,7 +1090,7 @@
     "imagePath": "/org/example/demo3/assets/Rain.png",
     "rowType": "WEATHER",
     "cardType": "WEATHER",
-    "faction": "NEUTRAL",
+    "faction": "KNIGHTS",
     "rarity": "WEATHER",
     "isUnlocked": true,
     "weatherType": "RAIN"

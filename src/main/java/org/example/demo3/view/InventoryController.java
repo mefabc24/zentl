@@ -46,7 +46,7 @@ public class InventoryController {
 
         selectedCardInstanceList  = FXCollections.observableArrayList();
 
-        this.cardRepository = new CardRepository(JSON_PATH);
+        this.cardRepository = new CardRepository();
         List<Card> loadedPrototypes = this.cardRepository.getAllCards();
 
         if (loadedPrototypes == null || loadedPrototypes.isEmpty()) {

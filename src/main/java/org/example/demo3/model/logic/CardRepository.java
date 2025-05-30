@@ -5,10 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.cards.SpecialCard;
-import org.example.demo3.model.cards.UnitCard;
-import org.example.demo3.model.cards.WeatherCard;
+import org.example.demo3.model.cards.*;
 import org.example.demo3.model.enums.CardType;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.typeadapter.RuntimeTypeAdapterFactory;
@@ -25,14 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.example.demo3.model.constants.Config.*;
+
 public class CardRepository {
     private List<Card> allCards;
-    private final String resourcePath;
+    private static final String resourcePath = JSON_PATH;
     private final Gson gson;
 
-    public CardRepository(String resourcePath) {
-        this.resourcePath = resourcePath;
-
+    public CardRepository() {
         RuntimeTypeAdapterFactory<Card> adapterFactory = RuntimeTypeAdapterFactory
                 .of(Card.class, "cardType")
                 .registerSubtype(UnitCard.class, "UNIT")
@@ -86,6 +83,13 @@ public class CardRepository {
                 .collect(Collectors.toList());
     }
 
+    public int getLastID() {
+        return allCards.stream()
+                .mapToInt(Card::getId)
+                .max()
+                .orElse(-1);
+    }
+
     // Save & Load
     public void save() { saveCardsToJson(); }
 
@@ -103,6 +107,7 @@ public class CardRepository {
 
     // (De-)Serialization
     private List<Card> loadCardsFromJson() {
+        System.out.println(this.resourcePath);
         System.out.println("Versuche Karten zu laden von Ressourcenpfad: " + this.resourcePath);
         InputStream is = getClass().getResourceAsStream(this.resourcePath);
 
@@ -137,7 +142,11 @@ public class CardRepository {
                     System.err.println("WARNUNG: Ein null-Kartenobjekt wurde aus JSON geladen. Überprüfe die JSON-Datei und die Adapterkonfiguration.");
                     continue;
                 }
-                System.out.println("Geladene Karte: ID=" + c.getId() + ", Name='" + c.getName() + "' ist vom Typ: " + c.getClass().getSimpleName() + " mit CardType Enum: " + c.getCardType());
+
+                if (c instanceof BaseCard bc) {
+                    bc.initMaxAmount();
+                }
+                System.out.println("Geladene Karte: ID=" + c.getId() + ", Name='" + c.getName() + "' ist vom Typ: " + c.getClass().getSimpleName() + " mit CardType Enum: " + c.getCardType() + " DEBUG: " + c.getMaxAmount());
             }
             return loaded;
         } catch (JsonSyntaxException e) {
