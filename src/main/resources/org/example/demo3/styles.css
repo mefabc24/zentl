@@ -1,0 +1,394 @@
+/* styles.css */
+
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-background-color: #2B2B2B;
+    -fx-accent: #007ACC;
+    -fx-focus-color: -fx-accent;
+}
+
+.label {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Black";
+}
+
+/* --- TABPANE UND TABS --- */
+.tab-pane {
+    -fx-tab-min-width: 150px;
+    -fx-tab-max-height: 45px;
+    -fx-tab-min-height: 40px;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #3C3F41;
+    -fx-padding: 0 0 0 0;
+}
+
+
+.tab-pane .tab {
+    -fx-background-color: #4E5254;
+    -fx-padding: 8 15 8 15;
+    -fx-background-radius: 5 5 0 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0 1px 0 1px;
+    -fx-border-color: transparent transparent #3C3F41 transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #2B2B2B;
+    -fx-padding: 10 15 10 15;
+    -fx-border-radius: 5 5 0 0;
+    -fx-background-insets: 0;
+    -fx-border-color: -fx-accent #2B2B2B #2B2B2B #2B2B2B;
+    -fx-border-width: 3 1 0 1;
+}
+
+.tab-pane .tab .tab-label {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -fx-accent;
+}
+
+.tab-pane .tab:hover {
+    -fx-background-color: #5A5E60;
+    -fx-cursor: hand;
+}
+
+.tab-pane .tab:selected:hover {
+    -fx-background-color: #333333;
+}
+
+
+.tab-pane > .tab-content-area {
+    -fx-background-color: #2B2B2B;
+    -fx-padding: 10px;
+}
+
+.button {
+    -fx-background-color: #55595C;
+    -fx-font-family: "Arial Black";
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-border-color: #44474A;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 2, 2);
+}
+
+.button:hover {
+    -fx-background-color: #6B6F72;
+    -fx-cursor: hand;
+}
+
+.button:pressed {
+    -fx-background-color: #4E5254;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 3, 0, 1, 1);
+}
+
+.primary-action-button {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+}
+.primary-action-button:hover {
+    -fx-background-color: derive(-fx-accent, 20%);
+}
+.primary-action-button:pressed {
+    -fx-background-color: derive(-fx-accent, -10%);
+}
+
+.sort-button {
+    -fx-background-color: #4A4D4F;
+}
+.sort-button:hover {
+    -fx-background-color: #5A5E60;
+}
+
+/* --- TEXTFIELD --- */
+.text-field {
+    -fx-background-color: #3C3F41;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 10px;
+    -fx-prompt-text-fill: #888888;
+}
+
+.text-field:focused {
+    -fx-border-color: -fx-accent;
+    -fx-background-color: #424549;
+}
+
+/* --- SCROLLPANE --- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+}
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* ScrollBar Styling */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: #3C3F41;
+    -fx-background-radius: 3px;
+}
+.scroll-bar .thumb {
+    -fx-background-color: #6B6F72;
+    -fx-background-insets: 2;
+    -fx-background-radius: 3px;
+}
+.scroll-bar .thumb:hover {
+    -fx-background-color: #808487;
+}
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 10 0;
+}
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+    -fx-padding: 0;
+}
+
+/* --- FLOWPANE (für Karten) --- */
+.flow-pane {
+    -fx-padding: 15px;
+    -fx-hgap: 15px;
+    -fx-vgap: 15px;
+    -fx-background-color: transparent;
+}
+
+/* --- KARTEN-BUTTONS (in allCardsFP) --- */
+.card-button {
+    -fx-background-color: #404040;
+    -fx-padding: 2px;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-border-color: #585858;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 8, 0, 3, 3);
+}
+
+.card-button:hover {
+    -fx-border-color: #707070;
+}
+
+.card-button.selected {
+    -fx-border-color: -fx-accent;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, -fx-accent, 10, 0.5, 0, 0);
+}
+
+/* --- KARTEN-VORSCHAU-BUTTONS (in selectedCardsFP) --- */
+.selected-card-preview-button {
+    -fx-background-color: #404040;
+    -fx-padding: 2px;
+    -fx-background-radius: 14px;
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-border-color: #585858;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 8, 0, 3, 3);
+}
+
+.selected-card-preview-button:hover {
+    -fx-border-color: #707070;
+}
+
+
+/* --- TOOLTIP --- */
+.tooltip {
+    -fx-background-color: #202020;
+    -fx-text-fill: #D0D0D0;
+    -fx-font-size: 16px;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #505050;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 2, 2);
+}
+
+.main-menu-button {
+    -fx-font-size: 28px;
+    -fx-min-width: 300px;
+    -fx-min-height: 70px;
+    -fx-background-color: #4A4D4F;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #3C3F41;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 2, 2);
+}
+
+.main-menu-button:hover {
+    -fx-background-color: #5A5E60;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0, 3, 3);
+}
+
+.main-menu-button:pressed {
+    -fx-background-color: #404345;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 1, 1);
+}
+
+.main-menu-button:disabled {
+    -fx-opacity: 0.5;
+    -fx-background-color: #4A4D4F;
+    -fx-effect: none;
+}
+
+.check-box {
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.check-box .box {
+    -fx-background-color: #3C3F41;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+    -fx-padding: 3px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: -fx-accent;
+    -fx-border-color: derive(-fx-accent, -20%);
+}
+
+.check-box:hover .box {
+    -fx-border-color: #6B6F72;
+}
+
+.check-box:focused .box {
+    -fx-border-color: -fx-accent;
+    -fx-effect: dropshadow(three-pass-box, -fx-accent, 3, 0.3, 0, 0);
+}
+
+
+/* --- COMBOBOX --- */
+.combo-box-base {
+    -fx-background-color: #3C3F41;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px 8px 5px 8px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-padding: 5px 8px 5px 8px;
+    -fx-cursor: hand;
+}
+
+.combo-box-base .arrow-button {
+    -fx-background-color: #4E5254;
+    -fx-background-radius: 5px;
+    -fx-padding: 6px 8px 6px 8px;
+}
+
+.combo-box-base .arrow-button .arrow {
+    -fx-background-color: #E0E0E0;
+    -fx-shape: "M0 0 L4 4 L8 0 Z";
+}
+
+.combo-box-base:hover {
+    -fx-border-color: #6B6F72;
+}
+
+.combo-box-base:focused {
+    -fx-border-color: -fx-accent;
+    -fx-effect: dropshadow(three-pass-box, -fx-accent, 3, 0.3, 0, 0);
+}
+
+/* Styling für die Popup-Liste der ComboBox */
+.combo-box-popup .list-view {
+    -fx-background-color: #3C3F41;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E0E0E0;
+    -fx-padding: 8px 10px;
+    -fx-font-size: 14px;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #5A5E60;
+    -fx-text-fill: white;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
+}
+
+
+/* --- TEXTAREA --- */
+.text-area {
+    -fx-background-color: #3C3F41;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 10px;
+    -fx-prompt-text-fill: #888888;
+}
+
+.text-area .content {
+    -fx-background-color: #3C3F41;
+}
+
+.text-area:focused {
+    -fx-border-color: -fx-accent;
+    -fx-background-color: #424549;
+}
+
+.text-area .scroll-bar:vertical,
+.text-area .scroll-bar:horizontal {
+    -fx-background-color: #333638;
+}
+
+.text-area .scroll-bar .thumb {
+    -fx-background-color: #6B6F72;
+}
+
+.text-area .scroll-bar .thumb:hover {
+    -fx-background-color: #808487;
+}
+
+.drag-over-selected-card {
+    -fx-border-color: orange;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(gaussian, rgba(255,165,0,0.7), 10, 0.5, 0, 0);
+}

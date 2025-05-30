@@ -13,6 +13,7 @@ import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.Player;
+import org.example.demo3.model.service.NavigationService;
 
 import java.net.URL;
 import java.util.Collections;
@@ -20,24 +21,18 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
-
     private final EventBus eventBus = EventBus.getInstanz();
-    @FXML
-    private VBox player1Side;
-    @FXML
-    private VBox player2Side;
-    @FXML
-    private HBox playerHand;
-    @FXML
-    private Label roundLabel;
-    @FXML
-    private Label currentPlayerLabel;
-    @FXML
-    private Label p1Score;
-    @FXML
-    private Label p2Score;
-    @FXML
-    private Button restartGameButton;
+    @FXML private VBox player1Side;
+    @FXML private VBox player2Side;
+    @FXML private HBox playerHand;
+    @FXML private Label roundLabel;
+    @FXML private Label currentPlayerLabel;
+    @FXML private Label p1Score;
+    @FXML private Label p2Score;
+    @FXML private Button restartGameButton;
+    @FXML private HBox Board;
+    @FXML private VBox infoPanel;
+
 
     private Player p1;
     private Player p2;
@@ -45,6 +40,12 @@ public class GameController implements Initializable {
     private Player currentPlayer;
     private Board gameBoard;
     private boolean gameEnded = false;
+
+    private NavigationService navigationService;
+
+    public void setNavigationService(NavigationService navigationService) {
+        this.navigationService = navigationService;
+    }
 
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToEvents();

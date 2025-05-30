@@ -3,7 +3,8 @@ package org.example.demo3.testing;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.player.PlayerImpl;
@@ -24,22 +25,23 @@ public class GameBoardTest {
     @BeforeEach
     void setUp() {
         board = new GameBoard();
-        p1 = new PlayerImpl("a", Fraction.KNIGHTS, new ArrayList<>());
-        p2 = new PlayerImpl("b", Fraction.KNIGHTS, new ArrayList<>());
+        p1 = new PlayerImpl("a", Faction.KNIGHTS, new ArrayList<>());
+        p2 = new PlayerImpl("b", Faction.KNIGHTS, new ArrayList<>());
     }
 
     @Test
     void testAddCardToRow() {
-        Card card = new UnitCard("Soldier ", 5, "", Fraction.KNIGHTS, RowType.MELEE);
+        Card card = new UnitCard(1, 12, 1, "Soldier ", "Test Description", Faction.KNIGHTS, RowType.MELEE,
+                Rarity.EPIC, "test/paths/ImagePath/", true);
         board.addCardToRow(card, p1);
 
-        // wurde Karte hinzugefuegt?
+        // wurde Karte hinzugefügt?
         assertTrue(board.getPlayerRows(p1).containsKey(RowType.MELEE));
-        // wurde mehr als nur eine Karte hi nzugefuegt?
+        // wurde mehr als nur eine Karte hinzugefügt?
         assertEquals(1, board.getPlayerRows(p1).get(RowType.MELEE).size());
         // stimmt die erste Karte mit unser Karte ueberein?
         assertEquals(card, board.getPlayerRows(p1).get(RowType.MELEE).getFirst());
-        // wurde bei Spieler 2 etwas hinzugefuegt?
+        // wurde bei Spieler 2 etwas hinzugefügt?
         assertTrue(board.getPlayerRows(p2).isEmpty());
 
     }
@@ -47,10 +49,14 @@ public class GameBoardTest {
     @Test
     void testCalcPower() {
 
-        Card card1 = new UnitCard("a ", 3, "", Fraction.KNIGHTS, RowType.MELEE);
-        Card card2 = new UnitCard("b ", 4, "", Fraction.KNIGHTS, RowType.RANGED);
-        Card card3 = new UnitCard("b ", 7, "", Fraction.KNIGHTS, RowType.MELEE);
-        Card card4 = new UnitCard("b ", 8, "", Fraction.KNIGHTS, RowType.SIEGE);
+        Card card1 = new UnitCard(2, 3, 1, "a " , "Desc", Faction.KNIGHTS, RowType.MELEE,
+                Rarity.COMMON, "test/paths/ImagePath/", true);
+        Card card2 = new UnitCard(3, 4, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
+                Rarity.COMMON, "test/paths/ImagePath/", true);
+        Card card3 = new UnitCard(4, 7, 1,"c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
+                Rarity.RARE, "test/paths/ImagePath/", true);
+        Card card4 = new UnitCard(5, 8, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
+                Rarity.RARE, "test/paths/ImagePath/", true);
 
         board.addCardToRow(card1, p1);
         board.addCardToRow(card2, p1);

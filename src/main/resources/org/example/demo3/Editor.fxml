@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.demo3.view.EditorController"
+      prefHeight="750.0" prefWidth="600.0"
+      spacing="15" alignment="TOP_CENTER" styleClass="root"> <!-- spacing und alignment, TOP_CENTER für GridPane -->
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Karteneditor" style="-fx-font-size: 20px; -fx-font-weight: bold;">
+        <VBox.margin>
+            <Insets bottom="10.0"/>
+        </VBox.margin>
+    </Label>
+
+    <GridPane hgap="10" vgap="10" alignment="CENTER" maxWidth="500"> <!-- GridPane für Formularelemente -->
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT" prefWidth="120"/> <!-- Für Labels -->
+            <ColumnConstraints hgrow="ALWAYS" prefWidth="280"/> <!-- Für Eingabefelder -->
+        </columnConstraints>
+
+
+        <!-- Power -->
+        <Label text="Stärke:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="powerText" promptText="Ganze Zahl" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <!-- Amount -->
+        <Label text="Amount:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="amountText" promptText="Kartenanzahl (0 == !unlocked)" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Name -->
+        <Label text="Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="nameText" promptText="Kartenname" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <!-- Description -->
+        <Label text="Beschreibung:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="descText" promptText="Kartenbeschreibung" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <!-- ImagePath -->
+        <Label text="Bildpfad:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="imagePathText" promptText="z.B. Geralt.png" GridPane.rowIndex="4"
+                   GridPane.columnIndex="1"/>
+
+        <!-- RowType -->
+        <Label text="Reihentyp:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="rowTypeComboBox" promptText="Reihentyp auswählen" GridPane.rowIndex="5"
+                  GridPane.columnIndex="1" prefWidth="Infinity"/>
+
+        <!-- CardType -->
+        <Label text="Kartentyp:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cardTypeComboBox" promptText="Reihentyp auswählen" GridPane.rowIndex="6"
+                  GridPane.columnIndex="1" prefWidth="Infinity"/>
+
+        <!-- Faction -->
+        <Label text="Fraktion:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="factionComboBox" promptText="Fraktion auswählen" GridPane.rowIndex="7" GridPane.columnIndex="1"
+                  prefWidth="Infinity"/>
+
+        <!-- Rarity -->
+        <Label text="Seltenheit:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="rarityComboBox" promptText="Seltenheit auswählen" GridPane.rowIndex="8"
+                  GridPane.columnIndex="1" prefWidth="Infinity"/>
+
+        <VBox.margin>
+            <Insets bottom="20.0"/>
+        </VBox.margin>
+    </GridPane>
+
+    <!-- Generate Button -->
+    <Button fx:id="generateButton" text="Generate JSON" onAction="#handleGenerateAction"
+            styleClass="primary-action-button" minWidth="150">
+        <VBox.margin>
+            <Insets bottom="10.0"/>
+        </VBox.margin>
+    </Button>
+
+    <Button fx:id="backButton" text="Zurück zum Hauptmenü" onAction="#handleBackAction" minWidth="150"/>
+
+
+    <!-- Output Area -->
+    <Label text="Generierte JSON-Ausgabe:" style="-fx-font-weight: bold;">
+        <VBox.margin>
+            <Insets top="10.0" bottom="5.0"/>
+        </VBox.margin>
+    </Label>
+    <TextArea fx:id="outputArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS" prefHeight="250"/>
+</VBox>

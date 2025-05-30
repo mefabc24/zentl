@@ -4,7 +4,8 @@ import org.example.demo3.model.board.Board;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.cards.UnitCard;
-import org.example.demo3.model.enums.Fraction;
+import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.PlayerImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +25,17 @@ public class PlayerTest {
     void setUp() {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++)
-            deck.add(new UnitCard("Soldier " + (i + 1), 5, "", Fraction.KNIGHTS, RowType.MELEE));
+            deck.add(new UnitCard(i, 4, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
+                    Rarity.COMMON, "test/paths/ImagePath/", true));
         for (int i = 0; i < 10; i++)
-            deck.add(new UnitCard("Archer " + (i + 1), 4, "", Fraction.KNIGHTS, RowType.RANGED));
+            deck.add(new UnitCard(i+20, 7, 1, "c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
+                    Rarity.RARE, "test/paths/ImagePath/", true));
         for (int i = 0; i < 5; i++)
-            deck.add(new UnitCard("Catapult " + (i + 1), 6, "", Fraction.KNIGHTS, RowType.SIEGE));
+            deck.add(new UnitCard(i+100, 8, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
+                    Rarity.RARE, "test/paths/ImagePath/", true));
         Collections.shuffle(deck);
 
-        player = new PlayerImpl("a", Fraction.KNIGHTS, deck);
+        player = new PlayerImpl("a", Faction.KNIGHTS, deck);
 
     }
 
@@ -68,7 +72,7 @@ public class PlayerTest {
         player.playCard(card, board);
 
         assertEquals(0, player.getHand().size());
-        assertTrue(board.getPlayerRows(player).get(card.getRow()).contains(card));
+        assertTrue(board.getPlayerRows(player).get(card.getRowType()).contains(card));
     }
 
     @Test
@@ -85,7 +89,8 @@ public class PlayerTest {
     @Test
     void testPlayCardNotInHand() {
         Board board = new GameBoard();
-        Card secretCard = new UnitCard("", 12312, "", Fraction.KNIGHTS, RowType.MELEE);
+        Card secretCard = new UnitCard(53, 12312, 1, "", "", Faction.KNIGHTS, RowType.MELEE, Rarity.EPIC,
+                "test/paths/ImagePath/", true);
         player.drawCard();
 
         assertFalse(player.getHand().contains(secretCard));

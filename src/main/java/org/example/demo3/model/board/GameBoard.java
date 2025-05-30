@@ -15,7 +15,7 @@ public class GameBoard implements Board {
 
     public void addCardToRow(Card card, Player player) {
         board.computeIfAbsent(player, p -> new EnumMap<>(RowType.class))
-                .computeIfAbsent(card.getRow(), r -> new ArrayList<>())
+                .computeIfAbsent(card.getRowType(), r -> new ArrayList<>())
                 .add(card);
     }
 
