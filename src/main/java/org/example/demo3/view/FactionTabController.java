@@ -184,7 +184,7 @@ public class FactionTabController {
         if (!cardDef.isUnlocked()) {
             System.out.println("Karte '" + cardDef.getName() + "' ist gesperrt und kann nicht ausgewählt werden.");
             if (mainController != null) {
-                mainController.showTemporaryMessage("Karte '" + cardDef.getName() + "' ist gesperrt!", 2000);
+                mainController.showToast("Karte '" + cardDef.getName() + "' ist gesperrt!", 2000);
             }
             return;
         }
@@ -203,7 +203,7 @@ public class FactionTabController {
                 System.out.println("Maximale Auswahl von " + MAX_SELECTION + " Karten für Fraktion '" +
                         this.currentFaction.name() + "' erreicht. Karte '" + cardDef.getName() + "' nicht hinzugefügt.");
                 if (mainController != null) {
-                    mainController.showTemporaryMessage("Limit für Fraktion " + this.currentFaction.name() +
+                    mainController.showToast("Limit für Fraktion " + this.currentFaction.name() +
                             " erreicht: " + MAX_SELECTION + " Karten", 2000);
                 }
                 return;
@@ -217,7 +217,7 @@ public class FactionTabController {
             if (countOfThisCardTypeSelected >= cardDef.getMaxAmount()) {
                 System.out.println("Maximale Anzahl (" + cardDef.getMaxAmount() + ") für Karte '" + cardDef.getName() + "' bereits ausgewählt.");
                 if (mainController != null) {
-                    mainController.showTemporaryMessage("Max. " + cardDef.getMaxAmount() + "x '" + cardDef.getName() + "' erlaubt.", 2000);
+                    mainController.showToast("Max. " + cardDef.getMaxAmount() + "x '" + cardDef.getName() + "' erlaubt.", 2000);
                 }
                 return;
             }
@@ -312,7 +312,7 @@ public class FactionTabController {
 
         if (potentialRandomCandidates.isEmpty()) {
             if (mainController != null) {
-                mainController.showTemporaryMessage("Keine freigeschalteten Karten in dieser Fraktion zum Randomisieren verfügbar.", 2500);
+                mainController.showToast("Keine freigeschalteten Karten in dieser Fraktion zum Randomisieren verfügbar.", 2500);
             }
             return;
         }

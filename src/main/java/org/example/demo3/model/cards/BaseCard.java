@@ -79,7 +79,13 @@ public abstract class BaseCard implements Card {
     public void setFaction(Faction faction) { this.faction = faction; }
     public void setRowType(RowType rowType) { this.rowType = rowType; }
     public void setCardType(CardType cardType) { this.cardType = cardType; }
-    public void setRarity(Rarity rarity) { this.rarity = rarity; }
+
+    public void setRarity(Rarity rarity) {
+        this.rarity = rarity;
+        if (rarity != null) {
+            this.maxAmount = rarity.getMaxAmount();
+        }
+    }
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
@@ -95,12 +101,11 @@ public abstract class BaseCard implements Card {
         }
     }
 
-    // Bild laden
+    // Image-Loader mit Fehlerprüfung
     @Override
     public Image getImage() {
         if (this.cardImage == null && this.imagePath != null && !this.imagePath.isEmpty()) {
-            try {
-                InputStream stream = getClass().getResourceAsStream(this.imagePath);
+            try (InputStream stream = getClass().getResourceAsStream(this.imagePath)) {
                 if (stream != null) {
                     this.cardImage = new Image(stream);
                     if (this.cardImage.isError()) {
@@ -108,7 +113,7 @@ public abstract class BaseCard implements Card {
                         this.cardImage = null;
                     }
                 } else {
-                    System.err.println("Bildressource nicht gefunden: " + this.imagePath + " für Karte " + this.name);
+                    System.err.println("Bild nicht gefunden: " + this.imagePath + " für Karte " + this.name);
                 }
             } catch (Exception e) {
                 System.err.println("Fehler beim Laden des Bildes '" + this.imagePath + "' für Karte " + this.name + ": " + e.getMessage());
@@ -120,8 +125,8 @@ public abstract class BaseCard implements Card {
 
     @Override
     public String toString() {
-        String statusColor = this.isUnlocked ? GREEN : RED;
+        String color = this.isUnlocked ? GREEN : RED;
 
-        return statusColor + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + "DEBUG maxAmount: " + maxAmount + selectedAmount + RESET;
+        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + "DEBUG maxAmount: " + maxAmount + selectedAmount + RESET;
     }
 }

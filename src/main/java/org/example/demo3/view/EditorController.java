@@ -59,6 +59,7 @@ public class EditorController {
         };
 
         powerText.setTextFormatter(new TextFormatter<>(integerFilter));
+        amountText.setTextFormatter(new TextFormatter<>(integerFilter));
 
         outputArea.setText("Fülle die Felder aus und klicke auf 'Generate JSON'.");
     }
@@ -141,7 +142,7 @@ public class EditorController {
                             "    \"cardType\": \"%s\",\n" +
                             "    \"faction\": \"%s\",\n" +
                             "    \"rarity\": \"%s\",\n" +
-                            "    \"isUnlocked\": \"%b\",\n" +
+                            "    \"isUnlocked\": %b\n" +
                             "}",
                     id,
                     power,

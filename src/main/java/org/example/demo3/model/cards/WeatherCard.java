@@ -17,5 +17,9 @@ public class WeatherCard extends BaseCard {
 
         this.weatherType = weatherType;
     }
+
+    // Get-Set
+    public WeatherType getWeatherType() { return weatherType; }
+    public void setWeatherType(WeatherType weatherType) { this.weatherType = weatherType; }
 }
 

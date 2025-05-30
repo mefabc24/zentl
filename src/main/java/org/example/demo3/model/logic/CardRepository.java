@@ -41,7 +41,8 @@ public class CardRepository {
                 .setPrettyPrinting()
                 .create();
 
-        this.allCards = loadCardsFromJson();
+        this.allCards = load();
+
         if (this.allCards == null) {
             this.allCards = new ArrayList<>();
             System.err.println("CardRepository: allCards war null nach dem Laden, initialisiere mit leerer Liste.");
