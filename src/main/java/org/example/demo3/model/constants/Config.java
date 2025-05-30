@@ -26,6 +26,9 @@ public final class Config {
     public static final int MIN_SELECTION = MAX_SELECTION;
     public static final int RANDOMIZER_CARD_AMOUNT = MAX_SELECTION;
 
+    // Effect Constants
+    public static final int TOAST_DURATION_SECONDS = 2;
+
     // File Paths
     public static final String FXML_PATH = "/org/example/demo3/";
     public static final String RESOURCE_PATH = "/org/example/demo3/";

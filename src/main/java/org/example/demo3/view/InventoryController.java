@@ -160,7 +160,7 @@ public class InventoryController {
     public void showToast(String message, int duration) {
         if (mainTabPane != null && mainTabPane.getScene() != null) {
             Stage stage = (Stage) mainTabPane.getScene().getWindow();
-            Toast.makeText(stage, message, duration);
+            Toast.makeText(stage, message);
         } else {
             System.err.println("Kann Toast nicht anzeigen: mainTabPane oder Scene ist null.");
         }
