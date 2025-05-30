@@ -71,19 +71,6 @@ public class CardRepository {
                 .collect(Collectors.toList());
     }
 
-    public List<Card> getCardsByType(CardType cardType) {
-        return allCards.stream()
-                .filter(card -> card.getCardType() == cardType)
-                .collect(Collectors.toList());
-    }
-
-    public List<Card> getSelectedCardsByType(CardType cardType) {
-        return allCards.stream()
-                .filter(card -> card.getSelectedAmount() > 0)
-                .filter(card -> card.getCardType() == cardType)
-                .collect(Collectors.toList());
-    }
-
     public int getLastID() {
         return allCards.stream()
                 .mapToInt(Card::getId)
