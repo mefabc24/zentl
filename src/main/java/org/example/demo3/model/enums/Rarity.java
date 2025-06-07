@@ -1,22 +1,46 @@
 package org.example.demo3.model.enums;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 public enum Rarity {
-    COMMON (0, 100),
-    RARE (1, 20),
-    EPIC (2, 5),
-    LEGENDARY (3, 1),
-    MYTHIC (4, 1),
-    WEATHER (5, 20),;
+    COMMON (0, 100, 0.5),
+    RARE (1, 20, 0.3),
+    EPIC (2, 5, 0.15),
+    LEGENDARY (3, 1, 0.04),
+    MYTHIC (4, 1, 0.01);
 
     private final int sortID;
     private final int maxAmount;
+    private final double weight;
 
-    Rarity(int sortID, int maxAmount) {
+    private static final List<Rarity> VALUES = List.of(values());
+    private static final double TOTAL_WEIGHT = VALUES.stream().mapToDouble(Rarity::getWeight).sum();
+
+    Rarity(int sortID, int maxAmount, double weight) {
         this.sortID = sortID;
         this.maxAmount = maxAmount;
+        this.weight = weight;
     }
 
+    // Getter
     public int getSortID() { return sortID; }
-
     public int getMaxAmount() { return maxAmount; }
+    public double getWeight() { return weight; }
+
+    // Static Methode fuer Zufallsauswahl
+    public static Rarity getRandom() {
+        double random = ThreadLocalRandom.current().nextDouble(TOTAL_WEIGHT);
+        double cumulativeWeight = 0.0;
+        System.out.println(random);
+
+        for (Rarity rarity : VALUES) {
+            cumulativeWeight += rarity.getWeight();
+            if (cumulativeWeight > random) {
+                System.out.println(rarity);
+                return rarity;
+            }
+        }
+        throw new IllegalStateException("Konnte keine Seltenheit auswählen. Überprüfe die Gewichte.");
+    }
 }
