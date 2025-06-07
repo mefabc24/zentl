@@ -12,6 +12,7 @@ public class PlayerImpl implements Player {
     private final String name;
     private final List<Card> deck;
     private final List<Card> hand;
+    private final List<Card> discardPile;
     private final Faction fraction;
     private int score;
     private int wins;
@@ -22,6 +23,7 @@ public class PlayerImpl implements Player {
         this.fraction = fraction;
         this.deck = new ArrayList<Card>(deck);
         this.hand = new ArrayList<Card>();
+        this.discardPile = new ArrayList<>();
         this.passed = false;
         Collections.shuffle(this.deck);
         this.score = 0;
@@ -59,12 +61,42 @@ public class PlayerImpl implements Player {
     public List<Card> getDeck() {
         return Collections.unmodifiableList(deck);
     }
+    
+    public List<Card> getDiscardPile() {
+        return Collections.unmodifiableList(discardPile);
+    }
+
+    @Override
+    public void addToDiscardPile(Card card) {
+        if (card != null) {
+            this.discardPile.add(card);
+        }
+    }
+
+    @Override
+    public Card removeFromDiscardPile(Card card) {
+        if (card != null && this.discardPile.remove(card)) {
+            return card;
+        }
+        return null;
+    }
+
+    @Override
+    public void addToHand(Card card) {
+        if (card != null) {
+            this.hand.add(card);
+        }
+    }
+    
+    @Override
+    public boolean removeFromHand(Card card) {
+        return this.hand.remove(card);
+    }
 
     public void drawCard() {
         if (!deck.isEmpty()) {
-            hand.add(deck.removeFirst());
+            addToHand(deck.removeFirst());
         }
-
     }
 
     public void playCard(Card card, Board board) {

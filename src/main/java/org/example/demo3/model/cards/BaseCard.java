@@ -1,20 +1,15 @@
 package org.example.demo3.model.cards;
 
 import javafx.scene.image.Image;
-import org.example.demo3.model.enums.CardType;
-import org.example.demo3.model.enums.Faction;
-import org.example.demo3.model.enums.Rarity;
-import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.enums.*;
 
 import java.io.InputStream;
-
 
 public abstract class BaseCard implements Card {
     // Console Colors
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
-
 
     protected int id;
     protected int power;
@@ -30,14 +25,20 @@ public abstract class BaseCard implements Card {
     protected RowType rowType;
     protected CardType cardType;
     protected Rarity rarity;
+    protected EffectType effectType; // Hinzugefügt
 
     protected transient Image cardImage;
     protected boolean isUnlocked;
 
-    protected BaseCard() { this.selectedAmount = 0; }
+    protected BaseCard() {
+        this.selectedAmount = 0;
+        this.effectType = EffectType.NONE; // Hinzugefügt: Standardwert
+    }
 
+    // Dieser Konstruktor dient eher als Referenz, Gson nutzt den parameterlosen
     protected BaseCard(int id, int power, int amount, String name, String description,
-                       Faction faction, RowType rowType, CardType cardType, Rarity rarity, String imagePath, boolean isUnlocked) {
+                       Faction faction, RowType rowType, CardType cardType, Rarity rarity,
+                       String imagePath, boolean isUnlocked, EffectType effectType) {
         this.id = id;
         this.power = power;
         this.amount = amount;
@@ -49,6 +50,7 @@ public abstract class BaseCard implements Card {
         this.rarity = rarity;
         this.imagePath = imagePath;
         this.isUnlocked = isUnlocked;
+        this.effectType = (effectType != null) ? effectType : EffectType.NONE;
 
         this.selectedAmount = 0;
         this.maxAmount = this.rarity.getMaxAmount();
@@ -67,6 +69,7 @@ public abstract class BaseCard implements Card {
     @Override public RowType getRowType() { return rowType; }
     @Override public CardType getCardType() { return cardType; }
     @Override public Rarity getRarity() { return rarity; }
+    @Override public EffectType getEffectType() { return effectType; } // Hinzugefügt
     @Override public boolean isUnlocked() { return isUnlocked; }
 
     // Setter
@@ -79,6 +82,7 @@ public abstract class BaseCard implements Card {
     public void setFaction(Faction faction) { this.faction = faction; }
     public void setRowType(RowType rowType) { this.rowType = rowType; }
     public void setCardType(CardType cardType) { this.cardType = cardType; }
+    public void setEffectType(EffectType effectType) { this.effectType = effectType; } // Hinzugefügt
 
     public void setRarity(Rarity rarity) {
         this.rarity = rarity;
@@ -89,7 +93,7 @@ public abstract class BaseCard implements Card {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-        this.cardImage = null; // Bild zurücksetzen zum neu laden
+        this.cardImage = null;
     }
 
     @Override public void setSelectedAmount(int selectedAmount) { this.selectedAmount = selectedAmount; }
@@ -101,7 +105,6 @@ public abstract class BaseCard implements Card {
         }
     }
 
-    // Image-Loader mit Fehlerprüfung
     @Override
     public Image getImage() {
         if (this.cardImage == null && this.imagePath != null && !this.imagePath.isEmpty()) {
@@ -126,7 +129,6 @@ public abstract class BaseCard implements Card {
     @Override
     public String toString() {
         String color = this.isUnlocked ? GREEN : RED;
-
-        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + "DEBUG maxAmount: " + maxAmount + selectedAmount + RESET;
+        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ") unlocked=" + isUnlocked + " effect=" + effectType + RESET;
     }
 }

@@ -40,9 +40,11 @@ public final class Config {
     public static final String FXML_FACTION_TAB_PATH = FXML_PATH + "faction-tab-content.fxml";
     public static final String FXML_INVENTORY_PATH = FXML_PATH + "inventory-view.fxml";
     public static final String FXML_MAINMENU_PATH = FXML_PATH + "MainMenu.fxml";
+    public static final String FXML_GAME_SETUP_PATH = FXML_PATH + "GameSetup.fxml";
     public static final String FXML_GAME_PATH = FXML_PATH + "hello-view.fxml";
-
+    public static final String FXML_GAME_MODE_SELECTION_PATH = FXML_PATH + "GameModeSelection.fxml";
+    
     public static final String JSON_PATH = RESOURCE_PATH + "cards.json";
     public static final String CSS_PATH = RESOURCE_PATH + "styles.css";
+    
 }
-

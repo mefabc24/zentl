@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1"
@@ -7,6 +8,11 @@
     <center>
         <HBox fx:id="Board" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
             <VBox fx:id="player1Side" spacing="10" alignment="CENTER"/>
+            <VBox fx:id="weatherArea" spacing="5" alignment="CENTER" style="-fx-border-color: #a0a0a0; -fx-border-style: dashed; -fx-padding: 10; -fx-min-width: 150;">
+                <children>
+                    <Label text="Weather"/>
+                </children>
+            </VBox>
             <VBox fx:id="player2Side" spacing="10" alignment="CENTER"/>
         </HBox>
     </center>
@@ -21,7 +27,9 @@
             <Label fx:id="currentPlayerLabel" text="Current: " style="-fx-font-size: 14px;"/>
             <Label fx:id="p1Score" text="Player 1 score: 0"/>
             <Label fx:id="p2Score" text="Player 2 score: 0"/>
-            <Button fx:id="restartGameButton" text="Restart Game" style="-fx-padding: 5px 15px;"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button fx:id="backToMenuButton" text="Back to Main Menu" onAction="#handleBackToMenu" maxWidth="Infinity"/>
+            <Button fx:id="restartGameButton" text="Restart Game" onAction="#handleRestartGame" maxWidth="Infinity"/>
         </VBox>
     </right>
 </BorderPane>

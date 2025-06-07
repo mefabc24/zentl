@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.NavigationService;
+import org.example.demo3.model.service.SoundService;
 
 import static org.example.demo3.model.constants.Config.*;
 
@@ -34,7 +35,15 @@ public class HelloApplication extends Application {
         } else {
             System.err.println("MainMenuController konnte nicht geladen werden!");
         }
+        
+        // play the fab menu theme
+        SoundService.getInstance().startMenuMusic();
 
+        navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
+        stage.setTitle("GWENT");
+        stage.setScene(scene);
+        stage.show();
+        
         // CSS
         navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
 

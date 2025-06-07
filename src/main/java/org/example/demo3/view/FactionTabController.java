@@ -86,14 +86,6 @@ public class FactionTabController {
                 });
         this.currentlyDisplayedInstancesInTab = new ArrayList<>(this.factionDisplayableInstances);
 
-        this.globalSelectedCardInstancesList.addListener((ListChangeListener<CardInstance>) change -> {
-            if (draggedItemFromSelectedCardsFP == null) {
-                updateTabSelectedCardsDisplay();
-            }
-            updateSelectedCountLabel();
-            refreshAllCardsDisplayStyles();
-        });
-
         setupDragAndDropEventHandlersForPane();
         updateTabSelectedCardsDisplay();
         updateSelectedCountLabel();
@@ -118,7 +110,7 @@ public class FactionTabController {
         sortAndRefreshCardInstancesInTab(this.currentSortOrderInTab);
     }
 
-    private void updateTabSelectedCardsDisplay() {
+    public void updateTabSelectedCardsDisplay() {
         tabSelectedCardsFP.getChildren().clear();
         tabSelectedCardsFP.setAlignment(FLOWPANE_ALIGNMENT_SELECTED_CARDS);
 
@@ -311,7 +303,7 @@ public class FactionTabController {
         draggedItemFromSelectedCardsFP = null;
     }
 
-    private void refreshAllCardsDisplayStyles() {
+    public void refreshAllCardsDisplayStyles() {
         if (tabAllCardsFP == null) return;
         for (Node node : tabAllCardsFP.getChildren()) {
             if (node instanceof Button) {
@@ -325,7 +317,7 @@ public class FactionTabController {
         }
     }
 
-    private void updateSelectedCountLabel() {
+    public void updateSelectedCountLabel() {
         if (tabSelectedCountLabel != null) {
             long currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
                     .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction &&

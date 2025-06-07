@@ -1,235 +1,86 @@
 package org.example.demo3.model.service;
 
-import org.example.demo3.event.*;
-import org.example.demo3.model.board.Board;
+import javafx.application.Platform;
+import org.example.demo3.event.PlayCardRequest;
+import org.example.demo3.event.PlayerPassed;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.cards.UnitCard;
+import org.example.demo3.model.enums.BotDifficulty;
 import org.example.demo3.model.enums.Faction;
-import org.example.demo3.model.enums.Rarity;
-import org.example.demo3.model.enums.RowType;
-import org.example.demo3.model.logic.Engine;
-import org.example.demo3.model.logic.GameEngine;
+import org.example.demo3.model.enums.GameMode;
+import org.example.demo3.model.logic.PlayerFactory;
+import org.example.demo3.model.player.EasyBot;
 import org.example.demo3.model.player.Player;
-import org.example.demo3.model.player.PlayerImpl;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class GameService implements Service {
-    private static final int BEST_OF = 3;
-    private final EventBus eventBus = EventBus.getInstanz();
-    private final Engine gameEngine = new GameEngine();
-    private GameBoard board;
-    private Player p1;
-    private Player p2;
-    private Player currentPlayer;
-    private int round;
-    private Player roundWinner;
+public class GameService extends AbstractGameService {
 
     public GameService() {
-        subscribeToEvents();
+        super();
     }
 
-    @SuppressWarnings("Convert2MethodRef")
-    private void subscribeToEvents() {
-        eventBus.subscribe(RestartEve.class, restartEve -> newGame());
-        eventBus.subscribe(PlayCardRequest.class, event -> CardPlayed(event));
-        eventBus.subscribe(PlayerPassed.class, event -> PlayerPassed(event));
-    }
+    @Override
+    public void newGame(GameMode mode, BotDifficulty difficulty, Faction p1Faction, Faction p2Faction) {
+        this.isGameActive = true;
+        this.gameMode = mode;
+        this.botDifficulty = difficulty;
 
-    public void newGame() {
-        board = new GameBoard();
-        p1 = createPlayer("Player 1", Faction.KNIGHTS);
-        p2 = createPlayer("Player 2", Faction.MONSTERS);
-        round = 1;
-        roundWinner = null;
-        currentPlayer = p1;
+        this.board = new GameBoard();
+        this.p1 = createPlayer("Player 1", p1Faction);
 
+        List<Card> p2Deck = cardRepository.getSavedDeck(p2Faction);
+        if (p2Deck.isEmpty()) {
+            p2Deck = cardRepository.getRandomDeck(p2Faction);
+        }
+        this.p2 = PlayerFactory.createPlayer2(mode, difficulty, p2Faction, p2Deck);
+
+        if (p1.getDeck().isEmpty() || p2.getDeck().isEmpty()) {
+            endGame();
+            return;
+        }
+
+        this.round = 1;
+        this.currentPlayer = p1;
         dealInitialHands();
         postGameState();
     }
 
-    private void postGameState() {
-        updateScores();
-        eventBus.post(new GameStateUpdateEve(p1, p2, currentPlayer, round, board));
-    }
+    @Override
+    protected void nextTurn() {
+        if (!isGameActive) return;
 
-    private void endGame() {
-        Player winner = gameEngine.determineGameWinner(p1, p2);
-        eventBus.post(new GameEndedEve(p1, p2, winner, p1.getWins(), p2.getWins(), p1.getName(), p2.getName()));
-    }
-
-    private void updateScores() {
-        p1.setScore(board.calculateTotalPower(p1));
-        p2.setScore(board.calculateTotalPower(p2));
-    }
-
-    private Player createPlayer(String name, Faction fraction) {
-        List<Card> deck = generateDeck(fraction);
-        Player player = new PlayerImpl(name, fraction, deck);
-        player.setWins(0);
-        return player;
-    }
-
-    private void dealInitialHands() {
-        for (int i = 0; i < 10; i++) {
-            p1.drawCard();
-            p2.drawCard();
-        }
-    }
-
-
-    private List<Card> generateDeck(Faction faction) { // Typ auf Interface ändern
-        List<Card> deck = new ArrayList<>();
-
-        int id = 1;
-        String defaultDescription = "Eine automatisch generierte Karte.";
-        String defaultImagePath = "";
-        Rarity defaultRarity = Rarity.COMMON;
-        boolean defaultIsUnlocked = true;
-
-        for (int i = 0; i < 15; i++) {
-            deck.add(new UnitCard(
-                    id++, // Eindeutige ID
-                    5,                          // Power
-                    1,                          // Amount
-                    "Soldier " + (i + 1),       // Name
-                    defaultDescription,         // Description
-                    faction,                    // Faction
-                    RowType.MELEE,              // RowType
-                    defaultRarity,              // Rarity
-                    defaultImagePath,           // ImagePath
-                    defaultIsUnlocked           // isUnlocked
-            ));
-        }
-        for (int i = 0; i < 10; i++) {
-            deck.add(new UnitCard(
-                    id++,
-                    4,
-                    1,
-                    "Archer " + (i + 1),
-                    defaultDescription,
-                    faction,
-                    RowType.RANGED,
-                    defaultRarity,
-                    defaultImagePath,
-                    defaultIsUnlocked
-            ));
-        }
-        for (int i = 0; i < 5; i++) {
-            deck.add(new UnitCard(
-                    id++,
-                    6,
-                    1,
-                    "Catapult " + (i + 1),
-                    defaultDescription,
-                    faction,
-                    RowType.SIEGE,
-                    defaultRarity,
-                    defaultImagePath,
-                    defaultIsUnlocked
-            ));
-        }
-        Collections.shuffle(deck);
-        return deck;
-    }
-
-    /*
-    private List<Card> generateDeck(Faction fraction) {
-        List<Card> deck = new ArrayList<>();
-        for (int i = 0; i < 15; i++)
-            deck.add(new UnitCard("Soldier " + (i + 1), 5, "", fraction, RowType.MELEE));
-        for (int i = 0; i < 10; i++)
-            deck.add(new UnitCard("Archer " + (i + 1), 4, "", fraction, RowType.RANGED));
-        for (int i = 0; i < 5; i++)
-            deck.add(new UnitCard("Catapult " + (i + 1), 6, "", fraction, RowType.SIEGE));
-        Collections.shuffle(deck);
-        return deck;
-    }*/
-
-    private void CardPlayed(PlayCardRequest event) {
-        event.getPlayer().playCard(event.getCard(), board);
-        nextTurn();
-    }
-
-    private void PlayerPassed(PlayerPassed event) {
-        event.getPlayer().pass();
-        nextTurn();
-    }
-
-    private void nextTurn() {
         if (p1.hasPassed() && p2.hasPassed()) {
             finishRound();
-        } else {
-            Player next = (currentPlayer == p1) ? p2 : p1;
-            if (!next.hasPassed()) {
-                currentPlayer = next;
-            }
-            postGameState();
+            return;
         }
 
-    }
-
-    private void finishRound() {
-        updateScores();
-        roundWinner = gameEngine.determineRoundWinner(p1, p2);
-
-        if (roundWinner == p1) {
-            p1.setWins(p1.getWins() + 1);
-        } else if (roundWinner == p2) {
-            p2.setWins(p2.getWins() + 1);
-        } else {
-            p1.setWins(p1.getWins() + 1);
-            p2.setWins(p2.getWins() + 1);
+        currentPlayer = (currentPlayer == p1) ? p2 : p1;
+        if (currentPlayer.hasPassed()) {
+            currentPlayer = (currentPlayer == p1) ? p2 : p1;
         }
 
-        eventBus.post(new RoundEndedEve(round, roundWinner, p1, p2));
-
-        if (p1.getWins() < BEST_OF - 1 && p2.getWins() < BEST_OF - 1) {
-            nextRound();
-        } else {
-            endGame();
-        }
-    }
-
-    private void nextRound() {
-        round++;
-        board.clearBoard();
-        p1.resetPass();
-        p2.resetPass();
-        p1.setScore(0);
-        p2.setScore(0);
-        for (int i = 0; i < 3; i++) {
-            if (!p1.getDeck().isEmpty()) p1.drawCard();
-            if (!p2.getDeck().isEmpty()) p2.drawCard();
-        }
-        currentPlayer = (roundWinner == p2) ? p2 : p1;
         postGameState();
 
+        if (isGameActive && currentPlayer instanceof EasyBot) {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
+                    if (!isGameActive) return;
+
+                    Card cardToPlay = ((EasyBot) currentPlayer).chooseCardToPlay();
+                    Platform.runLater(() -> {
+                        if (!isGameActive) return;
+                        if (cardToPlay != null) {
+                            eventBus.post(new PlayCardRequest(currentPlayer, cardToPlay));
+                        } else {
+                            eventBus.post(new PlayerPassed(currentPlayer));
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
+        }
     }
-
-
-    // nur fuer Tests!
-    public Player getP1() {
-        return p1;
-    }
-
-    public Player getP2() {
-        return p2;
-    }
-
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public int getRound() {
-        return round;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
 }

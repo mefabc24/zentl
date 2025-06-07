@@ -10,9 +10,15 @@ public interface Player {
     String getName();
 
     List<Card> getHand();
-
+    List<Card> getDiscardPile();
+    void addToDiscardPile(Card card);
+    Card removeFromDiscardPile(Card card);
+    
     List<Card> getDeck();
-
+    
+    boolean removeFromHand(Card card);
+    void addToHand(Card card);
+    
     void drawCard();
 
     void playCard(Card card, Board board);
@@ -34,4 +40,5 @@ public interface Player {
     int getWins();
 
     void setWins(int wins);
+    
 }

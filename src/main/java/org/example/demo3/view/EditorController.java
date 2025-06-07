@@ -32,7 +32,7 @@ public class EditorController {
     @FXML private TextArea outputArea;
 
     private NavigationService navigationService;
-    private final CardRepository cardRepository = new CardRepository();
+    private final CardRepository cardRepository = CardRepository.getInstance();
 
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
