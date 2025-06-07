@@ -65,6 +65,12 @@ public class CardRepository {
     // Getter
     public List<Card> getAllCards() { return allCards; }
 
+    public List<Card> getUnlockableCards() {
+        return allCards.stream()
+                .filter(card -> card.getAmount() < card.getMaxAmount())
+                .toList();
+    }
+
     public int getLastID() {
         return allCards.stream()
                 .mapToInt(Card::getId)
@@ -79,9 +85,9 @@ public class CardRepository {
         }
 
         List<Card> savedDeck = allCards.stream()
-                .filter(card -> card.getFaction() == faction && card.getSelectedAmount() > 0 && card.isUnlocked())
+                .filter(card -> card.getFaction() == faction && card.getSelectedAmount() > 0 && card.getAmount() > 0)
                 .flatMap(card -> Collections.nCopies(card.getSelectedAmount(), card).stream())
-                .collect(Collectors.toList());
+                .toList();
 
         if (savedDeck.size() >= MIN_SELECTION) {
             System.out.println("Gespeichertes Deck für Fraktion " + faction + " geladen. Größe: " + savedDeck.size());
@@ -98,8 +104,8 @@ public class CardRepository {
         }
 
         List<Card> potentialCards = allCards.stream()
-                .filter(card -> card.getFaction() == faction && card.isUnlocked() && card.getAmount() > 0)
-                .collect(Collectors.toList());
+                .filter(card -> card.getFaction() == faction && card.getAmount() > 0)
+                .toList();
 
         if (potentialCards.isEmpty()) {
             System.err.println("Keine freigeschalteten Karten für Fraktion " + faction + " verfügbar, um ein Zufallsdeck zu erstellen.");
@@ -131,7 +137,7 @@ public class CardRepository {
 
     public List<Card> load() {
         this.allCards = loadCardsFromJson();
-        if (this.allCards == null) {
+        if (this.allCards.isEmpty()) {
             this.allCards = new ArrayList<>();
         }
         return this.allCards;
