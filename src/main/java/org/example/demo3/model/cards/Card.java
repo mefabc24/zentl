@@ -23,9 +23,7 @@ public interface Card {
     RowType getRowType();
     EffectType getEffectType();
 
-    boolean isUnlocked();
-
     // Setter
-    void setUnlocked(boolean unlocked);
+    void setAmount(int amount);
     void setSelectedAmount(int selectedAmount);
 }

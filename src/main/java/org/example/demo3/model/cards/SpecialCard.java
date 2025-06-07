@@ -9,7 +9,7 @@ public class SpecialCard extends BaseCard {
     }
 
     public SpecialCard(int id, int power, int amount, String name, String description, Faction faction, RowType rowType,
-                       Rarity rarity, String imagePath, boolean isUnlocked) {
-        super(id, power, amount, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, isUnlocked, null);
+                       Rarity rarity, String imagePath) {
+        super(id, power, amount, name, description, faction, rowType, CardType.SPECIAL, rarity, imagePath, null);
     }
 }

@@ -9,7 +9,7 @@ public class UnitCard extends BaseCard {
     }
 
     public UnitCard(int id, int power, int amount, String name, String description, Faction faction, RowType rowType,
-                    Rarity rarity, String imagePath, boolean isUnlocked) {
-        super(id, power, amount, name, description, faction, rowType, CardType.UNIT, rarity, imagePath, isUnlocked, null);
+                    Rarity rarity, String imagePath) {
+        super(id, power, amount, name, description, faction, rowType, CardType.UNIT, rarity, imagePath, null);
     }
 }

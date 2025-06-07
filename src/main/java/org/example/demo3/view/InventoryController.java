@@ -93,7 +93,7 @@ public class InventoryController {
         this.allCardsMasterList = new ArrayList<>(loadedPrototypes);
         List<CardInstance> initialSelection = new ArrayList<>();
         for (Card prototype : allCardsMasterList) {
-            if (!prototype.isUnlocked()) {
+            if (prototype.getAmount() <= 0) {
                 prototype.setSelectedAmount(0);
             } else {
                 int validSelection = Math.min(prototype.getSelectedAmount(), prototype.getMaxAmount());

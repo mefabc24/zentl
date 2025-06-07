@@ -1,6 +1,5 @@
 package org.example.demo3.view;
 
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -28,7 +27,6 @@ import org.example.demo3.model.logic.CardComparators;
 
 import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.example.demo3.model.constants.Config.*;
 
@@ -91,9 +89,8 @@ public class FactionTabController {
         updateSelectedCountLabel();
 
         if (tabSearchTextField != null) {
-            tabSearchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                filterAndDisplayCardInstancesInTab(newValue);
-            });
+            tabSearchTextField.textProperty().addListener((observable, oldValue, newValue) ->
+                filterAndDisplayCardInstancesInTab(newValue));
         }
 
         if (tabCardScrollPane != null) {
@@ -116,8 +113,8 @@ public class FactionTabController {
 
         List<CardInstance> cardsForThisFactionInSelection = globalSelectedCardInstancesList.stream()
                 .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction &&
-                        instance.getCardDefinition().isUnlocked())
-                .collect(Collectors.toList());
+                        instance.getCardDefinition().getAmount() > 0)
+                .toList();
 
         for (CardInstance instance : cardsForThisFactionInSelection) {
             Button cardButton = createSelectedCardButton(instance);
@@ -193,7 +190,7 @@ public class FactionTabController {
             insertIndex = i + 1;
         }
 
-        if (!positionFound && !items.isEmpty() && items.get(items.size()-1) == draggedItemFromSelectedCardsFP && items.size()==1){
+        if (!positionFound && !items.isEmpty() && items.getLast() == draggedItemFromSelectedCardsFP && items.size()==1){
             Point2D childCenterInScene = draggedItemFromSelectedCardsFP.localToScene(draggedItemFromSelectedCardsFP.getBoundsInLocal().getWidth() / 2, 0);
             if(sceneX <= childCenterInScene.getX()){
                 insertIndex = 0;
@@ -321,7 +318,7 @@ public class FactionTabController {
         if (tabSelectedCountLabel != null) {
             long currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
                     .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction &&
-                            instance.getCardDefinition().isUnlocked())
+                            instance.getCardDefinition().getAmount() > 0)
                     .count();
             tabSelectedCountLabel.setText(currentFactionSelectedCount + "/" + MAX_SELECTION);
         }
@@ -343,7 +340,7 @@ public class FactionTabController {
 
         Card cardDef = instanceToToggle.getCardDefinition();
 
-        if (!cardDef.isUnlocked()) {
+        if (cardDef.getAmount() <= 0) {
             if (mainController != null) mainController.showToast("Karte '" + cardDef.getName() + "' ist gesperrt!", 2000);
             return;
         }
@@ -354,7 +351,7 @@ public class FactionTabController {
             globalSelectedCardInstancesList.remove(instanceToToggle);
         } else {
             long selectedCountForThisFaction = globalSelectedCardInstancesList.stream()
-                    .filter(inst -> inst.getCardDefinition().getFaction() == this.currentFaction && inst.getCardDefinition().isUnlocked())
+                    .filter(inst -> inst.getCardDefinition().getFaction() == this.currentFaction && inst.getCardDefinition().getAmount() > 0)
                     .count();
 
             if (selectedCountForThisFaction >= MAX_SELECTION) {
@@ -363,7 +360,7 @@ public class FactionTabController {
             }
 
             long countOfThisCardTypeSelected = globalSelectedCardInstancesList.stream()
-                    .filter(inst -> inst.getCardDefinition().getId() == cardDef.getId() && inst.getCardDefinition().isUnlocked())
+                    .filter(inst -> inst.getCardDefinition().getId() == cardDef.getId() && inst.getCardDefinition().getAmount() > 0)
                     .count();
 
             if (countOfThisCardTypeSelected >= cardDef.getMaxAmount()) {
@@ -392,7 +389,7 @@ public class FactionTabController {
             String lowerCaseSearchText = searchText.toLowerCase().trim();
             filteredInstances = this.factionDisplayableInstances.stream()
                     .filter(instance -> instance.getCardDefinition().getName().toLowerCase().contains(lowerCaseSearchText))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         this.currentlyDisplayedInstancesInTab = filteredInstances;
         sortAndRefreshCardInstancesInTab(this.currentSortOrderInTab);
@@ -435,8 +432,8 @@ public class FactionTabController {
     private void handleTabUnselectAll() {
         if (draggedItemFromSelectedCardsFP != null) return;
         List<CardInstance> instancesToUnselectInThisFaction = globalSelectedCardInstancesList.stream()
-                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction && instance.getCardDefinition().isUnlocked())
-                .collect(Collectors.toList());
+                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction && instance.getCardDefinition().getAmount() > 0)
+                .toList();
         globalSelectedCardInstancesList.removeAll(instancesToUnselectInThisFaction);
     }
 
@@ -446,8 +443,8 @@ public class FactionTabController {
         handleTabUnselectAll();
 
         List<CardInstance> potentialRandomCandidates = this.factionDisplayableInstances.stream()
-                .filter(instance -> instance.getCardDefinition().isUnlocked())
-                .collect(Collectors.toList());
+                .filter(instance -> instance.getCardDefinition().getAmount() > 0)
+                .toList();
 
         if (potentialRandomCandidates.isEmpty()) {
             if (mainController != null) mainController.showToast("Keine freigeschalteten Karten in dieser Fraktion zum Randomisieren verfügbar.", 2500);
@@ -486,7 +483,7 @@ public class FactionTabController {
         tabAllCardsFP.setAlignment(FLOWPANE_ALIGNMENT_ALL_CARDS);
 
         for (CardInstance instance : instancesToDisplay) {
-            if (!showLockedCards && !instance.getCardDefinition().isUnlocked()) continue;
+            if (!showLockedCards && instance.getCardDefinition().getAmount() <= 0) continue;
             Card cardDef = instance.getCardDefinition();
             Button cardButton = new Button();
             cardButton.setUserData(instance);
@@ -514,7 +511,7 @@ public class FactionTabController {
             }
             cardVisualPane.getChildren().add(cardDisplayNode);
 
-            if (!cardDef.isUnlocked()) {
+            if (cardDef.getAmount() <= 0) {
                 if (this.lockedOverlayImage != null && !this.lockedOverlayImage.isError()) {
                     ImageView overlayImageView = new ImageView(this.lockedOverlayImage);
                     overlayImageView.setFitWidth(CARD_PREVIEW_WIDTH);
@@ -549,7 +546,7 @@ public class FactionTabController {
                         "Typ: " + cardDef.getRowType() + "\n" +
                         "CardType: " + cardDef.getCardType() + "\n" +
                         "Seltenheit: " + cardDef.getRarity() + "\n" +
-                        "Status: " + (cardDef.isUnlocked() ? "Freigeschaltet" : "Gesperrt"));
+                        "Status: " + (cardDef.getAmount() > 0 ? "Freigeschaltet" : "Gesperrt"));
         tooltip.setFont(new Font("System", 20));
         cardButton.setTooltip(tooltip);
     }
@@ -562,12 +559,12 @@ public class FactionTabController {
 
         if (button.getParent() == tabAllCardsFP) {
             button.getStyleClass().remove("selected");
-            if (isThisInstanceSelected && cardDef.isUnlocked()) {
+            if (isThisInstanceSelected && cardDef.getAmount() > 0) {
                 button.getStyleClass().add("selected");
             }
         }
         button.getStyleClass().remove("locked-card-visual");
-        if (!cardDef.isUnlocked()) {
+        if (cardDef.getAmount() <= 0) {
             button.getStyleClass().add("locked-card-visual");
         }
     }

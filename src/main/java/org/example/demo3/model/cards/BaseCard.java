@@ -28,7 +28,6 @@ public abstract class BaseCard implements Card {
     protected EffectType effectType; // Hinzugefügt
 
     protected transient Image cardImage;
-    protected boolean isUnlocked;
 
     protected BaseCard() {
         this.selectedAmount = 0;
@@ -38,7 +37,7 @@ public abstract class BaseCard implements Card {
     // Dieser Konstruktor dient eher als Referenz, Gson nutzt den parameterlosen
     protected BaseCard(int id, int power, int amount, String name, String description,
                        Faction faction, RowType rowType, CardType cardType, Rarity rarity,
-                       String imagePath, boolean isUnlocked, EffectType effectType) {
+                       String imagePath, EffectType effectType) {
         this.id = id;
         this.power = power;
         this.amount = amount;
@@ -49,7 +48,6 @@ public abstract class BaseCard implements Card {
         this.cardType = cardType;
         this.rarity = rarity;
         this.imagePath = imagePath;
-        this.isUnlocked = isUnlocked;
         this.effectType = (effectType != null) ? effectType : EffectType.NONE;
 
         this.selectedAmount = 0;
@@ -70,12 +68,11 @@ public abstract class BaseCard implements Card {
     @Override public CardType getCardType() { return cardType; }
     @Override public Rarity getRarity() { return rarity; }
     @Override public EffectType getEffectType() { return effectType; } // Hinzugefügt
-    @Override public boolean isUnlocked() { return isUnlocked; }
 
     // Setter
     public void setId(int id) { this.id = id; }
     public void setPower(int power) { this.power = power; }
-    public void setAmount(int amount) { this.amount = amount; }
+
     public void setMaxAmount(int maxAmount) { this.maxAmount = maxAmount; }
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
@@ -97,7 +94,7 @@ public abstract class BaseCard implements Card {
     }
 
     @Override public void setSelectedAmount(int selectedAmount) { this.selectedAmount = selectedAmount; }
-    @Override public void setUnlocked(boolean unlocked) { this.isUnlocked = unlocked; }
+    @Override public void setAmount(int amount) { this.amount = amount; }
 
     public void initMaxAmount() {
         if (this.rarity != null) {
@@ -128,7 +125,7 @@ public abstract class BaseCard implements Card {
 
     @Override
     public String toString() {
-        String color = this.isUnlocked ? GREEN : RED;
-        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ") unlocked=" + isUnlocked + " effect=" + effectType + RESET;
+        String color = this.getAmount() > 0 ? GREEN : RED;
+        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ") amount=" + amount + " effect=" + effectType + RESET;
     }
 }

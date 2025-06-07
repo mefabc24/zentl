@@ -155,7 +155,7 @@ public class GameSetupController {
             return new DeckStatus(true, true, String.format("✓ Deck ready (%d/%d)", savedDeck.size(), MIN_SELECTION));
         }
         long selectedCount = cardRepository.getAllCards().stream()
-                .filter(c -> c.getFaction() == faction && c.getSelectedAmount() > 0 && c.isUnlocked())
+                .filter(c -> c.getFaction() == faction && c.getSelectedAmount() > 0 && c.getAmount() > 0)
                 .mapToInt(Card::getSelectedAmount)
                 .sum();
 
