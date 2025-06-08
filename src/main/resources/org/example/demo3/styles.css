@@ -401,3 +401,15 @@
 .deck-status-warning {
     -fx-text-fill: #FFB74D; /* Helles Orange */
 }
+
+/* Toast-Message Style*/
+.toast-label {
+    -fx-background-color: rgba(80, 80, 80, 0.85);
+    -fx-text-fill: #F0F0F0;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 25px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5);
+}

@@ -35,6 +35,7 @@ public class InventoryController {
     private NavigationService navigationService;
     private boolean isInitializing = true;
 
+    @SuppressWarnings("unused")
     public ObservableList<CardInstance> getSelectedCardInstanceList() {
         return selectedCardInstanceList;
     }
@@ -69,8 +70,7 @@ public class InventoryController {
             }
             mainTabPane.getTabs().forEach(tab -> {
                 Node content = tab.getContent();
-                if (content != null && content.getUserData() instanceof FactionTabController) {
-                    FactionTabController controller = (FactionTabController) content.getUserData();
+                if (content != null && content.getUserData() instanceof FactionTabController controller) {
                     controller.updateTabSelectedCardsDisplay();
                     controller.updateSelectedCountLabel();
                     controller.refreshAllCardsDisplayStyles();
@@ -87,7 +87,7 @@ public class InventoryController {
     private void loadCards() {
         List<Card> loadedPrototypes = this.cardRepository.getAllCards();
         if (loadedPrototypes == null || loadedPrototypes.isEmpty()) {
-            showErrorTab("Fehler: Keine Karten zum Anzeigen geladen.");
+            showErrorTab();
             return;
         }
         this.allCardsMasterList = new ArrayList<>(loadedPrototypes);
@@ -126,7 +126,14 @@ public class InventoryController {
                 Parent tabContentRoot = loader.load();
                 tabContentRoot.setUserData(loader.getController());
                 FactionTabController factionController = loader.getController();
-                factionController.initializeData(faction, this.allCardsMasterList, this.selectedCardInstanceList, this);
+
+                List<CardInstance> factionInstances = this.allCardsMasterList.stream()
+                        .filter(card -> card.getFaction() == faction)
+                        .map(CardInstance::new)
+                        .toList();
+
+                factionController.initializeData(faction, factionInstances, this.selectedCardInstanceList, this);
+
                 Tab factionTab = new Tab(faction.name());
                 factionTab.setContent(tabContentRoot);
                 mainTabPane.getTabs().add(factionTab);
@@ -149,23 +156,22 @@ public class InventoryController {
     @FXML
     private void handleBackToMenuButtonAction(ActionEvent event) {
         if (navigationService != null) {
-            navigationService.navigateTo(FXML_MAINMENU_PATH, "My Awesome Card Game - Main Menu", (MainMenuController controller) -> {
-                controller.setNavigationService(navigationService);
-            });
+            navigationService.navigateTo(FXML_MAINMENU_PATH, "My Awesome Card Game - Main Menu", (MainMenuController controller) ->
+                controller.setNavigationService(navigationService));
         }
     }
 
     public void showToast(String message, int duration) {
         if (mainTabPane != null && mainTabPane.getScene() != null) {
             Stage stage = (Stage) mainTabPane.getScene().getWindow();
-            Toast.makeText(stage, message);
+            Toast.makeText(stage, message, duration);
         }
     }
 
-    private void showErrorTab(String message) {
+    private void showErrorTab() {
         if (mainTabPane != null) {
             Tab errorTab = new Tab("Error");
-            errorTab.setContent(new Label(message));
+            errorTab.setContent(new Label("Fehler: Keine Karten zum Anzeigen geladen."));
             mainTabPane.getTabs().add(errorTab);
         }
     }

@@ -7,6 +7,8 @@ import com.google.gson.reflect.TypeToken;
 import org.example.demo3.model.cards.*;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.typeadapter.RuntimeTypeAdapterFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -20,13 +22,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static org.example.demo3.model.constants.Config.*;
 
 public class CardRepository {
     // Singleton-Pattern Implementierung
     private static CardRepository instance;
+    private static final Logger logger = LoggerFactory.getLogger(CardRepository.class);
 
     private List<Card> allCards;
     private static final String resourcePath = JSON_PATH;
@@ -49,7 +51,7 @@ public class CardRepository {
 
         if (this.allCards == null) {
             this.allCards = new ArrayList<>();
-            System.err.println("CardRepository: allCards war null nach dem Laden, initialisiere mit leerer Liste.");
+            logger.warn("allCards war null nach dem Laden, wird mit leerer Liste initialisiert.");
         }
     }
 
@@ -90,11 +92,11 @@ public class CardRepository {
                 .toList();
 
         if (savedDeck.size() >= MIN_SELECTION) {
-            System.out.println("Gespeichertes Deck für Fraktion " + faction + " geladen. Größe: " + savedDeck.size());
+            logger.info("Gespeichertes Deck für Fraktion {} geladen. Größe: {}", faction, savedDeck.size());
             return new ArrayList<>(savedDeck);
         }
 
-        System.out.println("Kein gültiges gespeichertes Deck für Fraktion " + faction + " gefunden (nur " + savedDeck.size() + "/" + MIN_SELECTION + " Karten).");
+        logger.info("Kein gültiges gespeichertes Deck für Fraktion {} gefunden (nur {}/{} Karten).", faction, savedDeck.size(), MIN_SELECTION);
         return Collections.emptyList();
     }
 
@@ -108,7 +110,7 @@ public class CardRepository {
                 .toList();
 
         if (potentialCards.isEmpty()) {
-            System.err.println("Keine freigeschalteten Karten für Fraktion " + faction + " verfügbar, um ein Zufallsdeck zu erstellen.");
+            logger.warn("Keine freigeschalteten Karten für Fraktion {} verfügbar, um ein Zufallsdeck zu erstellen.", faction);
             return Collections.emptyList();
         }
 
@@ -128,7 +130,7 @@ public class CardRepository {
             }
         }
 
-        System.out.println("Zufälliges Deck für Fraktion " + faction + " erstellt. Größe: " + randomDeck.size());
+        logger.info("Zufälliges Deck für Fraktion {} erstellt. Größe: {}", faction, randomDeck.size());
         return randomDeck;
     }
 
@@ -145,10 +147,10 @@ public class CardRepository {
 
     // (De-)Serialization
     private List<Card> loadCardsFromJson() {
-        System.out.println("Versuche Karten zu laden von Ressourcenpfad: " + resourcePath);
+        logger.info("Versuche Karten zu laden von Ressourcenpfad: {}", resourcePath);
         try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
             if (is == null) {
-                System.err.println("Ressourcendatei nicht gefunden: " + resourcePath);
+                logger.error("Ressourcendatei nicht gefunden: {}", resourcePath);
                 return new ArrayList<>();
             }
 
@@ -157,7 +159,7 @@ public class CardRepository {
                 List<Card> loaded = this.gson.fromJson(reader, cardListType);
 
                 if (loaded == null) {
-                    System.err.println("Gson.fromJson hat null zurückgegeben. JSON-Datei ist möglicherweise leer oder fehlerhaft formatiert.");
+                    logger.warn("Gson.fromJson hat null zurückgegeben. JSON-Datei ist möglicherweise leer oder fehlerhaft formatiert.");
                     return new ArrayList<>();
                 }
 
@@ -167,17 +169,15 @@ public class CardRepository {
                     }
                 });
 
-                System.out.println(loaded.size() + " Karten erfolgreich aus JSON deserialisiert.");
+                logger.info("{} Karten erfolgreich aus JSON deserialisiert.", loaded.size());
                 return loaded;
 
             } catch (JsonSyntaxException e) {
-                System.err.println("JSON Syntax Fehler beim Lesen von " + resourcePath + ": " + e.getMessage());
-                e.printStackTrace();
+                logger.error("JSON Syntax Fehler beim Lesen von {}: {}", resourcePath, e.getMessage(), e);
                 return new ArrayList<>();
             }
         } catch (IOException e) {
-            System.err.println("IO Fehler beim Lesen von " + resourcePath + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.error("IO Fehler beim Lesen von {}: {}", resourcePath, e.getMessage(), e);
             return new ArrayList<>();
         }
     }
@@ -185,7 +185,7 @@ public class CardRepository {
     private void saveCardsToJson() {
         URL resourceUrl = getClass().getResource(resourcePath);
         if (resourceUrl == null) {
-            System.err.println("Ressource zum Speichern nicht gefunden: " + resourcePath);
+            logger.error("Ressource zum Speichern nicht gefunden: {}", resourcePath);
             return;
         }
 
@@ -193,14 +193,12 @@ public class CardRepository {
             Path outputPath = Paths.get(resourceUrl.toURI());
             try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8)) {
                 this.gson.toJson(allCards, writer);
-                System.out.println("Karten erfolgreich gespeichert in " + outputPath.toAbsolutePath());
+                logger.info("Karten erfolgreich gespeichert in {}", outputPath.toAbsolutePath());
             } catch (IOException e) {
-                System.err.println("Fehler beim Speichern der Karten nach " + outputPath.toAbsolutePath() + ": " + e.getMessage());
-                e.printStackTrace();
+                logger.error("Fehler beim Speichern der Karten nach {}: {}", outputPath.toAbsolutePath(), e.getMessage(), e);
             }
         } catch (URISyntaxException e) {
-            System.err.println("Fehler beim Speichern der Karten: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Fehler beim Speichern der Karten: {}", e.getMessage(), e);
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.example.demo3.view;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.demo3.model.enums.CardType;
@@ -26,9 +25,6 @@ public class EditorController {
     @FXML private ComboBox<CardType> cardTypeComboBox;
     @FXML private ComboBox<Faction> factionComboBox;
     @FXML private ComboBox<Rarity> rarityComboBox;
-
-    @FXML private Button generateButton;
-    @FXML private Button backButton;
     @FXML private TextArea outputArea;
 
     private NavigationService navigationService;
@@ -65,7 +61,7 @@ public class EditorController {
     }
 
     @FXML
-    void handleGenerateAction(ActionEvent event) {
+    void handleGenerateAction() {
         try {
             int id = cardRepository.getLastID() + 1;
 
@@ -129,21 +125,21 @@ public class EditorController {
                 cardType = CardType.WEATHER;
             }
 
-            String jsonOutput = String.format(java.util.Locale.US,
-                    "{\n" +
-                            "    \"id\": %d,\n" +
-                            "    \"power\": %d,\n" +
-                            "    \"amount\": %d,\n" +
-                            "    \"selectedAmount\": %d,\n" +
-                            "    \"name\": \"%s\",\n" +
-                            "    \"description\": \"%s\",\n" +
-                            "    \"imagePath\": \"%s%s\",\n" +
-                            "    \"rowType\": \"%s\",\n" +
-                            "    \"cardType\": \"%s\",\n" +
-                            "    \"faction\": \"%s\",\n" +
-                            "    \"rarity\": \"%s\",\n" +
-                            "    \"isUnlocked\": %b\n" +
-                            "}",
+            String jsonOutput = """
+            {
+                "id": %d,
+                "power": %d,
+                "amount": %d,
+                "selectedAmount": %d,
+                "name": "%s",
+                "description": "%s",
+                "imagePath": "%s%s",
+                "rowType": "%s",
+                "cardType": "%s",
+                "faction": "%s",
+                "rarity": "%s",
+                "isUnlocked": %b
+            }""".formatted(
                     id,
                     power,
                     amount,
@@ -181,12 +177,11 @@ public class EditorController {
 
 
     @FXML
-    void handleBackAction(ActionEvent event) {
+    void handleBackAction() {
         if (navigationService != null) {
 
-            navigationService.navigateTo(FXML_MAINMENU_PATH, "Main Menu", (MainMenuController controller) -> {
-                controller.setNavigationService(navigationService);
-            });
+            navigationService.navigateTo(FXML_MAINMENU_PATH, "Main Menu", (MainMenuController controller) ->
+                controller.setNavigationService(navigationService));
         } else {
             System.err.println("NavigationService ist nicht im EditorController initialisiert.");
             outputArea.setText("Fehler: Navigation zum Hauptmenü nicht möglich.");
