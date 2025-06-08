@@ -127,10 +127,7 @@ public class InventoryController {
                 tabContentRoot.setUserData(loader.getController());
                 FactionTabController factionController = loader.getController();
 
-                List<CardInstance> factionInstances = this.allCardsMasterList.stream()
-                        .filter(card -> card.getFaction() == faction)
-                        .map(CardInstance::new)
-                        .toList();
+                List<CardInstance> factionInstances = this.cardRepository.getDisplayableCardInstances(faction);
 
                 factionController.initializeData(faction, factionInstances, this.selectedCardInstanceList, this);
 

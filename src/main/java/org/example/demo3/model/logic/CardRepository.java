@@ -80,6 +80,18 @@ public class CardRepository {
                 .orElse(-1);
     }
 
+    // CardInstances für Deckbuilder
+    public List<CardInstance> getDisplayableCardInstances(Faction faction) {
+        if (allCards == null) {
+            return Collections.emptyList();
+        }
+        return allCards.stream()
+                .filter(card -> card.getFaction() == faction)
+                .flatMap(card -> java.util.stream.IntStream.range(0, card.getAmount())
+                        .mapToObj(i -> new CardInstance(card)))
+                .toList();
+    }
+
     // Deck-Lade-Methoden
     public List<Card> getSavedDeck(Faction faction) {
         if (allCards == null || allCards.isEmpty()) {
