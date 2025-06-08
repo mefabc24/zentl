@@ -16,6 +16,8 @@ import org.example.demo3.model.cards.CardInstance;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class InventoryController {
     @FXML private Button backToMenuButton;
 
     private CardRepository cardRepository;
+    private static final Logger logger = LoggerFactory.getLogger(InventoryController.class);
     private List<Card> allCardsMasterList;
     private ObservableList<CardInstance> selectedCardInstanceList;
     private NavigationService navigationService;
@@ -135,7 +138,7 @@ public class InventoryController {
                 factionTab.setContent(tabContentRoot);
                 mainTabPane.getTabs().add(factionTab);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Fehler beim Laden einer Faction-Tab-Ansicht.", e);
             }
         }
     }

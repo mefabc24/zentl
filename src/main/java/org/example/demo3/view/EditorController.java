@@ -9,6 +9,8 @@ import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.UnaryOperator;
 
@@ -27,6 +29,7 @@ public class EditorController {
     @FXML private ComboBox<Rarity> rarityComboBox;
     @FXML private TextArea outputArea;
 
+    Logger logger = LoggerFactory.getLogger(EditorController.class);
     private NavigationService navigationService;
     private final CardRepository cardRepository = CardRepository.getInstance();
 
@@ -159,8 +162,8 @@ public class EditorController {
             System.out.println("JSON generiert:\n" + jsonOutput);
 
         } catch (Exception e) {
-            outputArea.setText("Ein unerwarteter Fehler ist aufgetreten: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Fehler beim Laden einer Faction-Tab-Ansicht.", e);
+            outputArea.setText("Ein unerwarteter Anwendungsfehler ist aufgetreten. Der Fehler wurde für die Analyse protokolliert.");
         }
     }
 

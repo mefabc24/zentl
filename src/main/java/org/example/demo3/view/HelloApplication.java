@@ -51,16 +51,4 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
-    /*
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/org/example/demo3/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-        GameService service = new GameService();
-        service.newGame();
-        stage.setTitle("Gwent");
-        stage.setScene(scene);
-        stage.show();
-    }
-     */
 }
