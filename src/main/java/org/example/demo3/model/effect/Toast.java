@@ -2,16 +2,20 @@ package org.example.demo3.model.effect;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
 import static org.example.demo3.model.constants.Config.TOAST_DURATION_SECONDS;
 
 public class Toast {
 
-    public static void makeText(Stage ownerStage, String message, int durationSeconds) {
+    public static void makeText(Stage ownerStage, String message, int durationMillis) {
         Popup popup = new Popup();
 
         Label label = new Label(message);
@@ -33,13 +37,14 @@ public class Toast {
         popup.show(ownerStage);
 
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(durationSeconds * 1000), // Umwandlung in MS
+                Duration.millis(durationMillis),
                 ae -> popup.hide()));
         timeline.play();
     }
 
+    @SuppressWarnings("unused")
     public static void makeText(Stage ownerStage, String message) {
-        makeText(ownerStage, message, TOAST_DURATION_SECONDS * 1000);
+        makeText(ownerStage, message, TOAST_DURATION_SECONDS * 1000); // Umwandlung in ms
     }
 
 }
