@@ -1235,7 +1235,7 @@
     "selectedAmount": 0,
     "name": "War Trumpet",
     "description": "Doubles the strength of all units in a chosen row.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
+    "imagePath": "/org/example/demo3/assets/Geralt.png",
     "rowType": "ANY",
     "cardType": "SPECIAL",
     "faction": "ITALY",

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import org.example.demo3.model.cards.*;
+import org.example.demo3.model.enums.EffectType;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.typeadapter.RuntimeTypeAdapterFactory;
 
@@ -31,8 +32,7 @@ public class CardRepository {
     private List<Card> allCards;
     private static final String resourcePath = JSON_PATH;
     private final Gson gson;
-
-    // Der Konstruktor ist jetzt private, um die Erstellung von außen zu verhindern
+    
     private CardRepository() {
         RuntimeTypeAdapterFactory<Card> adapterFactory = RuntimeTypeAdapterFactory
                 .of(Card.class, "cardType")
@@ -158,6 +158,13 @@ public class CardRepository {
                 loaded.forEach(card -> {
                     if (card instanceof BaseCard bc) {
                         bc.initMaxAmount();
+                    }
+                    
+                    if (card instanceof WeatherCard wc) {
+                        EffectType derivedEffect = WeatherCard.determineEffectType(wc.getWeatherType());
+                        if (wc instanceof BaseCard bc) {
+                            bc.setEffectType(derivedEffect);
+                        }
                     }
                 });
 

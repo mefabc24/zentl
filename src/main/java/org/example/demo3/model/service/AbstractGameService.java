@@ -25,7 +25,7 @@ public abstract class AbstractGameService {
     protected final GameEngine gameEngine = new GameEngine();
     protected final CardRepository cardRepository;
     protected final SoundService soundService;
-    
+
     protected Board board;
     protected Player p1, p2, currentPlayer;
     protected int round;
@@ -70,16 +70,17 @@ public abstract class AbstractGameService {
         Player player = event.getPlayer();
         Card card = event.getCard();
         soundService.playSoundForCard(card);
-        
+
         if (player.removeFromHand(card)) {
             if (card.getCardType() == CardType.UNIT) {
                 board.addCardToRow(card, player);
             } else if (card.getCardType() == CardType.WEATHER) {
                 board.addWeatherCard(card);
-            } else {
+            } else { // SPECIAL-Karte
                 player.addToDiscardPile(card);
             }
             handleCardEffect(card, player);
+            postGameState();
             nextTurn();
         }
     }
@@ -87,6 +88,8 @@ public abstract class AbstractGameService {
     protected void playerPassed(PlayerPassed event) {
         if (!isGameActive) return;
         event.getPlayer().pass();
+        System.out.println("[DEBUG] Player " + event.getPlayer().getName() + " has passed.");
+        postGameState();
         nextTurn();
     }
 
@@ -110,11 +113,8 @@ public abstract class AbstractGameService {
         if (!isGameActive) return;
         round++;
         Stream.of(p1, p2).forEach(p -> board.getPlayerRows(p).values().stream().flatMap(List::stream).forEach(p::addToDiscardPile));
-
-        // Annahme: Der Spieler, der gerade dran ist, bekommt die Wetterkarten auf den Ablagestapel, da wir uns den Besitzer nicht merken.
         board.getActiveWeatherCards().forEach(currentPlayer::addToDiscardPile);
         board.clearWeatherCards();
-
         board.clearBoard();
         board.clearWeatherEffects();
         board.clearAllHornEffects();
@@ -157,9 +157,20 @@ public abstract class AbstractGameService {
     protected void updateScores() {
         p1.setScore(board.calculateTotalPower(p1));
         p2.setScore(board.calculateTotalPower(p2));
+        // NEUE DEBUG-AUSGABE: Zeigt die finalen Punktestände nach jeder Aktualisierung.
+        System.out.println("--------------------------------------------------");
+        System.out.println("[DEBUG] SCORES UPDATED | P1: " + p1.getScore() + " | P2: " + p2.getScore());
+        System.out.println("--------------------------------------------------");
     }
 
     protected void handleCardEffect(Card card, Player player) {
+        // NEUE DEBUG-AUSGABE: Zeigt an, welcher Effekt getriggert wird.
+        System.out.println("\n============== EFFECT TRIGGER ==============");
+        System.out.println("[DEBUG] Player:      " + player.getName());
+        System.out.println("[DEBUG] Card Played: " + card.getName());
+        System.out.println("[DEBUG] EffectType:  " + card.getEffectType());
+        System.out.println("============================================");
+
         if (card.getEffectType() == null) return;
         String effectMessage = "";
 
@@ -212,35 +223,33 @@ public abstract class AbstractGameService {
             case WEATHER_FROST:
                 board.setWeatherEffect(RowType.MELEE, ((WeatherCard) card).getWeatherType());
                 effectMessage = "Biting Frost settles on the Melee rows!";
+                System.out.println("[DEBUG] Board state updated: MELEE weather is now active for ALL players.");
                 break;
             case WEATHER_FOG:
                 board.setWeatherEffect(RowType.RANGED, ((WeatherCard) card).getWeatherType());
                 effectMessage = "Impenetrable Fog descends on the Ranged rows!";
+                System.out.println("[DEBUG] Board state updated: RANGED weather is now active for ALL players.");
                 break;
             case WEATHER_RAIN:
                 board.setWeatherEffect(RowType.SIEGE, ((WeatherCard) card).getWeatherType());
                 effectMessage = "Torrential Rain pours on the Siege rows!";
+                System.out.println("[DEBUG] Board state updated: SIEGE weather is now active for ALL players.");
                 break;
             case CLEAR_WEATHER:
+            case RALLY: // Ist jetzt absichtlich identisch zu CLEAR_WEATHER
                 board.clearWeatherEffects();
                 board.getActiveWeatherCards().forEach(player::addToDiscardPile);
                 board.clearWeatherCards();
                 effectMessage = "The skies have cleared!";
+                System.out.println("[DEBUG] Board state updated: ALL weather effects cleared.");
                 break;
-
-            case RALLY:
-                board.clearWeatherEffects();
-                board.getActiveWeatherCards().forEach(player::addToDiscardPile);
-                board.clearWeatherCards();
-                effectMessage = player.getName() + " rallies the troops, clearing weather effects!";
-                break;
-
             case DIMERITIUM_BOMB:
                 board.clearAllHornEffects();
                 board.clearWeatherEffects();
                 board.getActiveWeatherCards().forEach(player::addToDiscardPile);
                 board.clearWeatherCards();
                 effectMessage = "A Dimeritium Bomb nullifies all magic on the battlefield!";
+                System.out.println("[DEBUG] Board state updated: ALL weather and horn effects cleared.");
                 break;
         }
         if (!effectMessage.isEmpty()) eventBus.post(new EffectLogEvent(effectMessage));

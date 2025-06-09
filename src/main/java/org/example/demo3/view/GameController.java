@@ -84,7 +84,7 @@ public class GameController implements Initializable {
     @FXML
     void handleBackToMenu(ActionEvent event) {
         cleanup();
-        
+
         SoundService.getInstance().startMenuMusic();
         if (navigationService != null) {
             navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", controller -> {
@@ -97,12 +97,22 @@ public class GameController implements Initializable {
 
     @FXML
     void handleRestartGame(ActionEvent event) {
-        cleanup(); // Altes Spiel und Listener beenden
-        subscribeToEvents(); // Listener für das neue Spiel wieder anmelden
+        // 1. Clean up the old game and its listeners.
+        // This shuts down the old gameService and unsubscribes its event handlers.
+        cleanup();
+
+        // 2. Re-subscribe the UI listeners of this controller for the new game.
+        subscribeToEvents();
+
+        // 3. Reset the game-over flag.
         gameEnded = false;
-        if (gameService != null) {
-            gameService.newGame(gameMode, botDifficulty, p1.getfraction(), p2.getfraction());
-        }
+        
+        // This ensures a clean state, and its constructor will subscribe its own event handlers once.
+        this.gameService = new GameService();
+
+        // 5. Tell the new service to start a new game with the previous settings.
+        // We use the p1 and p2 objects from the last game state just to get their faction info.
+        gameService.newGame(gameMode, botDifficulty, p1.getfraction(), p2.getfraction());
     }
 
     private void updateGameState(GameStateUpdateEve event) {
@@ -238,7 +248,7 @@ public class GameController implements Initializable {
 
     private void displayGameOver(GameEndedEve event) {
         gameEnded = true;
-        
+
         if (gameService != null) gameService.shutdown();
 
         p1Score.setText(event.getP1Name() + " Score: " + event.getP1().getScore() + " (Wins: " + event.getPl1Wins() + ")");
