@@ -23,7 +23,8 @@ public class NavigationService {
             FXML_INVENTORY_PATH,
             FXML_EDITOR_PATH,
             FXML_MAINMENU_PATH,
-            FXML_FACTION_TAB_PATH
+            FXML_FACTION_TAB_PATH,
+            FXML_UNLOCKER_PATH
     );
 
 

@@ -105,18 +105,28 @@ public abstract class BaseCard implements Card {
     @Override
     public Image getImage() {
         if (this.cardImage == null && this.imagePath != null && !this.imagePath.isEmpty()) {
-            try (InputStream stream = getClass().getResourceAsStream(this.imagePath)) {
+
+            // --- HIER DIE ÄNDERUNG ---
+            // Stelle sicher, dass der Pfad absolut ist (mit "/" beginnt)
+            String absolutePath = this.imagePath;
+            if (!absolutePath.startsWith("/")) {
+                absolutePath = "/" + absolutePath;
+            }
+            // ------------------------
+
+            // Verwende den neuen, absoluten Pfad
+            try (InputStream stream = getClass().getResourceAsStream(absolutePath)) {
                 if (stream != null) {
                     this.cardImage = new Image(stream);
                     if (this.cardImage.isError()) {
-                        System.err.println("Fehler beim Erstellen des Image-Objekts für: " + this.imagePath + " für Karte " + this.name + " - Exception: " + this.cardImage.getException());
+                        System.err.println("Fehler beim Erstellen des Image-Objekts für: " + absolutePath + " für Karte " + this.name + " - Exception: " + this.cardImage.getException());
                         this.cardImage = null;
                     }
                 } else {
-                    System.err.println("Bild nicht gefunden: " + this.imagePath + " für Karte " + this.name);
+                    System.err.println("Bild nicht gefunden: " + absolutePath + " für Karte " + this.name);
                 }
             } catch (Exception e) {
-                System.err.println("Fehler beim Laden des Bildes '" + this.imagePath + "' für Karte " + this.name + ": " + e.getMessage());
+                System.err.println("Fehler beim Laden des Bildes '" + absolutePath + "' für Karte " + this.name + ": " + e.getMessage());
                 e.printStackTrace();
             }
         }

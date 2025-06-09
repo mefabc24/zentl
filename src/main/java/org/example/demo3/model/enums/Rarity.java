@@ -49,7 +49,8 @@ public enum Rarity {
             cumulativeWeight += rarity.getWeight();
             if (cumulativeWeight > random) {
                 System.out.println(rarity);
-                return rarity;
+                return LEGENDARY;
+                //return rarity;
             }
         }
         throw new IllegalStateException("Konnte keine Seltenheit auswählen. Überprüfe die Gewichte.");

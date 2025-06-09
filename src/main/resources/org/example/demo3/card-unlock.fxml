@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Rectangle?>
 
+<?import javafx.scene.control.Label?>
 <GridPane xmlns="http://javafx.com/javafx/21"
           xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="org.example.demo3.view.CardUnlockController"
@@ -23,22 +24,33 @@
         <ColumnConstraints hgrow="ALWAYS"/>
     </columnConstraints>
 
-    <Button fx:id="spinButton" text="Spin!" onAction="#generateCard" GridPane.columnIndex="0" GridPane.rowIndex="0"
-            GridPane.halignment="CENTER"
-            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 10 20;"/>
+    <Label fx:id="newCardLabel" text="NEW!" visible="false" styleClass="new-card-label"
+           GridPane.columnIndex="0" GridPane.rowIndex="0"
+           GridPane.halignment="CENTER" GridPane.valignment="BOTTOM"/>
+
+
 
     <!-- Das Karussell-Fenster -->
-    <StackPane fx:id="carouselPane" alignment="CENTER_LEFT"
+    <StackPane fx:id="carouselPane"
                GridPane.columnIndex="0" GridPane.rowIndex="1"
                maxWidth="1000" maxHeight="320.0">
 
-        <!-- HBox für die Bilder -->
+        <!-- 1. HBox für die Bilder (liegt ganz hinten) -->
         <HBox fx:id="rarityContainer" alignment="CENTER_LEFT" spacing="30.0"/>
 
-        <!-- Zeiger in der Mitte -->
-        <Rectangle width="5" height="340.0" fill="#FFD700"
+        <!-- 2. Der finale Karten-Container (liegt darüber) -->
+        <!-- WICHTIG: KEIN mouseTransparent hier! -->
+        <StackPane fx:id="finalCardPane" alignment="CENTER" mouseTransparent="true"/>
+
+        <!-- 3. Der Zeiger (liegt darüber, ist aber transparent für Klicks) -->
+        <Rectangle fx:id="indicator" width="5" height="340.0" fill="#FFD700"
                    stroke="black" strokeWidth="1" mouseTransparent="true"
-                   StackPane.alignment="CENTER"/>
+                   StackPane.alignment="CENTER" visible="false"/>
+
     </StackPane>
+
+    <Button fx:id="spinButton" text="Spin!" onAction="#generateCard" GridPane.columnIndex="0" GridPane.rowIndex="2"
+            GridPane.halignment="CENTER"
+            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 10 20;"/>
 
 </GridPane>
