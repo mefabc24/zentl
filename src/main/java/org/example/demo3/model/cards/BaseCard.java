@@ -2,14 +2,19 @@ package org.example.demo3.model.cards;
 
 import javafx.scene.image.Image;
 import org.example.demo3.model.enums.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
+@SuppressWarnings("unused")
 public abstract class BaseCard implements Card {
     // Console Colors
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
+
+    private static final Logger logger = LoggerFactory.getLogger(BaseCard.class);
 
     protected int id;
     protected int power;
@@ -106,15 +111,12 @@ public abstract class BaseCard implements Card {
     public Image getImage() {
         if (this.cardImage == null && this.imagePath != null && !this.imagePath.isEmpty()) {
 
-            // --- HIER DIE ÄNDERUNG ---
-            // Stelle sicher, dass der Pfad absolut ist (mit "/" beginnt)
+
             String absolutePath = this.imagePath;
             if (!absolutePath.startsWith("/")) {
                 absolutePath = "/" + absolutePath;
             }
-            // ------------------------
 
-            // Verwende den neuen, absoluten Pfad
             try (InputStream stream = getClass().getResourceAsStream(absolutePath)) {
                 if (stream != null) {
                     this.cardImage = new Image(stream);
@@ -126,8 +128,7 @@ public abstract class BaseCard implements Card {
                     System.err.println("Bild nicht gefunden: " + absolutePath + " für Karte " + this.name);
                 }
             } catch (Exception e) {
-                System.err.println("Fehler beim Laden des Bildes '" + absolutePath + "' für Karte " + this.name + ": " + e.getMessage());
-                e.printStackTrace();
+                logger.error("Fehler beim Laden des Bildes '{}' für Karte '{}'", absolutePath, this.name, e);
             }
         }
         return this.cardImage;

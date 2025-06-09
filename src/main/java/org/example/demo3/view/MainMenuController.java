@@ -1,6 +1,5 @@
 package org.example.demo3.view;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.NavigationService;
@@ -56,7 +55,18 @@ public class MainMenuController {
 
     @FXML
     private void handleQuitButtonAction() {
+        if (navigationService != null) {
+            navigationService.navigateTo(FXML_UNLOCKER_PATH, "Unlocker", (CardUnlockController controller) ->
+                    controller.setNavigationService(navigationService));
+        } else {
+            System.err.println("NavigationService not initialized in MainMenuController.");
+        }
+    }
+
+    /*
+    @FXML
+    private void handleQuitButtonAction() {
         System.out.println("Quit button clicked");
         Platform.exit();
-    }
+    }*/
 }

@@ -426,5 +426,33 @@
     -fx-padding: 5px 20px;
     -fx-border-radius: 15px;
     -fx-background-radius: 15px;
+    -fx-translate-y: 200px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 10, 0, 0, 5);
 }
+
+/* Styling für den Container, der den Drop-Button und den Preis hält */
+.drop-container {
+    -fx-border-color: transparent;
+    -fx-padding: 20;
+    -fx-border-radius: 10;
+    -fx-border-width: 3;
+    /* Sag dem Container, dass er Farbänderungen am Rand animieren soll */
+    -fx-transition: -fx-border-color 0.2s;
+}
+
+/* Hover-Effekt für den gesamten Container */
+
+
+/* Der Button selbst */
+.drop-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+
+.drop-button:hover {
+    -fx-background-color: transparent;
+}
+
