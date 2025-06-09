@@ -28,6 +28,17 @@ public enum Rarity {
     public int getMaxAmount() { return maxAmount; }
     public double getWeight() { return weight; }
 
+    // Sucht passende Rarity anhand der SortID
+    public static Rarity fromSortID(int id) {
+        for (Rarity rarity : VALUES) { // VALUES ist die Liste, die du schon hast
+            if (rarity.getSortID() == id) {
+                return rarity;
+            }
+        }
+        // Dieser Fehlerfall ist wichtig, um Probleme im Code schnell zu finden.
+        throw new IllegalArgumentException("Keine Rarity mit der sortID gefunden: " + id);
+    }
+
     // Static Methode fuer Zufallsauswahl
     public static Rarity getRandom() {
         double random = ThreadLocalRandom.current().nextDouble(TOTAL_WEIGHT);

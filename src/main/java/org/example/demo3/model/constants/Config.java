@@ -29,6 +29,10 @@ public final class Config {
     // Effect Constants
     public static final int TOAST_DURATION_SECONDS = 2;
 
+    // Unlock System
+    public static final int CAROUSEL_ELEMENT_SIZE = 100;
+    public static final int CAROUSEL_SELECTED_INDEX = 96;
+
     // File Paths
     public static final String FXML_PATH = "/org/example/demo3/";
     public static final String RESOURCE_PATH = "/org/example/demo3/";
@@ -40,6 +44,7 @@ public final class Config {
     public static final String FXML_FACTION_TAB_PATH = FXML_PATH + "faction-tab-content.fxml";
     public static final String FXML_INVENTORY_PATH = FXML_PATH + "inventory-view.fxml";
     public static final String FXML_MAINMENU_PATH = FXML_PATH + "MainMenu.fxml";
+    public static final String FXML_UNLOCKER_PATH = FXML_PATH + "card-unlock.fxml";
     public static final String FXML_GAME_SETUP_PATH = FXML_PATH + "GameSetup.fxml";
     public static final String FXML_GAME_PATH = FXML_PATH + "hello-view.fxml";
     public static final String FXML_GAME_MODE_SELECTION_PATH = FXML_PATH + "GameModeSelection.fxml";
