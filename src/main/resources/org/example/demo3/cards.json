@@ -45,7 +45,7 @@
     "weatherType": "FROST",
     "effectType": "WEATHER_FROST"
   },
-  
+
   {
     "id": 1,
     "power": 2,
@@ -243,20 +243,6 @@
     "isUnlocked": true
   },
   {
-    "id": 15,
-    "power": 0,
-    "amount": 2,
-    "selectedAmount": 0,
-    "name": "Commander's Horn",
-    "description": "Doubles row strength.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
-    "rowType": "ANY",
-    "cardType": "SPECIAL",
-    "faction": "KNIGHTS",
-    "rarity": "RARE",
-    "isUnlocked": true
-  },
-  {
     "id": 16,
     "power": 9,
     "amount": 2,
@@ -265,20 +251,6 @@
     "description": "Hardened by battles.",
     "imagePath": "/org/example/demo3/assets/Rare.png",
     "rowType": "MELEE",
-    "cardType": "UNIT",
-    "faction": "KNIGHTS",
-    "rarity": "RARE",
-    "isUnlocked": true
-  },
-  {
-    "id": 17,
-    "power": 5,
-    "amount": 4,
-    "selectedAmount": 0,
-    "name": "Field Medic",
-    "description": "Revives a unit.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
-    "rowType": "RANGED",
     "cardType": "UNIT",
     "faction": "KNIGHTS",
     "rarity": "RARE",
@@ -986,20 +958,6 @@
     "isUnlocked": true
   },
   {
-    "id": 68,
-    "power": 0,
-    "amount": 3,
-    "selectedAmount": 0,
-    "name": "Clear Skies",
-    "description": "Clears all weather effects.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
-    "rowType": "ANY",
-    "cardType": "SPECIAL",
-    "faction": "MERCENARIES",
-    "rarity": "RARE",
-    "isUnlocked": true
-  },
-  {
     "id": 69,
     "power": 12,
     "amount": 1,
@@ -1096,21 +1054,6 @@
     "faction": "MERCENARIES",
     "rarity": "MYTHIC",
     "isUnlocked": true
-  },
-  {
-    "id": 76,
-    "power": 0,
-    "amount": 5,
-    "selectedAmount": 0,
-    "name": "Biting Frost",
-    "description": "Lowers strength of all units in a melee row to 1.",
-    "imagePath": "/org/example/demo3/assets/Frost.png",
-    "rowType": "WEATHER",
-    "cardType": "WEATHER",
-    "faction": "KNIGHTS",
-    "rarity": "WEATHER",
-    "isUnlocked": true,
-    "weatherType": "FROST"
   },
   {
     "id": 77,

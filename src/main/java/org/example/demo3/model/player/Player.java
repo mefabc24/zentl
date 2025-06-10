@@ -40,5 +40,8 @@ public interface Player {
     int getWins();
 
     void setWins(int wins);
-    
+
+    Player copy();
+
+    List<Card> getHandInternal();
 }

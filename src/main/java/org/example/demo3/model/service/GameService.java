@@ -9,9 +9,10 @@ import org.example.demo3.model.enums.BotDifficulty;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.GameMode;
 import org.example.demo3.model.logic.PlayerFactory;
+import org.example.demo3.model.player.AdvancedBot;
 import org.example.demo3.model.player.EasyBot;
-import org.example.demo3.model.player.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameService extends AbstractGameService {
@@ -31,7 +32,7 @@ public class GameService extends AbstractGameService {
 
         List<Card> p2Deck = cardRepository.getSavedDeck(p2Faction);
         if (p2Deck.isEmpty()) {
-            p2Deck = cardRepository.getRandomDeck(p2Faction);
+            p2Deck = createCustomBotDeck(p2Faction);
         }
         this.p2 = PlayerFactory.createPlayer2(mode, difficulty, p2Faction, p2Deck);
 
@@ -62,7 +63,25 @@ public class GameService extends AbstractGameService {
 
         postGameState();
 
-        if (isGameActive && currentPlayer instanceof EasyBot) {
+        if (currentPlayer instanceof AdvancedBot bot) {
+            // prevent UI freeze while bot thinks
+            new Thread(() -> {
+                    if (!isGameActive) return;
+
+                    Card cardToPlay = bot.chooseCardToPlay(p1, board, round);
+
+                    // return to javafx thread with the card the bot wants to play
+                    Platform.runLater(() -> {
+                        if (!isGameActive) return;
+                        if (cardToPlay != null) {
+                            eventBus.post(new PlayCardRequest(currentPlayer, cardToPlay));
+                        } else {
+                            eventBus.post(new PlayerPassed(currentPlayer));
+                        }
+                    });
+            }).start();
+
+        } else if (currentPlayer instanceof EasyBot bot) {
             new Thread(() -> {
                 try {
                     Thread.sleep(1000);
@@ -82,5 +101,38 @@ public class GameService extends AbstractGameService {
                 }
             }).start();
         }
+    }
+
+    // FOR TESTING THE BOTS
+    private List<Card> createCustomBotDeck(Faction faction) {
+        System.out.println("INFO: Erstelle benutzerdefiniertes Deck für den Bot...");
+        List<Card> customDeck = new ArrayList<>();
+
+        addCardByName(customDeck, "Paladin", 2);
+        addCardByName(customDeck, "Pikeman", 2);
+        addCardByName(customDeck, "Knight Errant", 2);
+        addCardByName(customDeck, "Ballista Crew", 2);
+
+        addCardByName(customDeck, "Heavy Cavalry", 2);
+        addCardByName(customDeck, "Crossbowman", 2);
+        addCardByName(customDeck, "Field Medic", 1);
+
+        addCardByName(customDeck, "Commander's Horn", 1);
+        addCardByName(customDeck, "Scorch", 1);
+        addCardByName(customDeck, "Biting Frost", 1);
+        addCardByName(customDeck, "Clear Skies", 1);
+
+        return customDeck;
+    }
+
+    private void addCardByName(List<Card> deck, String name, int count) {
+        cardRepository.getAllCards().stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .ifPresent(card -> {
+                    for (int i = 0; i < count; i++) {
+                        deck.add(card);
+                    }
+                });
     }
 }
