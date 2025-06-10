@@ -66,6 +66,8 @@ public class GameService extends AbstractGameService {
         if (currentPlayer instanceof AdvancedBot bot) {
             // prevent UI freeze while bot thinks
             new Thread(() -> {
+                try {
+                    Thread.sleep(1000);
                     if (!isGameActive) return;
 
                     Card cardToPlay = bot.chooseCardToPlay(p1, board, round);
@@ -79,6 +81,9 @@ public class GameService extends AbstractGameService {
                             eventBus.post(new PlayerPassed(currentPlayer));
                         }
                     });
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }).start();
 
         } else if (currentPlayer instanceof EasyBot bot) {
