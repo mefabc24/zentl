@@ -32,7 +32,7 @@ public class GameBoardTest {
     @Test
     void testAddCardToRow() {
         Card card = new UnitCard(1, 12, 1, "Soldier ", "Test Description", Faction.KNIGHTS, RowType.MELEE,
-                Rarity.EPIC, "test/paths/ImagePath/", true);
+                Rarity.EPIC, "test/paths/ImagePath/");
         board.addCardToRow(card, p1);
 
         // wurde Karte hinzugefügt?
@@ -50,13 +50,13 @@ public class GameBoardTest {
     void testCalcPower() {
 
         Card card1 = new UnitCard(2, 3, 1, "a " , "Desc", Faction.KNIGHTS, RowType.MELEE,
-                Rarity.COMMON, "test/paths/ImagePath/", true);
+                Rarity.COMMON, "test/paths/ImagePath/");
         Card card2 = new UnitCard(3, 4, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
-                Rarity.COMMON, "test/paths/ImagePath/", true);
+                Rarity.COMMON, "test/paths/ImagePath/");
         Card card3 = new UnitCard(4, 7, 1,"c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
-                Rarity.RARE, "test/paths/ImagePath/", true);
+                Rarity.RARE, "test/paths/ImagePath/");
         Card card4 = new UnitCard(5, 8, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
-                Rarity.RARE, "test/paths/ImagePath/", true);
+                Rarity.RARE, "test/paths/ImagePath/");
 
         board.addCardToRow(card1, p1);
         board.addCardToRow(card2, p1);

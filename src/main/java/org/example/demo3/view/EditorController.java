@@ -1,7 +1,6 @@
 package org.example.demo3.view;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.demo3.model.enums.CardType;
@@ -10,6 +9,8 @@ import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.UnaryOperator;
 
@@ -26,13 +27,11 @@ public class EditorController {
     @FXML private ComboBox<CardType> cardTypeComboBox;
     @FXML private ComboBox<Faction> factionComboBox;
     @FXML private ComboBox<Rarity> rarityComboBox;
-
-    @FXML private Button generateButton;
-    @FXML private Button backButton;
     @FXML private TextArea outputArea;
 
+    Logger logger = LoggerFactory.getLogger(EditorController.class);
     private NavigationService navigationService;
-    private final CardRepository cardRepository = new CardRepository();
+    private final CardRepository cardRepository = CardRepository.getInstance();
 
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
@@ -65,7 +64,7 @@ public class EditorController {
     }
 
     @FXML
-    void handleGenerateAction(ActionEvent event) {
+    void handleGenerateAction() {
         try {
             int id = cardRepository.getLastID() + 1;
 
@@ -129,21 +128,21 @@ public class EditorController {
                 cardType = CardType.WEATHER;
             }
 
-            String jsonOutput = String.format(java.util.Locale.US,
-                    "{\n" +
-                            "    \"id\": %d,\n" +
-                            "    \"power\": %d,\n" +
-                            "    \"amount\": %d,\n" +
-                            "    \"selectedAmount\": %d,\n" +
-                            "    \"name\": \"%s\",\n" +
-                            "    \"description\": \"%s\",\n" +
-                            "    \"imagePath\": \"%s%s\",\n" +
-                            "    \"rowType\": \"%s\",\n" +
-                            "    \"cardType\": \"%s\",\n" +
-                            "    \"faction\": \"%s\",\n" +
-                            "    \"rarity\": \"%s\",\n" +
-                            "    \"isUnlocked\": %b\n" +
-                            "}",
+            String jsonOutput = """
+            {
+                "id": %d,
+                "power": %d,
+                "amount": %d,
+                "selectedAmount": %d,
+                "name": "%s",
+                "description": "%s",
+                "imagePath": "%s%s",
+                "rowType": "%s",
+                "cardType": "%s",
+                "faction": "%s",
+                "rarity": "%s",
+                "isUnlocked": %b
+            }""".formatted(
                     id,
                     power,
                     amount,
@@ -163,8 +162,8 @@ public class EditorController {
             System.out.println("JSON generiert:\n" + jsonOutput);
 
         } catch (Exception e) {
-            outputArea.setText("Ein unerwarteter Fehler ist aufgetreten: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Fehler beim Laden einer Faction-Tab-Ansicht.", e);
+            outputArea.setText("Ein unerwarteter Anwendungsfehler ist aufgetreten. Der Fehler wurde für die Analyse protokolliert.");
         }
     }
 
@@ -181,12 +180,11 @@ public class EditorController {
 
 
     @FXML
-    void handleBackAction(ActionEvent event) {
+    void handleBackAction() {
         if (navigationService != null) {
 
-            navigationService.navigateTo(FXML_MAINMENU_PATH, "Main Menu", (MainMenuController controller) -> {
-                controller.setNavigationService(navigationService);
-            });
+            navigationService.navigateTo(FXML_MAINMENU_PATH, "Main Menu", (MainMenuController controller) ->
+                controller.setNavigationService(navigationService));
         } else {
             System.err.println("NavigationService ist nicht im EditorController initialisiert.");
             outputArea.setText("Fehler: Navigation zum Hauptmenü nicht möglich.");

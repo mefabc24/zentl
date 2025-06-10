@@ -5,7 +5,6 @@ import java.util.UUID;
 public class CardInstance {
     private final Card cardDefinition;
     private final UUID instanceId;
-    private boolean isUnlocked;
 
     public CardInstance(Card cardDefinition) {
         if (cardDefinition == null) {
@@ -13,11 +12,9 @@ public class CardInstance {
         }
         this.cardDefinition = cardDefinition;
         this.instanceId = UUID.randomUUID();
-        this.isUnlocked = cardDefinition.getAmount() > 0;
     }
 
     // Getter
-    public boolean isUnlocked() { return isUnlocked; }
     public Card getCardDefinition() { return cardDefinition; }
     public UUID getInstanceId() { return instanceId; }
 

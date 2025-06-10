@@ -8,11 +8,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -34,36 +30,34 @@ import static org.example.demo3.model.constants.Config.*;
 
 public class FactionTabController {
 
+    // FXML Fields
     @FXML private FlowPane tabAllCardsFP;
     @FXML private FlowPane tabSelectedCardsFP;
     @FXML private ScrollPane tabCardScrollPane;
     @FXML private TextField tabSearchTextField;
     @FXML private Label tabSelectedCountLabel;
-
-    @FXML private Button tabRaritySortButton;
-    @FXML private Button tabPowerSortButton;
-    @FXML private Button tabRowTypeSortButton;
-    @FXML private Button tabCardTypeSortButton;
     @FXML private Button tabToggleVisibilityButton;
-    @FXML private Button tabUnselectAllButton;
-    @FXML private Button tabRandomizeButton;
 
+    // Member Variables
     private Faction currentFaction;
     private List<CardInstance> factionDisplayableInstances;
     private List<CardInstance> currentlyDisplayedInstancesInTab;
     private ObservableList<CardInstance> globalSelectedCardInstancesList;
-
-    private Comparator<CardInstance> currentSortOrderInTab = CardComparators.BY_ID_ASC_INSTANCE;
-    private boolean sortAscendingInTab = true;
-    private boolean showLockedCards = false;
+    private final Map<CardInstance, Button> instanceToButtonMap = new HashMap<>();
     private InventoryController mainController;
     private Image lockedOverlayImage;
 
+    // State Variables
+    private Comparator<CardInstance> currentSortOrderInTab = CardComparators.BY_ID_ASC_INSTANCE;
+    private boolean sortAscendingInTab = true;
+    private boolean showLockedCards = false;
+
+    // Drag and Drop State (Original)
     private Node draggedItemFromSelectedCardsFP = null;
     private Button ghostNode = null;
 
 
-    public void initializeData(Faction faction, List<Card> allCardPrototypes, ObservableList<CardInstance> globalSelectedInstances, InventoryController mainController) {
+    public void initializeData(Faction faction, List<CardInstance> factionInstances, ObservableList<CardInstance> globalSelectedInstances, InventoryController mainController) {
         this.currentFaction = faction;
         this.globalSelectedCardInstancesList = globalSelectedInstances;
         this.mainController = mainController;
@@ -76,16 +70,17 @@ public class FactionTabController {
             System.err.println("FEHLER beim Laden von LockedOverlay.png: " + e.getMessage());
         }
 
-        this.factionDisplayableInstances = new ArrayList<>();
-        allCardPrototypes.stream()
-                .filter(proto -> proto.getFaction() == this.currentFaction)
-                .forEach(proto -> {
-                    for (int i = 0; i < proto.getAmount(); i++) {
-                        this.factionDisplayableInstances.add(new CardInstance(proto));
-                    }
-                });
+        this.factionDisplayableInstances = new ArrayList<>(factionInstances);
         this.currentlyDisplayedInstancesInTab = new ArrayList<>(this.factionDisplayableInstances);
 
+        setupListeners();
+        setupDragAndDropEventHandlersForPane();
+        updateTabSelectedCardsDisplay();
+        updateSelectedCountLabel();
+        sortAndRefreshCardInstancesInTab(this.currentSortOrderInTab);
+    }
+
+    private void setupListeners() {
         this.globalSelectedCardInstancesList.addListener((ListChangeListener<CardInstance>) change -> {
             if (draggedItemFromSelectedCardsFP == null) {
                 updateTabSelectedCardsDisplay();
@@ -94,14 +89,8 @@ public class FactionTabController {
             refreshAllCardsDisplayStyles();
         });
 
-        setupDragAndDropEventHandlersForPane();
-        updateTabSelectedCardsDisplay();
-        updateSelectedCountLabel();
-
         if (tabSearchTextField != null) {
-            tabSearchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                filterAndDisplayCardInstancesInTab(newValue);
-            });
+            tabSearchTextField.textProperty().addListener((obs, oldVal, newVal) -> filterAndDisplayCardInstancesInTab(newVal));
         }
 
         if (tabCardScrollPane != null) {
@@ -115,34 +104,57 @@ public class FactionTabController {
                 }
             });
         }
-        sortAndRefreshCardInstancesInTab(this.currentSortOrderInTab);
     }
 
-    private void updateTabSelectedCardsDisplay() {
+    private void displayCardInstancesInTab(List<CardInstance> instancesToDisplay) {
+        tabAllCardsFP.getChildren().clear();
+        tabAllCardsFP.setPadding(new Insets(10));
+        tabAllCardsFP.setHgap(10);
+        tabAllCardsFP.setVgap(10);
+        tabAllCardsFP.setAlignment(FLOWPANE_ALIGNMENT_ALL_CARDS);
+        instanceToButtonMap.clear();
+
+        List<Button> cardButtons = instancesToDisplay.stream()
+                .filter(instance -> showLockedCards || instance.getCardDefinition().getAmount() > 0)
+                .map(this::createDisplayCardButton)
+                .toList();
+
+        tabAllCardsFP.getChildren().addAll(cardButtons);
+    }
+
+    public void updateTabSelectedCardsDisplay() {
         tabSelectedCardsFP.getChildren().clear();
         tabSelectedCardsFP.setAlignment(FLOWPANE_ALIGNMENT_SELECTED_CARDS);
 
-        List<CardInstance> cardsForThisFactionInSelection = globalSelectedCardInstancesList.stream()
-                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction &&
-                        instance.getCardDefinition().isUnlocked())
-                .collect(Collectors.toList());
+        List<Button> selectedButtons = globalSelectedCardInstancesList.stream()
+                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction)
+                .map(this::createSelectedCardButton)
+                .toList();
 
-        for (CardInstance instance : cardsForThisFactionInSelection) {
-            Button cardButton = createSelectedCardButton(instance);
-            setupDragAndDropEventHandlersForSingleCard(cardButton);
-            tabSelectedCardsFP.getChildren().add(cardButton);
-        }
+        tabSelectedCardsFP.getChildren().addAll(selectedButtons);
+    }
+
+    private Button createDisplayCardButton(CardInstance instance) {
+        Button cardButton = new Button();
+        cardButton.setUserData(instance);
+        cardButton.setGraphic(createCardVisual(instance.getCardDefinition(), CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT));
+        cardButton.setPadding(Insets.EMPTY);
+        cardButton.getStyleClass().add("card-button");
+
+        cardButton.setOnAction(event -> handleCardSelectionToggleInTab(instance));
+
+        updateButtonSelectionStyleInTab(cardButton, globalSelectedCardInstancesList.contains(instance));
+        Tooltip.install(cardButton, createCardTooltip(instance.getCardDefinition()));
+
+        instanceToButtonMap.put(instance, cardButton);
+        return cardButton;
     }
 
     private Button createSelectedCardButton(CardInstance instance) {
         Card cardDef = instance.getCardDefinition();
-        ImageView imageView = new ImageView(cardDef.getImage());
-        imageView.setFitWidth(SELECTED_CARD_PREVIEW_WIDTH);
-        imageView.setFitHeight(SELECTED_CARD_PREVIEW_HEIGHT);
-        imageView.setPreserveRatio(true);
-
         Button cardButton = new Button();
-        cardButton.setGraphic(imageView);
+
+        cardButton.setGraphic(createCardVisual(cardDef, SELECTED_CARD_PREVIEW_WIDTH, SELECTED_CARD_PREVIEW_HEIGHT));
         cardButton.setPadding(Insets.EMPTY);
         cardButton.getStyleClass().clear();
         cardButton.getStyleClass().add("selected-card-preview-button");
@@ -150,16 +162,62 @@ public class FactionTabController {
 
         cardButton.setOnAction(e -> {
             if (draggedItemFromSelectedCardsFP != null && draggedItemFromSelectedCardsFP.getUserData() == instance) return;
-            handleCardSelectionToggleInTab(instance, null);
+            handleCardSelectionToggleInTab(instance);
         });
+
+        setupDragAndDropEventHandlersForSingleCard(cardButton);
         Tooltip.install(cardButton, new Tooltip(cardDef.getName() + " (Entfernen)"));
         return cardButton;
     }
 
+    private Node createCardVisual(Card cardDef, double width, double height) {
+        StackPane cardVisualPane = new StackPane(createCardImageOrPlaceholder(cardDef, width, height));
+        cardVisualPane.setAlignment(Pos.CENTER);
+        cardVisualPane.setPrefSize(width, height);
+
+        if (cardDef.getAmount() <= 0) {
+            if (this.lockedOverlayImage != null && !this.lockedOverlayImage.isError()) {
+                ImageView overlayImageView = new ImageView(this.lockedOverlayImage);
+                overlayImageView.setFitWidth(width);
+                overlayImageView.setFitHeight(height);
+                cardVisualPane.getChildren().add(overlayImageView);
+            }
+        }
+        return cardVisualPane;
+    }
+
+    private Node createCardImageOrPlaceholder(Card cardDef, double width, double height) {
+        Image image = cardDef.getImage();
+        if (image != null && !image.isError()) {
+            ImageView cardImageView = new ImageView(image);
+            cardImageView.setFitWidth(width);
+            cardImageView.setFitHeight(height);
+            return cardImageView;
+        } else {
+            Label noImageLabel = new Label("Bild\nfehlt");
+            noImageLabel.setWrapText(true);
+            noImageLabel.setStyle("-fx-text-alignment: center; -fx-text-fill: black; -fx-font-weight: bold;");
+            Rectangle placeholderRect = new Rectangle(width, height, Color.LIGHTGREY);
+            placeholderRect.setStroke(Color.DARKGREY);
+            return new StackPane(placeholderRect, noImageLabel);
+        }
+    }
+
+    private Tooltip createCardTooltip(Card cardDef) {
+        String tooltipText = String.format(
+                "Name: %s\nBeschreibung: %s\nStärke: %d\nFraktion: %s\nTyp: %s\nCardType: %s\nSeltenheit: %s\nStatus: %s",
+                cardDef.getName(), cardDef.getDescription(), cardDef.getPower(), cardDef.getFaction(),
+                cardDef.getRowType(), cardDef.getCardType(), cardDef.getRarity(),
+                (cardDef.getAmount() > 0 ? "Freigeschaltet" : "Gesperrt")
+        );
+        Tooltip tooltip = new Tooltip(tooltipText);
+        tooltip.setFont(new Font("System", 20));
+        return tooltip;
+    }
+
     private void createAndShowGhostNode() {
-        if (draggedItemFromSelectedCardsFP instanceof Button && draggedItemFromSelectedCardsFP.getUserData() instanceof CardInstance) {
+        if (draggedItemFromSelectedCardsFP instanceof Button && draggedItemFromSelectedCardsFP.getUserData() instanceof CardInstance instance) {
             removeGhostNodeFromPane();
-            CardInstance instance = (CardInstance) draggedItemFromSelectedCardsFP.getUserData();
             ghostNode = createSelectedCardButton(instance);
             ghostNode.setOpacity(0.5);
             ghostNode.setMouseTransparent(true);
@@ -169,30 +227,21 @@ public class FactionTabController {
 
     private void removeGhostNodeFromPane() {
         if (ghostNode != null) {
-            if (tabSelectedCardsFP.getChildren().contains(ghostNode)) {
-                tabSelectedCardsFP.getChildren().remove(ghostNode);
-            }
+            tabSelectedCardsFP.getChildren().remove(ghostNode);
             ghostNode = null;
         }
     }
 
     private void updateGhostNodePosition(double sceneX) {
         if (ghostNode == null || draggedItemFromSelectedCardsFP == null) return;
-
         ObservableList<Node> items = tabSelectedCardsFP.getChildren();
-
-        if (items.contains(ghostNode)) {
-            items.remove(ghostNode);
-        }
+        items.remove(ghostNode);
 
         int insertIndex = 0;
         boolean positionFound = false;
-
         for (int i = 0; i < items.size(); i++) {
             Node child = items.get(i);
-
             Point2D childCenterInScene = child.localToScene(child.getBoundsInLocal().getWidth() / 2, 0);
-
             if (sceneX <= childCenterInScene.getX()) {
                 insertIndex = i;
                 positionFound = true;
@@ -200,8 +249,7 @@ public class FactionTabController {
             }
             insertIndex = i + 1;
         }
-
-        if (!positionFound && !items.isEmpty() && items.get(items.size()-1) == draggedItemFromSelectedCardsFP && items.size()==1){
+        if (!positionFound && !items.isEmpty() && items.getLast() == draggedItemFromSelectedCardsFP && items.size()==1){
             Point2D childCenterInScene = draggedItemFromSelectedCardsFP.localToScene(draggedItemFromSelectedCardsFP.getBoundsInLocal().getWidth() / 2, 0);
             if(sceneX <= childCenterInScene.getX()){
                 insertIndex = 0;
@@ -211,21 +259,16 @@ public class FactionTabController {
         } else if (!positionFound && items.stream().allMatch(n -> n == draggedItemFromSelectedCardsFP)) {
             insertIndex = 0;
         }
-
-
         if (insertIndex > items.size()) {
             insertIndex = items.size();
         }
-
         items.add(insertIndex, ghostNode);
     }
-
 
     private void setupDragAndDropEventHandlersForPane() {
         tabSelectedCardsFP.setOnDragOver(event -> {
             if (draggedItemFromSelectedCardsFP != null && event.getGestureSource() == draggedItemFromSelectedCardsFP) {
                 event.acceptTransferModes(TransferMode.MOVE);
-
                 if (event.getPickResult().getIntersectedNode() == tabSelectedCardsFP) {
                     updateGhostNodePosition(event.getSceneX());
                 }
@@ -233,18 +276,7 @@ public class FactionTabController {
             }
         });
 
-        tabSelectedCardsFP.setOnDragDropped(event -> {
-            if (draggedItemFromSelectedCardsFP != null && ghostNode != null) {
-                int ghostIndex = tabSelectedCardsFP.getChildren().indexOf(ghostNode);
-                if (ghostIndex != -1) {
-                    tabSelectedCardsFP.getChildren().remove(draggedItemFromSelectedCardsFP);
-                    tabSelectedCardsFP.getChildren().add(ghostIndex, draggedItemFromSelectedCardsFP);
-                    event.setDropCompleted(true);
-                }
-            }
-            cleanupDragOperation();
-            event.consume();
-        });
+        tabSelectedCardsFP.setOnDragDropped(this::handleDragDropped);
     }
 
     private void setupDragAndDropEventHandlersForSingleCard(Node cardNode) {
@@ -254,52 +286,47 @@ public class FactionTabController {
             }
             draggedItemFromSelectedCardsFP = cardNode;
             createAndShowGhostNode();
-
             Dragboard db = cardNode.startDragAndDrop(TransferMode.MOVE);
             SnapshotParameters params = new SnapshotParameters();
             params.setFill(Color.TRANSPARENT);
             Image snapshotImage = cardNode.snapshot(params, null);
             db.setDragView(snapshotImage, event.getX(), event.getY());
-
             ClipboardContent content = new ClipboardContent();
             content.putString("selectedCardIsBeingDragged");
             db.setContent(content);
-
             draggedItemFromSelectedCardsFP.setVisible(false);
             draggedItemFromSelectedCardsFP.setManaged(false);
-
             event.consume();
         });
-
         cardNode.setOnDragOver(event -> {
             if (draggedItemFromSelectedCardsFP != null &&
                     draggedItemFromSelectedCardsFP != cardNode &&
                     event.getGestureSource() == draggedItemFromSelectedCardsFP &&
                     ghostNode != null) {
-
                 event.acceptTransferModes(TransferMode.MOVE);
                 updateGhostNodePosition(event.getSceneX());
                 event.consume();
             }
         });
 
-        cardNode.setOnDragDropped(event -> {
-            if (draggedItemFromSelectedCardsFP != null && ghostNode != null) {
-                int ghostIndex = tabSelectedCardsFP.getChildren().indexOf(ghostNode);
-                if (ghostIndex != -1) {
-                    tabSelectedCardsFP.getChildren().remove(draggedItemFromSelectedCardsFP);
-                    tabSelectedCardsFP.getChildren().add(ghostIndex, draggedItemFromSelectedCardsFP);
-                    event.setDropCompleted(true);
-                }
-            }
-            cleanupDragOperation();
-            event.consume();
-        });
-
+        cardNode.setOnDragDropped(this::handleDragDropped);
         cardNode.setOnDragDone(event -> {
             cleanupDragOperation();
             event.consume();
         });
+    }
+
+    private void handleDragDropped(DragEvent event) {
+        if (draggedItemFromSelectedCardsFP != null && ghostNode != null) {
+            int ghostIndex = tabSelectedCardsFP.getChildren().indexOf(ghostNode);
+            if (ghostIndex != -1) {
+                tabSelectedCardsFP.getChildren().remove(draggedItemFromSelectedCardsFP);
+                tabSelectedCardsFP.getChildren().add(ghostIndex, draggedItemFromSelectedCardsFP);
+                event.setDropCompleted(true);
+            }
+        }
+        cleanupDragOperation();
+        event.consume();
     }
 
     private void cleanupDragOperation() {
@@ -311,114 +338,83 @@ public class FactionTabController {
         draggedItemFromSelectedCardsFP = null;
     }
 
-    private void refreshAllCardsDisplayStyles() {
-        if (tabAllCardsFP == null) return;
-        for (Node node : tabAllCardsFP.getChildren()) {
-            if (node instanceof Button) {
-                Button button = (Button) node;
-                Object userData = button.getUserData();
-                if (userData instanceof CardInstance) {
-                    CardInstance instance = (CardInstance) userData;
-                    updateButtonSelectionStyleInTab(button, globalSelectedCardInstancesList.contains(instance));
-                }
-            }
-        }
-    }
-
-    private void updateSelectedCountLabel() {
-        if (tabSelectedCountLabel != null) {
-            long currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
-                    .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction &&
-                            instance.getCardDefinition().isUnlocked())
-                    .count();
-            tabSelectedCountLabel.setText(currentFactionSelectedCount + "/" + MAX_SELECTION);
-        }
-    }
-    private Button findButtonForCardInstanceInTab(CardInstance instanceToFind) {
-        for (Node node : tabAllCardsFP.getChildren()) {
-            if (node instanceof Button && node.getUserData() == instanceToFind) {
-                return (Button) node;
-            }
-        }
-        return null;
-    }
-
-    private void handleCardSelectionToggleInTab(CardInstance instanceToToggle, Button cardInstanceButtonInTab) {
-        if (instanceToToggle == null) return;
-        if (draggedItemFromSelectedCardsFP != null && draggedItemFromSelectedCardsFP.getUserData() == instanceToToggle) {
+    private void handleCardSelectionToggleInTab(CardInstance instanceToToggle) {
+        if (instanceToToggle == null || (draggedItemFromSelectedCardsFP != null && draggedItemFromSelectedCardsFP.getUserData() == instanceToToggle)) {
             return;
         }
-
-        Card cardDef = instanceToToggle.getCardDefinition();
-
-        if (!cardDef.isUnlocked()) {
-            if (mainController != null) mainController.showToast("Karte '" + cardDef.getName() + "' ist gesperrt!", 2000);
-            return;
-        }
-
-        boolean wasSelected = globalSelectedCardInstancesList.contains(instanceToToggle);
-
-        if (wasSelected) {
+        if (globalSelectedCardInstancesList.contains(instanceToToggle)) {
             globalSelectedCardInstancesList.remove(instanceToToggle);
         } else {
-            long selectedCountForThisFaction = globalSelectedCardInstancesList.stream()
-                    .filter(inst -> inst.getCardDefinition().getFaction() == this.currentFaction && inst.getCardDefinition().isUnlocked())
-                    .count();
-
-            if (selectedCountForThisFaction >= MAX_SELECTION) {
-                if (mainController != null) mainController.showToast("Limit für Fraktion " + this.currentFaction.name() + " erreicht: " + MAX_SELECTION + " Karten", 2000);
-                return;
+            if (canSelectCard(instanceToToggle)) {
+                globalSelectedCardInstancesList.add(instanceToToggle);
             }
+        }
+    }
 
-            long countOfThisCardTypeSelected = globalSelectedCardInstancesList.stream()
-                    .filter(inst -> inst.getCardDefinition().getId() == cardDef.getId() && inst.getCardDefinition().isUnlocked())
-                    .count();
-
-            if (countOfThisCardTypeSelected >= cardDef.getMaxAmount()) {
-                if (mainController != null) mainController.showToast("Max. " + cardDef.getMaxAmount() + "x '" + cardDef.getName() + "' erlaubt.", 2000);
-                return;
-            }
-
-            globalSelectedCardInstancesList.add(instanceToToggle);
+    private boolean canSelectCard(CardInstance instance) {
+        Card cardDef = instance.getCardDefinition();
+        if (cardDef.getAmount() <= 0) {
+            mainController.showToast("Karte '" + cardDef.getName() + "' ist gesperrt!", 2000);
+            return false;
         }
 
-        if (cardInstanceButtonInTab != null) {
-            updateButtonSelectionStyleInTab(cardInstanceButtonInTab, !wasSelected);
-        } else {
-            Button associatedMainButton = findButtonForCardInstanceInTab(instanceToToggle);
-            if (associatedMainButton != null) {
-                updateButtonSelectionStyleInTab(associatedMainButton, !wasSelected);
-            }
+        long factionCount = globalSelectedCardInstancesList.stream()
+                .filter(inst -> inst.getCardDefinition().getFaction() == this.currentFaction).count();
+        if (factionCount >= MAX_SELECTION) {
+            mainController.showToast("Limit für Fraktion " + this.currentFaction.name() + " erreicht.", 2000);
+            return false;
+        }
+
+        long sameCardCount = globalSelectedCardInstancesList.stream()
+                .filter(inst -> inst.getCardDefinition().getId() == cardDef.getId()).count();
+        if (sameCardCount >= cardDef.getMaxAmount()) {
+            mainController.showToast("Max. " + cardDef.getMaxAmount() + "x '" + cardDef.getName() + "' erlaubt.", 2000);
+            return false;
+        }
+        return true;
+    }
+
+    public void refreshAllCardsDisplayStyles() {
+        instanceToButtonMap.forEach((instance, button) ->
+                updateButtonSelectionStyleInTab(button, globalSelectedCardInstancesList.contains(instance))
+        );
+    }
+
+    private void updateButtonSelectionStyleInTab(Button button, boolean isSelected) {
+        CardInstance instance = (CardInstance) button.getUserData();
+        Card cardDef = instance.getCardDefinition();
+
+        button.getStyleClass().removeAll("selected", "locked-card-visual");
+
+        if (isSelected && cardDef.getAmount() > 0) {
+            button.getStyleClass().add("selected");
+        }
+        if (cardDef.getAmount() <= 0) {
+            button.getStyleClass().add("locked-card-visual");
+        }
+    }
+
+    public void updateSelectedCountLabel() {
+        if (tabSelectedCountLabel != null) {
+            long count = globalSelectedCardInstancesList.stream()
+                    .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction).count();
+            tabSelectedCountLabel.setText(count + "/" + MAX_SELECTION);
         }
     }
 
     private void filterAndDisplayCardInstancesInTab(String searchText) {
-        List<CardInstance> filteredInstances;
-        if (searchText == null || searchText.trim().isEmpty()) {
-            filteredInstances = new ArrayList<>(this.factionDisplayableInstances);
-        } else {
-            String lowerCaseSearchText = searchText.toLowerCase().trim();
-            filteredInstances = this.factionDisplayableInstances.stream()
-                    .filter(instance -> instance.getCardDefinition().getName().toLowerCase().contains(lowerCaseSearchText))
-                    .collect(Collectors.toList());
-        }
-        this.currentlyDisplayedInstancesInTab = filteredInstances;
+        String lowerCaseSearchText = (searchText == null) ? "" : searchText.toLowerCase().trim();
+        this.currentlyDisplayedInstancesInTab = this.factionDisplayableInstances.stream()
+                .filter(instance -> lowerCaseSearchText.isEmpty() || instance.getCardDefinition().getName().toLowerCase().contains(lowerCaseSearchText))
+                .collect(Collectors.toList());
         sortAndRefreshCardInstancesInTab(this.currentSortOrderInTab);
     }
 
     private void sortAndRefreshCardInstancesInTab(Comparator<CardInstance> comparator) {
-        if (this.currentlyDisplayedInstancesInTab == null) return;
-
         if (this.currentSortOrderInTab != null && this.currentSortOrderInTab.equals(comparator) && comparator != CardComparators.BY_ID_ASC_INSTANCE) {
             this.sortAscendingInTab = !this.sortAscendingInTab;
         } else {
             this.sortAscendingInTab = true;
-        }
-
-        if (comparator == null && this.currentSortOrderInTab != null) {
-            comparator = this.currentSortOrderInTab;
-        } else if (comparator == null) {
-            comparator = CardComparators.BY_RARITY_ASC_INSTANCE;
         }
         this.currentSortOrderInTab = comparator;
 
@@ -428,6 +424,7 @@ public class FactionTabController {
         this.currentlyDisplayedInstancesInTab.sort(finalComparator);
         displayCardInstancesInTab(this.currentlyDisplayedInstancesInTab);
     }
+
     @FXML private void handleTabSortByRarity() { sortAndRefreshCardInstancesInTab(CardComparators.BY_RARITY_ASC_INSTANCE); }
     @FXML private void handleTabSortByPower() { sortAndRefreshCardInstancesInTab(CardComparators.BY_POWER_ASC_INSTANCE); }
     @FXML private void handleTabSortByRowType() { sortAndRefreshCardInstancesInTab(CardComparators.BY_ROWTYPE_ASC_INSTANCE); }
@@ -435,148 +432,47 @@ public class FactionTabController {
 
     @FXML private void handleTabToggleVisibility() {
         this.showLockedCards = !this.showLockedCards;
-        if (tabToggleVisibilityButton != null) tabToggleVisibilityButton.setText(this.showLockedCards ? "HIDE LOCKED" : "SHOW LOCKED");
+        tabToggleVisibilityButton.setText(this.showLockedCards ? "HIDE LOCKED" : "SHOW LOCKED");
         displayCardInstancesInTab(this.currentlyDisplayedInstancesInTab);
     }
 
-    @FXML
-    private void handleTabUnselectAll() {
+    @FXML private void handleTabUnselectAll() {
         if (draggedItemFromSelectedCardsFP != null) return;
-        List<CardInstance> instancesToUnselectInThisFaction = globalSelectedCardInstancesList.stream()
-                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction && instance.getCardDefinition().isUnlocked())
-                .collect(Collectors.toList());
-        globalSelectedCardInstancesList.removeAll(instancesToUnselectInThisFaction);
+        List<CardInstance> toRemove = globalSelectedCardInstancesList.stream()
+                .filter(instance -> instance.getCardDefinition().getFaction() == this.currentFaction)
+                .toList();
+        globalSelectedCardInstancesList.removeAll(toRemove);
     }
 
-    @FXML
-    private void handleTabRandomize() {
+    @FXML private void handleTabRandomize() {
         if (draggedItemFromSelectedCardsFP != null) return;
         handleTabUnselectAll();
 
-        List<CardInstance> potentialRandomCandidates = this.factionDisplayableInstances.stream()
-                .filter(instance -> instance.getCardDefinition().isUnlocked())
+        List<CardInstance> candidates = this.factionDisplayableInstances.stream()
+                .filter(instance -> instance.getCardDefinition().getAmount() > 0)
                 .collect(Collectors.toList());
+        Collections.shuffle(candidates);
 
-        if (potentialRandomCandidates.isEmpty()) {
-            if (mainController != null) mainController.showToast("Keine freigeschalteten Karten in dieser Fraktion zum Randomisieren verfügbar.", 2500);
-            return;
+        List<CardInstance> toAdd = new ArrayList<>();
+        for (CardInstance candidate : candidates) {
+            if (globalSelectedCardInstancesList.size() + toAdd.size() >= MAX_SELECTION) break;
+
+            List<CardInstance> tempList = new ArrayList<>(globalSelectedCardInstancesList);
+            tempList.addAll(toAdd);
+
+            if (canSelectCardWithList(candidate, tempList)) {
+                toAdd.add(candidate);
+            }
         }
-
-        Collections.shuffle(potentialRandomCandidates, new Random());
-        List<CardInstance> cardsToAddTemporarily = new ArrayList<>();
-        int cardsSuccessfullySelected = 0;
-
-        for (CardInstance instanceToSelect : potentialRandomCandidates) {
-            long currentFactionSelectedCount = globalSelectedCardInstancesList.stream()
-                    .filter(selectedInst -> selectedInst.getCardDefinition().getFaction() == this.currentFaction)
-                    .count() + cardsToAddTemporarily.stream().filter(ci -> ci.getCardDefinition().getFaction() == this.currentFaction).count();
-            if (currentFactionSelectedCount >= MAX_SELECTION) break;
-
-            long countOfThisCardTypeSelected = globalSelectedCardInstancesList.stream()
-                    .filter(inst -> inst.getCardDefinition().getId() == instanceToSelect.getCardDefinition().getId())
-                    .count() + cardsToAddTemporarily.stream().filter(ci -> ci.getCardDefinition().getId() == instanceToSelect.getCardDefinition().getId()).count();
-            if (countOfThisCardTypeSelected >= instanceToSelect.getCardDefinition().getMaxAmount()) continue;
-
-            cardsToAddTemporarily.add(instanceToSelect);
-            cardsSuccessfullySelected++;
-            if (cardsSuccessfullySelected >= RANDOMIZER_CARD_AMOUNT) break;
-        }
-        for(CardInstance instance : cardsToAddTemporarily){
-            handleCardSelectionToggleInTab(instance, findButtonForCardInstanceInTab(instance));
-        }
+        globalSelectedCardInstancesList.addAll(toAdd);
     }
 
-    private void displayCardInstancesInTab(List<CardInstance> instancesToDisplay) {
-        tabAllCardsFP.getChildren().clear();
-        tabAllCardsFP.setPadding(new Insets(10));
-        tabAllCardsFP.setHgap(10);
-        tabAllCardsFP.setVgap(10);
-        tabAllCardsFP.setAlignment(FLOWPANE_ALIGNMENT_ALL_CARDS);
-
-        for (CardInstance instance : instancesToDisplay) {
-            if (!showLockedCards && !instance.getCardDefinition().isUnlocked()) continue;
-            Card cardDef = instance.getCardDefinition();
-            Button cardButton = new Button();
-            cardButton.setUserData(instance);
-            StackPane cardVisualPane = new StackPane();
-            cardVisualPane.setAlignment(Pos.CENTER);
-            cardVisualPane.setPrefSize(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT);
-            Image image = cardDef.getImage();
-            Node cardDisplayNode;
-
-            if (image != null && !image.isError()) {
-                ImageView cardImageView = new ImageView(image);
-                cardImageView.setFitWidth(CARD_PREVIEW_WIDTH);
-                cardImageView.setFitHeight(CARD_PREVIEW_HEIGHT);
-                cardImageView.setPreserveRatio(false);
-                cardDisplayNode = cardImageView;
-            } else {
-                Label noImageLabel = new Label("Bild\nfehlt");
-                noImageLabel.setWrapText(true);
-                noImageLabel.setStyle("-fx-text-alignment: center; -fx-text-fill: black; -fx-font-weight: bold;");
-                Rectangle placeholderRect = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT);
-                placeholderRect.setFill(Color.LIGHTGREY);
-                placeholderRect.setStroke(Color.DARKGREY);
-                cardDisplayNode = new StackPane(placeholderRect, noImageLabel);
-                StackPane.setAlignment(noImageLabel, Pos.CENTER);
-            }
-            cardVisualPane.getChildren().add(cardDisplayNode);
-
-            if (!cardDef.isUnlocked()) {
-                if (this.lockedOverlayImage != null && !this.lockedOverlayImage.isError()) {
-                    ImageView overlayImageView = new ImageView(this.lockedOverlayImage);
-                    overlayImageView.setFitWidth(CARD_PREVIEW_WIDTH);
-                    overlayImageView.setFitHeight(CARD_PREVIEW_HEIGHT);
-                    cardVisualPane.getChildren().add(overlayImageView);
-                } else {
-                    Rectangle lockFallbackOverlay = new Rectangle(CARD_PREVIEW_WIDTH, CARD_PREVIEW_HEIGHT, Color.rgb(0, 0, 0, 0.5));
-                    Label lockedLabel = new Label("LOCKED");
-                    lockedLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;");
-                    StackPane.setAlignment(lockedLabel, Pos.CENTER);
-                    cardVisualPane.getChildren().addAll(lockFallbackOverlay, lockedLabel);
-                }
-            }
-            cardButton.setGraphic(cardVisualPane);
-            cardButton.setPadding(Insets.EMPTY);
-            cardButton.getStyleClass().clear();
-            cardButton.getStyleClass().add("card-button");
-            setupCardButtonInTab(cardButton, instance);
-            tabAllCardsFP.getChildren().add(cardButton);
-        }
-    }
-
-    private void setupCardButtonInTab(Button cardButton, CardInstance instance) {
+    private boolean canSelectCardWithList(CardInstance instance, List<CardInstance> list) {
         Card cardDef = instance.getCardDefinition();
-        updateButtonSelectionStyleInTab(cardButton, globalSelectedCardInstancesList.contains(instance));
-        cardButton.setOnAction(event -> handleCardSelectionToggleInTab(instance, cardButton));
-        Tooltip tooltip = new Tooltip(
-                "Name: " + cardDef.getName() + "\n" +
-                        "Beschreibung: " + cardDef.getDescription() + "\n" +
-                        "Stärke: " + cardDef.getPower() + "\n" +
-                        "Fraktion: " + cardDef.getFaction() + "\n" +
-                        "Typ: " + cardDef.getRowType() + "\n" +
-                        "CardType: " + cardDef.getCardType() + "\n" +
-                        "Seltenheit: " + cardDef.getRarity() + "\n" +
-                        "Status: " + (cardDef.isUnlocked() ? "Freigeschaltet" : "Gesperrt"));
-        tooltip.setFont(new Font("System", 20));
-        cardButton.setTooltip(tooltip);
-    }
+        long factionCount = list.stream().filter(inst -> inst.getCardDefinition().getFaction() == this.currentFaction).count();
+        if (factionCount >= MAX_SELECTION) return false;
 
-    private void updateButtonSelectionStyleInTab(Button button, boolean isThisInstanceSelected) {
-        Object userData = button.getUserData();
-        if (!(userData instanceof CardInstance)) return;
-        CardInstance instance = (CardInstance) userData;
-        Card cardDef = instance.getCardDefinition();
-
-        if (button.getParent() == tabAllCardsFP) {
-            button.getStyleClass().remove("selected");
-            if (isThisInstanceSelected && cardDef.isUnlocked()) {
-                button.getStyleClass().add("selected");
-            }
-        }
-        button.getStyleClass().remove("locked-card-visual");
-        if (!cardDef.isUnlocked()) {
-            button.getStyleClass().add("locked-card-visual");
-        }
+        long sameCardCount = list.stream().filter(inst -> inst.getCardDefinition().getId() == cardDef.getId()).count();
+        return sameCardCount < cardDef.getMaxAmount();
     }
 }

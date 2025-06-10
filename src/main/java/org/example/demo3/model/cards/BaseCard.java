@@ -1,20 +1,20 @@
 package org.example.demo3.model.cards;
 
 import javafx.scene.image.Image;
-import org.example.demo3.model.enums.CardType;
-import org.example.demo3.model.enums.Faction;
-import org.example.demo3.model.enums.Rarity;
-import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.enums.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
-
+@SuppressWarnings("unused")
 public abstract class BaseCard implements Card {
     // Console Colors
     private static final String RESET = "\u001B[0m";
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
 
+    private static final Logger logger = LoggerFactory.getLogger(BaseCard.class);
 
     protected int id;
     protected int power;
@@ -30,14 +30,19 @@ public abstract class BaseCard implements Card {
     protected RowType rowType;
     protected CardType cardType;
     protected Rarity rarity;
+    protected EffectType effectType; // Hinzugefügt
 
     protected transient Image cardImage;
-    protected boolean isUnlocked;
 
-    protected BaseCard() { this.selectedAmount = 0; }
+    protected BaseCard() {
+        this.selectedAmount = 0;
+        this.effectType = EffectType.NONE; // Hinzugefügt: Standardwert
+    }
 
+    // Dieser Konstruktor dient eher als Referenz, Gson nutzt den parameterlosen
     protected BaseCard(int id, int power, int amount, String name, String description,
-                       Faction faction, RowType rowType, CardType cardType, Rarity rarity, String imagePath, boolean isUnlocked) {
+                       Faction faction, RowType rowType, CardType cardType, Rarity rarity,
+                       String imagePath, EffectType effectType) {
         this.id = id;
         this.power = power;
         this.amount = amount;
@@ -48,7 +53,7 @@ public abstract class BaseCard implements Card {
         this.cardType = cardType;
         this.rarity = rarity;
         this.imagePath = imagePath;
-        this.isUnlocked = isUnlocked;
+        this.effectType = (effectType != null) ? effectType : EffectType.NONE;
 
         this.selectedAmount = 0;
         this.maxAmount = this.rarity.getMaxAmount();
@@ -67,18 +72,19 @@ public abstract class BaseCard implements Card {
     @Override public RowType getRowType() { return rowType; }
     @Override public CardType getCardType() { return cardType; }
     @Override public Rarity getRarity() { return rarity; }
-    @Override public boolean isUnlocked() { return isUnlocked; }
+    @Override public EffectType getEffectType() { return effectType; } // Hinzugefügt
 
     // Setter
     public void setId(int id) { this.id = id; }
     public void setPower(int power) { this.power = power; }
-    public void setAmount(int amount) { this.amount = amount; }
+
     public void setMaxAmount(int maxAmount) { this.maxAmount = maxAmount; }
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
     public void setFaction(Faction faction) { this.faction = faction; }
     public void setRowType(RowType rowType) { this.rowType = rowType; }
     public void setCardType(CardType cardType) { this.cardType = cardType; }
+    public void setEffectType(EffectType effectType) { this.effectType = effectType; } // Hinzugefügt
 
     public void setRarity(Rarity rarity) {
         this.rarity = rarity;
@@ -89,11 +95,11 @@ public abstract class BaseCard implements Card {
 
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
-        this.cardImage = null; // Bild zurücksetzen zum neu laden
+        this.cardImage = null;
     }
 
     @Override public void setSelectedAmount(int selectedAmount) { this.selectedAmount = selectedAmount; }
-    @Override public void setUnlocked(boolean unlocked) { this.isUnlocked = unlocked; }
+    @Override public void setAmount(int amount) { this.amount = amount; }
 
     public void initMaxAmount() {
         if (this.rarity != null) {
@@ -101,23 +107,28 @@ public abstract class BaseCard implements Card {
         }
     }
 
-    // Image-Loader mit Fehlerprüfung
     @Override
     public Image getImage() {
         if (this.cardImage == null && this.imagePath != null && !this.imagePath.isEmpty()) {
-            try (InputStream stream = getClass().getResourceAsStream(this.imagePath)) {
+
+
+            String absolutePath = this.imagePath;
+            if (!absolutePath.startsWith("/")) {
+                absolutePath = "/" + absolutePath;
+            }
+
+            try (InputStream stream = getClass().getResourceAsStream(absolutePath)) {
                 if (stream != null) {
                     this.cardImage = new Image(stream);
                     if (this.cardImage.isError()) {
-                        System.err.println("Fehler beim Erstellen des Image-Objekts für: " + this.imagePath + " für Karte " + this.name + " - Exception: " + this.cardImage.getException());
+                        System.err.println("Fehler beim Erstellen des Image-Objekts für: " + absolutePath + " für Karte " + this.name + " - Exception: " + this.cardImage.getException());
                         this.cardImage = null;
                     }
                 } else {
-                    System.err.println("Bild nicht gefunden: " + this.imagePath + " für Karte " + this.name);
+                    System.err.println("Bild nicht gefunden: " + absolutePath + " für Karte " + this.name);
                 }
             } catch (Exception e) {
-                System.err.println("Fehler beim Laden des Bildes '" + this.imagePath + "' für Karte " + this.name + ": " + e.getMessage());
-                e.printStackTrace();
+                logger.error("Fehler beim Laden des Bildes '{}' für Karte '{}'", absolutePath, this.name, e);
             }
         }
         return this.cardImage;
@@ -125,8 +136,7 @@ public abstract class BaseCard implements Card {
 
     @Override
     public String toString() {
-        String color = this.isUnlocked ? GREEN : RED;
-
-        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ")  unlocked/selAmount" + isUnlocked + "/" + "DEBUG maxAmount: " + maxAmount + selectedAmount + RESET;
+        String color = this.getAmount() > 0 ? GREEN : RED;
+        return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ") amount=" + amount + " effect=" + effectType + RESET;
     }
 }

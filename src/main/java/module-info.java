@@ -13,6 +13,8 @@ module org.example.demo3 {
     requires com.almasb.fxgl.all;
     requires annotations;
     requires com.google.gson;
+    requires org.slf4j;
+    requires javafx.media;
 
     opens org.example.demo3.view to com.google.gson, javafx.fxml;
     opens org.example.demo3.model.cards to com.google.gson;

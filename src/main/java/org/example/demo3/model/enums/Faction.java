@@ -4,5 +4,6 @@ public enum Faction {
     KNIGHTS,
     MONSTERS,
     MERCENARIES,
-    TEST
+    TEST,
+    ITALY,
 }

@@ -1,4 +1,3 @@
-
 package org.example.demo3.model.service;
 
 import javafx.fxml.FXMLLoader;
@@ -19,11 +18,14 @@ public class NavigationService {
     private final Stage primaryStage;
     private final String menuCssPath;
 
+    private Object currentController;
+
     private static final Set<String> FXMLS_WITH_MENU_CSS = Set.of(
             FXML_INVENTORY_PATH,
             FXML_EDITOR_PATH,
             FXML_MAINMENU_PATH,
-            FXML_FACTION_TAB_PATH
+            FXML_FACTION_TAB_PATH,
+            FXML_UNLOCKER_PATH
     );
 
 
@@ -39,9 +41,16 @@ public class NavigationService {
 
     public <T> void navigateTo(String fxmlPath, String title, ControllerInitializer<T> controllerSetup) {
         try {
+            if (currentController instanceof Cleanable) {
+                System.out.println("Calling cleanup() on old controller: " + currentController.getClass().getSimpleName());
+                ((Cleanable) currentController).cleanup();
+            }
+
             System.out.println("Navigating to: " + fxmlPath);
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath), "FXML not found: " + fxmlPath));
             Parent newRoot = loader.load();
+
+            this.currentController = loader.getController();
 
             if (controllerSetup != null) {
                 T controller = loader.getController();

@@ -11,20 +11,11 @@ import static org.example.demo3.model.constants.Config.TOAST_DURATION_SECONDS;
 
 public class Toast {
 
-    public static void makeText(Stage ownerStage, String message) {
+    public static void makeText(Stage ownerStage, String message, int durationMillis) {
         Popup popup = new Popup();
 
         Label label = new Label(message);
-        label.setStyle(
-                "-fx-background-color: rgba(80, 80, 80, 0.85);" +
-                        "-fx-text-fill: #F0F0F0;" +
-                        "-fx-font-size: 15px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-padding: 12px 25px;" +
-                        "-fx-background-radius: 20px;" +
-                        "-fx-border-radius: 20px;" +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 5);"
-        );
+        label.getStyleClass().add("toast-label");
 
         popup.getContent().add(label);
         popup.setAutoFix(true);
@@ -42,8 +33,14 @@ public class Toast {
         popup.show(ownerStage);
 
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(TOAST_DURATION_SECONDS * 1000), // Umwandlung in MS
+                Duration.millis(durationMillis),
                 ae -> popup.hide()));
         timeline.play();
     }
+
+    @SuppressWarnings("unused")
+    public static void makeText(Stage ownerStage, String message) {
+        makeText(ownerStage, message, TOAST_DURATION_SECONDS * 1000); // Umwandlung in ms
+    }
+
 }

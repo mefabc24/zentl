@@ -5,6 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.NavigationService;
+import org.example.demo3.model.service.SoundService;
+import javafx.scene.text.Font;
+import java.io.InputStream;
 
 import static org.example.demo3.model.constants.Config.*;
 
@@ -22,6 +25,18 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
+        try (
+                InputStream arialStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/ariblk.ttf");
+                InputStream impactStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/impact.ttf")
+        ) {
+                Font.loadFont(arialStream, 10);
+                Font.loadFont(impactStream, 10);
+        } catch (Exception e) {
+            System.err.println("Fehler beim Laden der Schriftarten aufgetreten.");
+            e.printStackTrace();
+        }
+
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(FXML_MAINMENU_PATH));
         Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
 
@@ -35,6 +50,14 @@ public class HelloApplication extends Application {
             System.err.println("MainMenuController konnte nicht geladen werden!");
         }
 
+        // play the fab menu theme
+        SoundService.getInstance().startMenuMusic();
+
+        navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
+        stage.setTitle("GWENT");
+        stage.setScene(scene);
+        stage.show();
+
         // CSS
         navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
 
@@ -42,16 +65,4 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
-    /*
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/org/example/demo3/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-        GameService service = new GameService();
-        service.newGame();
-        stage.setTitle("Gwent");
-        stage.setScene(scene);
-        stage.show();
-    }
-     */
 }

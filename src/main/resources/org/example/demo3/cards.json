@@ -1,5 +1,52 @@
 [
   {
+    "id": 15,
+    "power": 0,
+    "amount": 2,
+    "selectedAmount": 1,
+    "name": "Commander's Horn",
+    "description": "Doubles row strength.",
+    "imagePath": "/org/example/demo3/assets/Rare.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "KNIGHTS",
+    "rarity": "RARE",
+    "isUnlocked": true,
+    "effectType": "COMMANDERS_HORN"
+  },
+  {
+    "id": 17,
+    "power": 5,
+    "amount": 4,
+    "selectedAmount": 0,
+    "name": "Field Medic",
+    "description": "Revives a unit.",
+    "imagePath": "/org/example/demo3/assets/Rare.png",
+    "rowType": "RANGED",
+    "cardType": "UNIT",
+    "faction": "KNIGHTS",
+    "rarity": "RARE",
+    "isUnlocked": true,
+    "effectType": "MEDIC"
+  },
+  {
+    "id": 76,
+    "power": 0,
+    "amount": 5,
+    "selectedAmount": 0,
+    "name": "Biting Frost",
+    "description": "Lowers strength of all units in a melee row to 1.",
+    "imagePath": "/org/example/demo3/assets/Frost.png",
+    "rowType": "WEATHER",
+    "cardType": "WEATHER",
+    "faction": "KNIGHTS",
+    "rarity": "COMMON",
+    "isUnlocked": true,
+    "weatherType": "FROST",
+    "effectType": "WEATHER_FROST"
+  },
+
+  {
     "id": 1,
     "power": 2,
     "amount": 5,
@@ -196,20 +243,6 @@
     "isUnlocked": true
   },
   {
-    "id": 15,
-    "power": 0,
-    "amount": 2,
-    "selectedAmount": 0,
-    "name": "Commander's Horn",
-    "description": "Doubles row strength.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
-    "rowType": "ANY",
-    "cardType": "SPECIAL",
-    "faction": "KNIGHTS",
-    "rarity": "RARE",
-    "isUnlocked": true
-  },
-  {
     "id": 16,
     "power": 9,
     "amount": 2,
@@ -218,20 +251,6 @@
     "description": "Hardened by battles.",
     "imagePath": "/org/example/demo3/assets/Rare.png",
     "rowType": "MELEE",
-    "cardType": "UNIT",
-    "faction": "KNIGHTS",
-    "rarity": "RARE",
-    "isUnlocked": true
-  },
-  {
-    "id": 17,
-    "power": 5,
-    "amount": 4,
-    "selectedAmount": 0,
-    "name": "Field Medic",
-    "description": "Revives a unit.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
-    "rowType": "RANGED",
     "cardType": "UNIT",
     "faction": "KNIGHTS",
     "rarity": "RARE",
@@ -939,20 +958,6 @@
     "isUnlocked": true
   },
   {
-    "id": 68,
-    "power": 0,
-    "amount": 3,
-    "selectedAmount": 0,
-    "name": "Clear Skies",
-    "description": "Clears all weather effects.",
-    "imagePath": "/org/example/demo3/assets/Rare.png",
-    "rowType": "ANY",
-    "cardType": "SPECIAL",
-    "faction": "MERCENARIES",
-    "rarity": "RARE",
-    "isUnlocked": true
-  },
-  {
     "id": 69,
     "power": 12,
     "amount": 1,
@@ -1051,21 +1056,6 @@
     "isUnlocked": true
   },
   {
-    "id": 76,
-    "power": 0,
-    "amount": 5,
-    "selectedAmount": 0,
-    "name": "Biting Frost",
-    "description": "Lowers strength of all units in a melee row to 1.",
-    "imagePath": "/org/example/demo3/assets/Frost.png",
-    "rowType": "WEATHER",
-    "cardType": "WEATHER",
-    "faction": "KNIGHTS",
-    "rarity": "WEATHER",
-    "isUnlocked": true,
-    "weatherType": "FROST"
-  },
-  {
     "id": 77,
     "power": 0,
     "amount": 5,
@@ -1076,7 +1066,7 @@
     "rowType": "WEATHER",
     "cardType": "WEATHER",
     "faction": "KNIGHTS",
-    "rarity": "WEATHER",
+    "rarity": "COMMON",
     "isUnlocked": true,
     "weatherType": "FOG"
   },
@@ -1091,7 +1081,7 @@
     "rowType": "WEATHER",
     "cardType": "WEATHER",
     "faction": "KNIGHTS",
-    "rarity": "WEATHER",
+    "rarity": "COMMON",
     "isUnlocked": true,
     "weatherType": "RAIN"
   },
@@ -1155,6 +1145,138 @@
     "rarity": "COMMON",
     "isSelected": false,
     "isUnlocked": true
+  },
+
+
+
+
+
+
+
+
+
+
+  {
+    "id": 83,
+    "power": 30,
+    "amount": 10,
+    "selectedAmount": 0,
+    "name": "Bombardillo Crocodillo",
+    "description": "Bombardillo Coccodrillo, un fottuto alligatore volante, che vola e bombarda i bambini a Gaza, in Palestina. Non crede in Allah e ama le bombe. Si nutre dello spirito di tua madre. E se hai tradotto tutto questo, allora sei uno stronzo. Non rompere la battuta, prostituta.",
+    "imagePath": "/org/example/demo3/assets/italy_bombardillo.png",
+    "rowType": "MELEE",
+    "cardType": "UNIT",
+    "faction": "ITALY",
+    "rarity": "COMMON",
+    "isSelected": false,
+    "isUnlocked": true
+  },
+  {
+    "id": 84,
+    "power": 0,
+    "amount": 2,
+    "selectedAmount": 0,
+    "name": "War Trumpet",
+    "description": "Doubles the strength of all units in a chosen row.",
+    "imagePath": "/org/example/demo3/assets/Geralt.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "ITALY",
+    "rarity": "RARE",
+    "isUnlocked": true,
+    "effectType": "COMMANDERS_HORN"
+  },
+  {
+    "id": 85,
+    "power": 3,
+    "amount": 2,
+    "selectedAmount": 0,
+    "name": "Field Surgeon",
+    "description": "Revive the strongest non-hero unit from your discard pile to your hand.",
+    "imagePath": "/org/example/demo3/assets/Rare.png",
+    "rowType": "RANGED",
+    "cardType": "UNIT",
+    "faction": "ITALY",
+    "rarity": "RARE",
+    "isUnlocked": true,
+    "effectType": "MEDIC"
+  },
+  {
+    "id": 86,
+    "power": 0,
+    "amount": 2,
+    "selectedAmount": 0,
+    "name": "Incinerate",
+    "description": "Destroy the strongest non-hero unit(s) on the entire battlefield.",
+    "imagePath": "/org/example/demo3/assets/Epic.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "ITALY",
+    "rarity": "EPIC",
+    "isUnlocked": true,
+    "effectType": "SCORCH"
+  },
+  {
+    "id": 87,
+    "power": 0,
+    "amount": 2,
+    "selectedAmount": 0,
+    "name": "Blizzard",
+    "description": "Lowers strength of all non-hero units in the melee row to 1.",
+    "imagePath": "/org/example/demo3/assets/Frost.png",
+    "rowType": "WEATHER",
+    "cardType": "WEATHER",
+    "faction": "ITALY",
+    "rarity": "COMMON",
+    "isUnlocked": true,
+    "weatherType": "FROST",
+    "effectType": "WEATHER_FROST"
   }
 
+,
+  {
+    "id": 88,
+    "power": 0,
+    "amount": 2,
+    "selectedAmount": 0,
+    "name": "Clear Skies",
+    "description": "Removes all Weather effects from the battlefield.",
+    "imagePath": "/org/example/demo3/assets/Rare.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "ITALY",
+    "rarity": "COMMON",
+    "isUnlocked": true,
+    "effectType": "CLEAR_WEATHER"
+  },
+  {
+    "id": 89,
+    "power": 0,
+    "amount": 2,
+    "selectedAmount": 0,
+    "name": "Rally",
+    "description": "Removes all negative effects (Weather, enemy Horns) from your rows.",
+    "imagePath": "/org/example/demo3/assets/Rare.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "ITALY",
+    "rarity": "RARE",
+    "isUnlocked": true,
+    "effectType": "RALLY"
+  },
+  {
+    "id": 90,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Dimeritium Bomb",
+    "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
+    "imagePath": "/org/example/demo3/assets/Epic.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "ITALY",
+    "rarity": "EPIC",
+    "isUnlocked": true,
+    "effectType": "DIMERITIUM_BOMB"
+  }
 ]

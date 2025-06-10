@@ -26,13 +26,13 @@ public class PlayerTest {
         List<Card> deck = new ArrayList<>();
         for (int i = 0; i < 15; i++)
             deck.add(new UnitCard(i, 4, 1, "b ", "Desc", Faction.KNIGHTS, RowType.RANGED,
-                    Rarity.COMMON, "test/paths/ImagePath/", true));
+                    Rarity.COMMON, "test/paths/ImagePath/"));
         for (int i = 0; i < 10; i++)
             deck.add(new UnitCard(i+20, 7, 1, "c ", "Desc", Faction.KNIGHTS, RowType.MELEE,
-                    Rarity.RARE, "test/paths/ImagePath/", true));
+                    Rarity.RARE, "test/paths/ImagePath/"));
         for (int i = 0; i < 5; i++)
             deck.add(new UnitCard(i+100, 8, 1, "d ", "Desc", Faction.KNIGHTS, RowType.SIEGE,
-                    Rarity.RARE, "test/paths/ImagePath/", true));
+                    Rarity.RARE, "test/paths/ImagePath/"));
         Collections.shuffle(deck);
 
         player = new PlayerImpl("a", Faction.KNIGHTS, deck);
@@ -90,7 +90,7 @@ public class PlayerTest {
     void testPlayCardNotInHand() {
         Board board = new GameBoard();
         Card secretCard = new UnitCard(53, 12312, 1, "", "", Faction.KNIGHTS, RowType.MELEE, Rarity.EPIC,
-                "test/paths/ImagePath/", true);
+                "test/paths/ImagePath/");
         player.drawCard();
 
         assertFalse(player.getHand().contains(secretCard));
