@@ -99,9 +99,6 @@ public class CardUnlockController {
         rootPane.getChildren().add(dropSelectionView);
     }
 
-    /**
-     * LOGIK-FIX: Diese Methode zieht zuerst die KARTE und startet dann die Animation.
-     */
     private void handleDropSelection(DropType dropType) {
         Card wonCard = drawActualCard(dropType);
         if (wonCard == null) {
@@ -120,9 +117,7 @@ public class CardUnlockController {
         ftOut.play();
     }
 
-    /**
-     * LOGIK-FIX: Diese neue Methode findet die tatsächlich gewonnene Karte.
-     */
+
     private Card drawActualCard(DropType dropType) {
         List<Card> unlockableCards = cards.stream()
                 .filter(c -> c.getAmount() < c.getRarity().getMaxAmount())

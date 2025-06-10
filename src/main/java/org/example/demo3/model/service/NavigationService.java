@@ -18,7 +18,6 @@ public class NavigationService {
     private final Stage primaryStage;
     private final String menuCssPath;
 
-    // This holds a reference to the controller of the currently displayed view.
     private Object currentController;
 
     private static final Set<String> FXMLS_WITH_MENU_CSS = Set.of(
@@ -42,7 +41,6 @@ public class NavigationService {
 
     public <T> void navigateTo(String fxmlPath, String title, ControllerInitializer<T> controllerSetup) {
         try {
-            // clear up old controller when new view is called
             if (currentController instanceof Cleanable) {
                 System.out.println("Calling cleanup() on old controller: " + currentController.getClass().getSimpleName());
                 ((Cleanable) currentController).cleanup();
@@ -52,7 +50,6 @@ public class NavigationService {
             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath), "FXML not found: " + fxmlPath));
             Parent newRoot = loader.load();
 
-            // Store the new controller so it can be cleaned up later.
             this.currentController = loader.getController();
 
             if (controllerSetup != null) {

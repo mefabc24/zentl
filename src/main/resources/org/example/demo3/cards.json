@@ -40,7 +40,7 @@
     "rowType": "WEATHER",
     "cardType": "WEATHER",
     "faction": "KNIGHTS",
-    "rarity": "WEATHER",
+    "rarity": "COMMON",
     "isUnlocked": true,
     "weatherType": "FROST",
     "effectType": "WEATHER_FROST"
@@ -1066,7 +1066,7 @@
     "rowType": "WEATHER",
     "cardType": "WEATHER",
     "faction": "KNIGHTS",
-    "rarity": "WEATHER",
+    "rarity": "COMMON",
     "isUnlocked": true,
     "weatherType": "FOG"
   },
@@ -1081,7 +1081,7 @@
     "rowType": "WEATHER",
     "cardType": "WEATHER",
     "faction": "KNIGHTS",
-    "rarity": "WEATHER",
+    "rarity": "COMMON",
     "isUnlocked": true,
     "weatherType": "RAIN"
   },
@@ -1227,7 +1227,7 @@
     "rowType": "WEATHER",
     "cardType": "WEATHER",
     "faction": "ITALY",
-    "rarity": "WEATHER",
+    "rarity": "COMMON",
     "isUnlocked": true,
     "weatherType": "FROST",
     "effectType": "WEATHER_FROST"

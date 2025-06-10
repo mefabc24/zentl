@@ -4,7 +4,6 @@ import org.example.demo3.model.enums.DropType;
 import org.example.demo3.model.enums.Rarity;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -44,7 +43,6 @@ public class RarityDropService {
         this.probabilityTables.put(DropType.ELITE, eliteChances);
     }
 
-    // In RarityDropService.java
     public Map<Rarity, Double> getProbabilityTable(DropType type) {
         return probabilityTables.get(type);
     }
@@ -67,7 +65,6 @@ public class RarityDropService {
         double random = ThreadLocalRandom.current().nextDouble(totalWeight);
         double cumulativeWeight = 0.0;
 
-        // Iteriere durch die spezifische Chance-Map
         for (Map.Entry<Rarity, Double> entry : chances.entrySet()) {
             cumulativeWeight += entry.getValue();
             if (cumulativeWeight > random) {
@@ -75,7 +72,7 @@ public class RarityDropService {
             }
         }
 
-        // Sollte nie erreicht werden, wenn totalWeight > 0 ist, aber ein guter Fallback.
+        // Fallback
         throw new IllegalStateException("Konnte keine Seltenheit auswählen für " + dropType);
     }
 
