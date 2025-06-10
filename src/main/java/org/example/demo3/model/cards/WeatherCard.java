@@ -19,7 +19,7 @@ public class WeatherCard extends BaseCard {
     }
 
     // Private statische Hilfsmethode, um den super()-Konstruktor sauber zu halten
-    private static EffectType determineEffectType(WeatherType weatherType) {
+    public static EffectType determineEffectType(WeatherType weatherType) {
         if (weatherType == null) {
             return EffectType.NONE;
         }

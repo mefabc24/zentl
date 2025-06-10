@@ -123,4 +123,29 @@ public class GameBoard implements Board {
     public void clearAllHornEffects() {
         activeHorns.values().forEach(Set::clear);
     }
+
+    // needed for minimax, to create deepcopys
+    @Override
+    public Board copyWithPlayerMapping(Map<Player, Player> playerMapping) {
+        GameBoard newBoard = new GameBoard();
+
+        // iterate over the player mapping not the boards keys => ensures all players are included in the new state, even if they have no cards on the board
+        playerMapping.forEach((originalPlayer, newPlayer) -> {
+            // copy the player-specific card rows
+            Map<RowType, List<Card>> originalRows = this.board.getOrDefault(originalPlayer, Collections.emptyMap());
+            Map<RowType, List<Card>> newRows = new EnumMap<>(RowType.class);
+            originalRows.forEach((rowType, cards) -> newRows.put(rowType, new ArrayList<>(cards)));
+            newBoard.board.put(newPlayer, newRows);
+
+            // copy the player specific horn effects
+            Set<RowType> originalHorns = this.activeHorns.getOrDefault(originalPlayer, Collections.emptySet());
+            newBoard.activeHorns.put(newPlayer, new HashSet<>(originalHorns));
+        });
+
+        // copy global board effects that are not tied to a specific player
+        newBoard.activeWeather.putAll(this.activeWeather);
+        newBoard.activeWeatherCards.addAll(this.activeWeatherCards);
+
+        return newBoard;
+    }
 }

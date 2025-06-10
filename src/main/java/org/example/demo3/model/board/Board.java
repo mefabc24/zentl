@@ -28,4 +28,7 @@ public interface Board {
     void applyHornEffect(Player player, RowType rowType);
     void clearHornEffects(Player player);
     void clearAllHornEffects();
+
+    // bots
+    public Board copyWithPlayerMapping(Map<Player, Player> playerMapping);
 }
