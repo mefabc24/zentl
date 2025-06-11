@@ -31,10 +31,15 @@ public class GameSetupController {
     @FXML private Button startGameButton;
     @FXML private Button backButton;
 
+    // Player Labels
+    @FXML private Label player1Label;
+    @FXML private Label player2Label;
+
     private NavigationService navigationService;
     private CardRepository cardRepository;
     private GameMode gameMode;
-    private BotDifficulty botDifficulty;
+    private BotDifficulty bot1Difficulty;
+    private BotDifficulty bot2Difficulty;
 
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
@@ -43,6 +48,15 @@ public class GameSetupController {
     @FXML
     public void initialize() {
         cardRepository = CardRepository.getInstance();
+        p1FactionComboBox.valueProperty().addListener((obs, oldVal, newVal) -> updateDeckStatusLabels());
+        p2FactionComboBox.valueProperty().addListener((obs, oldVal, newVal) -> updateDeckStatusLabels());
+    }
+
+    // Main init method to handle all modes
+    public void initData(GameMode mode, BotDifficulty b1Diff, BotDifficulty b2Diff) {
+        this.gameMode = mode;
+        this.bot1Difficulty = b1Diff;
+        this.bot2Difficulty = b2Diff;
 
         List<Faction> playableFactions = Stream.of(Faction.values())
                 .filter(f -> f != Faction.TEST)
@@ -50,29 +64,41 @@ public class GameSetupController {
 
         p1FactionComboBox.setItems(FXCollections.observableArrayList(playableFactions));
         p2FactionComboBox.setItems(FXCollections.observableArrayList(playableFactions));
-
-        p1FactionComboBox.valueProperty().addListener((obs, oldVal, newVal) -> updateDeckStatusLabels());
-        p2FactionComboBox.valueProperty().addListener((obs, oldVal, newVal) -> updateDeckStatusLabels());
-
         p1FactionComboBox.setValue(Faction.KNIGHTS);
         p2FactionComboBox.setValue(Faction.MONSTERS);
+
+        // Configure UI based on the game mode
+        switch (mode) {
+            case PLAYER_VS_PLAYER:
+                player1Label.setText("Player 1");
+                player2Label.setText("Player 2");
+                p1FactionComboBox.setDisable(false);
+                p2FactionComboBox.setDisable(false);
+                break;
+            case PLAYER_VS_BOT:
+                player1Label.setText("Player");
+                player2Label.setText("Bot (" + bot1Difficulty.name() + ")");
+                p1FactionComboBox.setDisable(false);
+                p2FactionComboBox.setDisable(true);
+                p2DeckStatusLabel.setText("Bot will use a random deck");
+                break;
+            case BOT_VS_BOT:
+                player1Label.setText("Bot 1 (" + bot1Difficulty.name() + ")");
+                player2Label.setText("Bot 2 (" + bot2Difficulty.name() + ")");
+                p1FactionComboBox.setDisable(true);
+                p2FactionComboBox.setDisable(true);
+                p1DeckStatusLabel.setText("Bot will use a random deck");
+                p2DeckStatusLabel.setText("Bot will use a random deck");
+                break;
+        }
 
         updateDeckStatusLabels();
     }
 
-    public void initData(GameMode mode, BotDifficulty difficulty) {
-        this.gameMode = mode;
-        this.botDifficulty = difficulty;
-
-        if (mode == GameMode.PLAYER_VS_BOT) {
-            p2FactionComboBox.setDisable(true);
-            p2FactionComboBox.setValue(Faction.MONSTERS);
-            p2DeckStatusLabel.setText("Bot will use a random deck");
-        }
-    }
-
     private void updateDeckStatusLabels() {
-        updateStatusForPlayer(p1FactionComboBox.getValue(), p1DeckStatusLabel);
+        if (gameMode == GameMode.PLAYER_VS_PLAYER || gameMode == GameMode.PLAYER_VS_BOT) {
+            updateStatusForPlayer(p1FactionComboBox.getValue(), p1DeckStatusLabel);
+        }
         if (gameMode == GameMode.PLAYER_VS_PLAYER) {
             updateStatusForPlayer(p2FactionComboBox.getValue(), p2DeckStatusLabel);
         }
@@ -90,30 +116,25 @@ public class GameSetupController {
         statusLabel.getStyleClass().add(status.isValid ? "deck-status-ok" : "deck-status-warning");
     }
 
-
     @FXML
     void handleStartGameAction(ActionEvent event) {
         Faction p1Faction = p1FactionComboBox.getValue();
         Faction p2Faction = p2FactionComboBox.getValue();
 
-        if (p1Faction == null || (p2Faction == null && gameMode == GameMode.PLAYER_VS_PLAYER)) {
-            showAlert("Selection Missing", "Please select a faction for both players.");
-            return;
-        }
-
         if (gameMode == GameMode.PLAYER_VS_PLAYER && p1Faction == p2Faction) {
             showAlert("Selection Invalid", "Players cannot choose the same faction.");
             return;
         }
-        
+
         SoundService.getInstance().stopMenuMusic();
-        
+
         if (navigationService != null) {
             navigationService.navigateTo(FXML_GAME_PATH, "Gwent", (GameController controller) -> {
                 GameService gameService = new GameService();
                 controller.setGameService(gameService);
                 controller.setNavigationService(navigationService);
-                gameService.newGame(gameMode, botDifficulty, p1Faction, p2Faction);
+                // Use the difficulties stored in the controller, passing both to newGame
+                gameService.newGame(gameMode, this.bot1Difficulty, this.bot2Difficulty, p1Faction, p2Faction);
             });
         }
     }
@@ -137,22 +158,20 @@ public class GameSetupController {
 
     private static class DeckStatus {
         final boolean isValid;
-        final boolean isGameReady;
         final String message;
-        DeckStatus(boolean isValid, boolean isGameReady, String message) {
+        DeckStatus(boolean isValid, String message) {
             this.isValid = isValid;
-            this.isGameReady = isGameReady;
             this.message = message;
         }
     }
 
     private DeckStatus getDeckStatus(Faction faction) {
         if (faction == null) {
-            return new DeckStatus(false, false, "No faction selected");
+            return new DeckStatus(false, "No faction selected");
         }
         List<Card> savedDeck = cardRepository.getSavedDeck(faction);
         if (!savedDeck.isEmpty()) {
-            return new DeckStatus(true, true, String.format("✓ Deck ready (%d/%d)", savedDeck.size(), MIN_SELECTION));
+            return new DeckStatus(true, String.format("✓ Deck ready (%d/%d)", savedDeck.size(), MIN_SELECTION));
         }
         long selectedCount = cardRepository.getAllCards().stream()
                 .filter(c -> c.getFaction() == faction && c.getSelectedAmount() > 0 && c.getAmount() > 0)
@@ -161,9 +180,9 @@ public class GameSetupController {
 
         if (selectedCount > 0) {
             String msg = String.format("⚠️ Deck incomplete (%d/%d)", selectedCount, MIN_SELECTION);
-            return new DeckStatus(false, true, msg);
+            return new DeckStatus(false, msg);
         } else {
-            return new DeckStatus(false, true, "⚠️ No deck selected");
+            return new DeckStatus(false, "⚠️ No deck selected");
         }
     }
 }

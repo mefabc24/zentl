@@ -3,11 +3,13 @@ package org.example.demo3.view;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.NavigationService;
 import org.example.demo3.model.service.SoundService;
 import javafx.scene.text.Font;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static org.example.demo3.model.constants.Config.*;
 
@@ -18,49 +20,52 @@ public class HelloApplication extends Application {
 
     public static NavigationService getNavigationService() { return navigationService; }
 
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) throws IOException {
-
+        // Font loading (unchanged)
         try (
                 InputStream arialStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/ariblk.ttf");
                 InputStream impactStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/impact.ttf")
         ) {
-                Font.loadFont(arialStream, 10);
-                Font.loadFont(impactStream, 10);
+            if (arialStream != null) Font.loadFont(arialStream, 10);
+            if (impactStream != null) Font.loadFont(impactStream, 10);
         } catch (Exception e) {
             System.err.println("Fehler beim Laden der Schriftarten aufgetreten.");
             e.printStackTrace();
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(FXML_MAINMENU_PATH));
-        Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        FXMLLoader mainLoader = new FXMLLoader(HelloApplication.class.getResource("/org/example/demo3/main-view.fxml"));
+        StackPane root = mainLoader.load();
+        MainViewController mainViewController = mainLoader.getController();
 
-        navigationService = new NavigationService(scene, stage);
+        Scene scene = new Scene(root, 1920, 1080);
 
-        MainMenuController mainMenuController = fxmlLoader.getController();
-        if (mainMenuController != null) {
-            mainMenuController.setNavigationService(navigationService);
-            mainMenuController.setStage(stage);
-        } else {
-            System.err.println("MainMenuController konnte nicht geladen werden!");
+        try {
+            String cssPath = Objects.requireNonNull(getClass().getResource(CSS_PATH)).toExternalForm();
+            scene.getStylesheets().add(cssPath);
+            System.out.println("Successfully applied global stylesheet: " + cssPath);
+        } catch (NullPointerException e) {
+            System.err.println("FATAL: Global stylesheet not found at: " + CSS_PATH);
+            e.printStackTrace();
         }
 
-        // play the fab menu theme
+        navigationService = new NavigationService(mainViewController.getMainContentPane(), stage);
+
+        // Perform the initial navigation to the main menu
+        navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", (MainMenuController controller) -> {
+            controller.setNavigationService(navigationService);
+            controller.setStage(stage);
+        });
+
+        // ================== TRIGGER THE PRE-LOAD ==================
+        System.out.println("Kicking off preload for Inventory...");
+        navigationService.preLoadView(FXML_INVENTORY_PATH);
+
         SoundService.getInstance().startMenuMusic();
-
-        navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
-        stage.setTitle("GWENT");
-        stage.setScene(scene);
-        stage.show();
-
-        // CSS
-        navigationService.applyStylesIfNeeded(FXML_MAINMENU_PATH);
-
         stage.setTitle("GWENT");
         stage.setScene(scene);
         stage.show();

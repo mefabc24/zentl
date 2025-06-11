@@ -114,6 +114,8 @@
     -fx-background-color: #5A5E60;
 }
 
+/* --- Other styles from your file... (omitted for brevity, but they stay the same) --- */
+/* (All the styles for text-field, scroll-pane, etc. remain here) */
 /* --- TEXTFIELD --- */
 .text-field {
     -fx-background-color: #3C3F41;
@@ -229,19 +231,18 @@
 }
 
 .main-menu-button {
-    -fx-font-size: 28px;
-    -fx-min-width: 300px;
-    -fx-min-height: 70px;
-    -fx-background-color: #4A4D4F;
-    -fx-text-fill: #E0E0E0;
-    -fx-font-weight: bold;
-    -fx-background-radius: 8px;
-    -fx-border-radius: 8px;
-    -fx-border-color: #3C3F41;
-    -fx-border-width: 2px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 2, 2);
+    -fx-padding: 0;
+    -fx-pref-width: 400px;
+    -fx-pref-height: 70px;
+    
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+    -fx-background-color: transparent;
+    
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
-
 .main-menu-button:hover {
     -fx-background-color: #5A5E60;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 12, 0, 3, 3);
@@ -436,12 +437,8 @@
     -fx-padding: 20;
     -fx-border-radius: 10;
     -fx-border-width: 3;
-    /* Sag dem Container, dass er Farbänderungen am Rand animieren soll */
     -fx-transition: -fx-border-color 0.2s;
 }
-
-/* Hover-Effekt für den gesamten Container */
-
 
 /* Der Button selbst */
 .drop-button {
@@ -456,3 +453,298 @@
     -fx-background-color: transparent;
 }
 
+
+/****************************************************************/
+/* --- MAIN MENU STYLES (DEFINITIVE FIX) ---                    */
+/****************************************************************/
+
+/* The root pane for the main menu, which holds the background GIF */
+.main-menu-root {
+    -fx-background-image: url("assets/UI_Components/menu/background.gif");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+/* Shared styles for all custom image-based menu buttons */
+.play-button, .inventory-button, .editor-button, .quit-button {
+    -fx-background-color: transparent; /* Resets the background for the normal state */
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-effect: none;
+    -fx-cursor: hand;
+    -fx-min-width: 384px;
+    -fx-min-height: 65px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+}
+
+/*
+ * This block explicitly tells the image buttons to have a transparent background
+ * EVEN WHEN HOVERED. This rule is more specific than the generic `.button:hover`
+ * rule, so it wins and prevents the gray box from appearing.
+ */
+.play-button:hover,
+.inventory-button:hover,
+.editor-button:hover,
+.quit-button:hover {
+    -fx-background-color: transparent;
+}
+
+
+/* --- PLAY BUTTON --- */
+.play-button {
+    -fx-background-image: url("assets/UI_Components/menu/play_low.png");
+}
+.play-button:hover {
+    -fx-background-image: url("assets/UI_Components/menu/play_active.png");
+}
+
+/* --- INVENTORY BUTTON --- */
+.inventory-button {
+    -fx-background-image: url("assets/UI_Components/menu/inventory_low.png");
+}
+.inventory-button:hover {
+    -fx-background-image: url("assets/UI_Components/menu/inventory_active.png");
+}
+
+/* --- EDITOR BUTTON --- */
+.editor-button {
+    -fx-background-image: url("assets/UI_Components/menu/editor_low.png");
+}
+.editor-button:hover {
+    -fx-background-image: url("assets/UI_Components/menu/editor_active.png");
+}
+
+/* --- QUIT BUTTON --- */
+.quit-button {
+    -fx-background-image: url("assets/UI_Components/menu/quit_low.png");
+}
+.quit-button:hover {
+    -fx-background-image: url("assets/UI_Components/menu/quit_active.png");
+}
+
+/****************************************************************/
+/* --- GAME SCREEN STYLES ---                                   */
+/****************************************************************/
+
+/* Style for the card VBox container in the game screen */
+.game-card {
+    -fx-background-color: #f0f0f0; /* The light gray/white background */
+    -fx-border-color: #333333;
+    -fx-border-width: 1px;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+    -fx-background-radius: 3px;
+    -fx-border-radius: 3px;
+}
+
+/* Style for the hover effect on the game card */
+.game-card:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-border-color: #000000;
+    -fx-border-width: 2px;
+}
+
+/* 
+ * This rule targets the labels ONLY inside our game cards
+ * and forces their text color to be black, overriding any global
+ * white text style. The !important flag ensures this rule wins.
+ */
+.game-card .game-card-label {
+    -fx-text-fill: black !important;
+}
+
+/* 
+ * This new rule targets any label with the 'game-board-label' class.
+ * We apply this class in the Java code to the row labels (MELEE, RANGED, etc.),
+ * their power counts, and the info labels on the right panel.
+ * This forces their text to be black and readable on light backgrounds.
+ */
+.game-board-label {
+    -fx-text-fill: black !important;
+}
+
+/* ================================================================== */
+/* NEUE STYLES FÜR DIE MODUS-AUSWAHL                                  */
+/* ================================================================== */
+
+/* Player vs Player Button */
+.mode-pvp-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/pvp_low.png');
+}
+.mode-pvp-button:hover, .mode-pvp-button.selected-mode-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/pvp_active.png');
+}
+
+/* LAN Button */
+.mode-lan-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/lan_low.png');
+}
+.mode-lan-button:hover, .mode-lan-button.selected-mode-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/lan_active.png');
+}
+
+/* Player vs Bot Button */
+.mode-pvb-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/pvb_low.png');
+}
+.mode-pvb-button:hover, .mode-pvb-button.selected-mode-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/pvb_active.png');
+}
+
+/* Bot vs Bot Button */
+.mode-bvb-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/bvb_low.png');
+}
+.mode-bvb-button:hover, .mode-bvb-button.selected-mode-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/bvb_active.png');
+}
+
+/* "Weiter" Button */
+.mode-continue-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/continue_low.png');
+}
+.mode-continue-button:hover {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/continue_active.png');
+}
+
+/* "Zurück" Button */
+.mode-back-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/back_low.png');
+}
+.mode-back-button:hover {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/mode_selection/back_active.png');
+}
+
+.selected-mode-button {
+    /* Diese Klasse dient nur dazu, den :hover-Effekt dauerhaft zu aktivieren, wenn ein Button ausgewählt ist. */
+    /* Keine zusätzlichen Regeln hier nötig. */
+}
+
+/* ================================================================== */
+/* STYLES FÜR DIE DECK-AUSWAHL (GameSetup)                            */
+/* ================================================================== */
+
+/* "Start Game" / "Weiter" Button */
+.deck-start-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/deck_selection/continue_low.png');
+}
+.deck-start-button:hover {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/deck_selection/continue_active.png');
+}
+/* Deaktivierter Zustand für den Start-Button */
+.deck-start-button:disabled {
+    -fx-opacity: 0.5; /* Macht den Button halbtransparent, wenn er deaktiviert ist */
+}
+
+/* "Back" / "Zurück" Button */
+.deck-back-button {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/deck_selection/back_low.png');
+}
+.deck-back-button:hover {
+    -fx-background-color: transparent;
+    -fx-background-image: url('assets/UI_Components/deck_selection/back_active.png');
+}
+
+/* --- Kreative Stile für ComboBox (Dropdown) --- */
+.deck-combo-box {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #4a4a4a, #2a2a2a);
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 16px;
+    -fx-border-color: #666;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+/* Pfeil im Dropdown */
+.deck-combo-box .arrow {
+    -fx-background-color: #A0A0A0;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Macht den Pfeil zu einem einfachen Dreieck */
+}
+/* Aufklappende Liste */
+.deck-combo-box .list-cell {
+    -fx-background-color: #333;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 16px;
+}
+.deck-combo-box .list-cell:hover {
+    -fx-background-color: #0078D7; /* Blauer Highlight-Effekt wie in vielen IDEs */
+    -fx-text-fill: white;
+}
+
+/* --- Kreative Stile für Labels --- */
+.deck-label {
+    -fx-font-size: 24px;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 5, 0.1, 0, 1);
+}
+
+/* Stile für den Deck-Status (wird vom Controller dynamisch zugewiesen) */
+.deck-status-ok {
+    -fx-text-fill: #90ee90;
+    -fx-effect: dropshadow(gaussian, #90ee90, 10, 0.3, 0, 0);
+}
+.deck-status-warning {
+    -fx-text-fill: #ffc0cb;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, #ff8c8c, 10, 0.3, 0, 0);
+}
+
+/* ================================================================== */
+/* STYLES FÜR RADIO-BUTTONS (in Modus- und Deck-Auswahl)               */
+/* ================================================================== */
+
+/* Basis-Style für alle RadioButtons */
+.radio-button {
+    -fx-text-fill: #cccccc; /* Helles Grau für den Text */
+    -fx-font-size: 16px;
+}
+
+/* Der "Punkt"-Teil des RadioButtons */
+.radio-button .radio {
+    -fx-border-width: 2px;
+    -fx-border-color: #00AEEF; /* Leuchtende Zyan-Farbe für den Rand */
+    -fx-background-color: transparent; /* Kein innerer Hintergrund */
+    -fx-border-radius: 15px; /* Macht es perfekt rund */
+    -fx-padding: 4px; /* Abstand zwischen Rand und innerem Punkt */
+    -fx-effect: dropshadow(gaussian, #00AEEF, 10, 0.6, 0, 0); /* Leuchteffekt */
+}
+
+/* Der innere Punkt, der erscheint, wenn ausgewählt */
+.radio-button:selected .radio .dot {
+    -fx-background-color: #00AEEF; /* Füllt den Kreis mit der Leuchtfarbe */
+    -fx-background-insets: 0;
+    -fx-shape: "M 0,0 A 1,1 0 1 1 0,-0.001 Z"; /* Stellt sicher, dass der Punkt rund ist */
+}
+
+/* Zustand, wenn die Maus über dem RadioButton ist */
+.radio-button:hover .radio {
+    -fx-border-color: white; /* Der Rand wird weiß beim Hovern */
+}
+
+/* ================================================================== */
+/* STYLES FÜR SUB-LABELS (in Modus-Auswahl)                           */
+/* ================================================================== */
+
+.sub-header-label {
+    -fx-font-size: 18px;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-weight: bold;
+}
