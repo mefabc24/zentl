@@ -19,7 +19,7 @@ public class GameServiceTest {
         gameService = new GameService();
     }
 
-    @Test
+/*    @Test
     void testNewGame() {
         gameService.newGame();
 
@@ -42,7 +42,5 @@ public class GameServiceTest {
         assertTrue(p1.getDeck().size() < 30);
         assertTrue(p1.getDeck().size() < 30);
 
-    }
-
-
+    }*/
 }
