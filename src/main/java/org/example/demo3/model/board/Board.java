@@ -30,5 +30,5 @@ public interface Board {
     void clearAllHornEffects();
 
     // bots
-    public Board copyWithPlayerMapping(Map<Player, Player> playerMapping);
+    Board copy();
 }

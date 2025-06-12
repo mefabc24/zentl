@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="30.0" styleClass="main-menu-background"
+      stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21"
+      fx:controller="org.example.demo3.view.JoinLobbyController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+    <children>
+        <Label styleClass="title-label" text="Spiel beitreten">
+            <font>
+                <Font name="System Bold" size="48.0"/>
+            </font>
+        </Label>
+        <VBox alignment="CENTER" spacing="10.0">
+            <children>
+                <Label text="IP-Adresse des Hosts eingeben:" styleClass="info-label"/>
+                <TextField fx:id="ipTextField" maxWidth="300.0" promptText="z.B. 192.168.1.10"/>
+            </children>
+        </VBox>
+        <Button fx:id="connectButton" mnemonicParsing="false" onAction="#handleConnectAction" prefHeight="60.0"
+                prefWidth="250.0" styleClass="main-menu-button" text="Verbinden"/>
+        <Label fx:id="statusLabel" styleClass="info-label-highlight"/>
+        <Button mnemonicParsing="false" onAction="#handleBackAction" prefHeight="60.0" prefWidth="250.0"
+                styleClass="main-menu-button" text="Zurück"/>
+    </children>
+</VBox>

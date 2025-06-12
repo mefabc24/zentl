@@ -1,6 +1,5 @@
 package org.example.demo3.view;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -10,18 +9,24 @@ import org.example.demo3.model.enums.BotDifficulty;
 import org.example.demo3.model.enums.GameMode;
 import org.example.demo3.model.service.NavigationService;
 
-import static org.example.demo3.model.constants.Config.FXML_GAME_SETUP_PATH;
-import static org.example.demo3.model.constants.Config.FXML_MAINMENU_PATH;
+import static org.example.demo3.model.constants.Config.*;
 
 public class GameModeSelectionController {
 
-    @FXML private Button pvpButton;
-    @FXML private Button pvbButton;
-    @FXML private VBox botSelectionPane;
-    @FXML private RadioButton easyBotRadio;
-    @FXML private RadioButton advancedBotRadio;
-    @FXML private ToggleGroup botDifficultyToggleGroup;
-    @FXML private Button startButton;
+    @FXML
+    private Button pvpButton;
+    @FXML
+    private Button pvbButton;
+    @FXML
+    private VBox botSelectionPane;
+    @FXML
+    private RadioButton easyBotRadio;
+    @FXML
+    private RadioButton advancedBotRadio;
+    @FXML
+    private ToggleGroup botDifficultyToggleGroup;
+    @FXML
+    private Button startButton;
 
     private NavigationService navigationService;
     private GameMode selectedMode;
@@ -32,7 +37,6 @@ public class GameModeSelectionController {
 
     @FXML
     public void initialize() {
-        // Event Listener für die Radio-Buttons, um den Start-Button zu aktivieren
         botDifficultyToggleGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             startButton.setDisable(newToggle == null);
         });
@@ -44,8 +48,6 @@ public class GameModeSelectionController {
         botSelectionPane.setVisible(false);
         botSelectionPane.setManaged(false);
         startButton.setDisable(false);
-        // Optional: Direkt zum nächsten Screen
-        // handleStartGame(); 
     }
 
     @FXML
@@ -53,10 +55,9 @@ public class GameModeSelectionController {
         selectedMode = GameMode.PLAYER_VS_BOT;
         botSelectionPane.setVisible(true);
         botSelectionPane.setManaged(true);
-        // Start-Button deaktivieren, bis eine Schwierigkeit gewählt ist
         startButton.setDisable(botDifficultyToggleGroup.getSelectedToggle() == null);
         if (botDifficultyToggleGroup.getSelectedToggle() == null) {
-            easyBotRadio.setSelected(true); // Standardauswahl
+            easyBotRadio.setSelected(true);
         }
     }
 
@@ -73,7 +74,6 @@ public class GameModeSelectionController {
             }
         }
 
-        // Navigiere zum Game Setup und übergebe die Auswahl
         final BotDifficulty finalDifficulty = difficulty;
         navigationService.navigateTo(FXML_GAME_SETUP_PATH, "Gwent - Game Setup", (GameSetupController controller) -> {
             controller.setNavigationService(navigationService);
@@ -85,6 +85,16 @@ public class GameModeSelectionController {
     private void handleBackButton() {
         navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", (MainMenuController controller) -> {
             controller.setNavigationService(navigationService);
+        });
+    }
+
+    // navigate to lan selection (host or join)
+    @FXML
+    private void handleLanButtonAction() {
+        navigationService.navigateTo(FXML_LAN_SELECTION_PATH, "LAN Multiplayer", controller -> {
+            if (controller instanceof LanSelectionController) {
+                ((LanSelectionController) controller).setNavigationService(navigationService);
+            }
         });
     }
 }

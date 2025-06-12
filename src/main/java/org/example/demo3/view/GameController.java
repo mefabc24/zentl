@@ -34,6 +34,8 @@ public class GameController implements Initializable {
     @FXML private Button restartGameButton, backToMenuButton;
 
     private Player p1, p2, currentPlayer;
+    private String localPlayerName; // needed to find the correct player object for first gamestate update (player2 doesnt exist before the first gamestate update comes from the server)
+    private Player localPlayer; // gets updated with every gamestate update
     private int round;
     private Board gameBoard;
     private boolean gameEnded = false;
@@ -70,9 +72,16 @@ public class GameController implements Initializable {
         eventBus.subscribe(EffectLogEvent.class, effectLogHandler);
     }
 
+    // sets the identity of the local player for lan games
+    public void setLocalPlayerIdentity(String name) {
+        this.localPlayerName = name;
+    }
+
     private void cleanup() {
         System.out.println("GameController cleaning up...");
         if (gameService != null) {
+            // shut down server or client connections
+            gameService.shutdownNetwork();
             gameService.shutdown();
         }
         eventBus.unsubscribe(GameStateUpdateEve.class, gameStateUpdateHandler);
@@ -106,7 +115,7 @@ public class GameController implements Initializable {
 
         // 3. Reset the game-over flag.
         gameEnded = false;
-        
+
         // This ensures a clean state, and its constructor will subscribe its own event handlers once.
         this.gameService = new GameService();
 
@@ -115,6 +124,7 @@ public class GameController implements Initializable {
         gameService.newGame(gameMode, botDifficulty, p1.getfraction(), p2.getfraction());
     }
 
+    // updates the entire game state based on an event from the game service
     private void updateGameState(GameStateUpdateEve event) {
         if (this.gameMode == null) {
             this.gameMode = event.getGameMode();
@@ -127,10 +137,18 @@ public class GameController implements Initializable {
         this.round = event.getRound();
         this.gameBoard = event.getGameBoard();
 
+        // (LAN) determine which player object corresponds to the local user
+        if (localPlayerName != null) {
+            if (p1 != null && p1.getName().equals(localPlayerName)) {
+                this.localPlayer = p1;
+            } else if (p2 != null && p2.getName().equals(localPlayerName)) {
+                this.localPlayer = p2;
+            }
+        }
+
         if (gameEnded) return;
 
         restartGameButton.setVisible(false);
-        playerHand.setDisable(false);
         updateUI();
     }
 
@@ -173,29 +191,54 @@ public class GameController implements Initializable {
         }
     }
 
+    // updates the player's hand view => for lan to determine whose turn it is and who can play
     private void updatePlayerHand() {
         playerHand.getChildren().clear();
-        boolean roundOver = p1 != null && p2 != null && p1.hasPassed() && p2.hasPassed();
-        if (roundOver || gameEnded) {
+
+        if (currentPlayer == null) {
             playerHand.setDisable(true);
             return;
         }
-        if (currentPlayer == null) return;
 
-        playerHand.setDisable(currentPlayer.hasPassed());
+        if(localPlayer != null) {
+        } else {
+        }
 
-        for (Card card : currentPlayer.getHand()) {
+        boolean canPlay;
+        List<Card> handToShow;
+
+        // (HOTSEAT) in local pvp show the hand of whoever turn it is
+        if (gameMode == GameMode.PLAYER_VS_PLAYER && (gameService != null && !gameService.isLanGame())) {
+            canPlay = !currentPlayer.hasPassed();
+            handToShow = currentPlayer.getHand();
+        } else { // (LAN or PVB) disable hand when its the turn of the other player
+            if (localPlayer == null) {
+                playerHand.setDisable(true);
+                return;
+            }
+            // determine if it is this machine turn to play
+            boolean isMyTurn = localPlayer.equals(currentPlayer);
+            canPlay = isMyTurn && !localPlayer.hasPassed();
+            // always show the local player hand regardless of whose turn it is
+            handToShow = localPlayer.getHand();
+        }
+
+        // disable the hand if the player cannot play
+        playerHand.setDisable(!canPlay);
+
+        for (Card card : handToShow) {
             VBox cardUI = createCardUI(card);
-            if (!currentPlayer.hasPassed()) {
-                cardUI.setOnMouseClicked(e -> eventBus.post(new PlayCardRequest(currentPlayer, card)));
+            if (canPlay) {
+                // if playable add listener to send play card request
+                cardUI.setOnMouseClicked(e -> {eventBus.post(new PlayCardRequest(card));});
             }
             playerHand.getChildren().add(cardUI);
         }
 
-        if (!currentPlayer.hasPassed()) {
+        if (canPlay) {
             Button passBtn = new Button("Pass");
             passBtn.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
-            passBtn.setOnAction(e -> eventBus.post(new PlayerPassed(currentPlayer)));
+            passBtn.setOnAction(e -> {eventBus.post(new PlayerPassed());});
             playerHand.getChildren().add(passBtn);
         }
     }

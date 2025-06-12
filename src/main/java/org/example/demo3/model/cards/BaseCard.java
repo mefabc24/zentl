@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import org.example.demo3.model.enums.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Objects;
 
 import java.io.InputStream;
 
@@ -28,15 +29,15 @@ public abstract class BaseCard implements Card {
 
     protected Faction faction;
     protected RowType rowType;
-    protected CardType cardType;
+    protected transient CardType cardType;
     protected Rarity rarity;
-    protected EffectType effectType; // Hinzugefügt
+    protected EffectType effectType;
 
     protected transient Image cardImage;
 
     protected BaseCard() {
         this.selectedAmount = 0;
-        this.effectType = EffectType.NONE; // Hinzugefügt: Standardwert
+        this.effectType = EffectType.NONE;
     }
 
     // Dieser Konstruktor dient eher als Referenz, Gson nutzt den parameterlosen
@@ -138,5 +139,17 @@ public abstract class BaseCard implements Card {
     public String toString() {
         String color = this.getAmount() > 0 ? GREEN : RED;
         return color + "{" + id + "} [" + faction + "] " + name + " " + power + " -" + rarity + "- (" + rowType + ") amount=" + amount + " effect=" + effectType + RESET;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card otherCard)) return false;
+        return this.id == otherCard.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

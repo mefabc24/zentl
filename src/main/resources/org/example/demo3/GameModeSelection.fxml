@@ -1,49 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<VBox alignment="CENTER" spacing="20.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.view.GameModeSelectionController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="20.0" styleClass="root"
+      xmlns="http://javafx.com/javafx/17" fx:controller="org.example.demo3.view.GameModeSelectionController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
     <Label text="Select Game Mode" style="-fx-font-size: 36px; -fx-text-fill: #E0E0E0;">
         <font>
-            <Font name="Impact" size="36.0" />
+            <Font name="Impact" size="36.0"/>
         </font>
         <VBox.margin>
-            <Insets bottom="50.0" />
+            <Insets bottom="50.0"/>
         </VBox.margin>
     </Label>
     <HBox alignment="CENTER" spacing="40.0">
-        <Button fx:id="pvpButton" onAction="#handlePvpButton" prefHeight="80.0" prefWidth="300.0" text="Player vs Player" styleClass="main-menu-button"/>
-        <Button fx:id="pvbButton" onAction="#handlePvbButton" prefHeight="80.0" prefWidth="300.0" text="Player vs Bot" styleClass="main-menu-button"/>
+        <Button fx:id="pvpButton" onAction="#handlePvpButton" prefHeight="80.0" prefWidth="300.0" text="Lokal (Hotseat)"
+                styleClass="main-menu-button"/>
+        <Button fx:id="lanButton" onAction="#handleLanButtonAction" prefHeight="80.0" prefWidth="300.0" text="LAN-Spiel"
+                styleClass="main-menu-button"/>
+        <Button fx:id="pvbButton" onAction="#handlePvbButton" prefHeight="80.0" prefWidth="300.0" text="Player vs Bot"
+                styleClass="main-menu-button"/>
     </HBox>
     <VBox fx:id="botSelectionPane" alignment="CENTER" managed="false" spacing="15.0" visible="false">
         <VBox.margin>
-            <Insets top="30.0" />
+            <Insets top="30.0"/>
         </VBox.margin>
         <Label text="Select Bot Difficulty" style="-fx-font-size: 24px; -fx-text-fill: #cccccc;"/>
         <HBox alignment="CENTER" spacing="20.0">
             <RadioButton fx:id="easyBotRadio" mnemonicParsing="false" text="Easy" textFill="WHITE">
                 <toggleGroup>
-                    <ToggleGroup fx:id="botDifficultyToggleGroup" />
+                    <ToggleGroup fx:id="botDifficultyToggleGroup"/>
                 </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="advancedBotRadio" mnemonicParsing="false" text="Advanced" toggleGroup="$botDifficultyToggleGroup" textFill="WHITE"/>
+            <RadioButton fx:id="advancedBotRadio" mnemonicParsing="false" text="Advanced"
+                         toggleGroup="$botDifficultyToggleGroup" textFill="WHITE"/>
         </HBox>
     </VBox>
-    <HBox alignment="CENTER" spacing="30.0" >
+    <HBox alignment="CENTER" spacing="30.0">
         <VBox.margin>
-            <Insets top="60.0" />
+            <Insets top="60.0"/>
         </VBox.margin>
-        <Button fx:id="startButton" onAction="#handleStartGame" text="Continue to Setup" disable="true" styleClass="primary-action-button" prefHeight="60.0" prefWidth="250.0"/>
-        <Button fx:id="backButton" onAction="#handleBackButton" text="Back to Main Menu" prefHeight="50.0" prefWidth="200.0"/>
+        <Button fx:id="startButton" onAction="#handleStartGame" text="Continue to Setup" disable="true"
+                styleClass="primary-action-button" prefHeight="60.0" prefWidth="250.0"/>
+        <Button fx:id="backButton" onAction="#handleBackButton" text="Back to Main Menu" prefHeight="50.0"
+                prefWidth="200.0"/>
     </HBox>
 </VBox>

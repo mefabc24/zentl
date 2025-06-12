@@ -375,7 +375,7 @@ public class AdvancedBot extends PlayerImpl {
                 playerMapping.put(opponent, this.opponent);
             }
 
-            this.board = board.copyWithPlayerMapping(playerMapping);
+            this.board = board.copy();
             this.round = round;
         }
 
@@ -395,18 +395,9 @@ public class AdvancedBot extends PlayerImpl {
 
         // deepcopys all objects in a gamestate
         public GameState copy() {
-            // create new player copies
             Player newBot = this.bot.copy();
             Player newOpponent = this.opponent.copy();
-
-            // playermapping is needed because the board contains references to the original player objects
-            Map<Player, Player> playerMapping = new HashMap<>();
-            playerMapping.put(this.bot, newBot);
-            playerMapping.put(this.opponent, newOpponent);
-
-            // copy board with the correct player mapping
-            Board newBoard = this.board.copyWithPlayerMapping(playerMapping);
-
+            Board newBoard = this.board.copy(); // <-- Viel einfacher!
             return new GameState(newBot, newOpponent, newBoard, this.round, true);
         }
 

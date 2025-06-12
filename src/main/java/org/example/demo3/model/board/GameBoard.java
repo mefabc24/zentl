@@ -10,9 +10,9 @@ import org.example.demo3.model.player.Player;
 import java.util.*;
 
 public class GameBoard implements Board {
-    private final Map<Player, Map<RowType, List<Card>>> board;
+    private final Map<String, Map<RowType, List<Card>>> board;
     private final Map<RowType, WeatherType> activeWeather;
-    private final Map<Player, Set<RowType>> activeHorns;
+    private final Map<String, Set<RowType>> activeHorns;
     private final List<Card> activeWeatherCards;
 
     public GameBoard() {
@@ -24,7 +24,7 @@ public class GameBoard implements Board {
 
     @Override
     public void addCardToRow(Card card, Player player) {
-        board.computeIfAbsent(player, p -> {
+        board.computeIfAbsent(player.getName(), p -> {
             activeHorns.put(p, new HashSet<>());
             return new EnumMap<>(RowType.class);
         }).computeIfAbsent(card.getRowType(), r -> new ArrayList<>()).add(card);
@@ -32,7 +32,7 @@ public class GameBoard implements Board {
 
     @Override
     public void removeCard(Card card, Player player) {
-        Map<RowType, List<Card>> playerRows = board.get(player);
+        Map<RowType, List<Card>> playerRows = board.get(player.getName());
         if (playerRows != null) {
             List<Card> row = playerRows.get(card.getRowType());
             if (row != null) {
@@ -43,7 +43,7 @@ public class GameBoard implements Board {
 
     @Override
     public int calculateRowPower(RowType row, Player player) {
-        List<Card> cardsInRow = board.getOrDefault(player, Collections.emptyMap())
+        List<Card> cardsInRow = board.getOrDefault(player.getName(), Collections.emptyMap())
                 .getOrDefault(row, Collections.emptyList());
 
         int basePower = 0;
@@ -58,7 +58,7 @@ public class GameBoard implements Board {
             }
         }
 
-        if (activeHorns.getOrDefault(player, Collections.emptySet()).contains(row)) {
+        if (activeHorns.getOrDefault(player.getName(), Collections.emptySet()).contains(row)) {
             return basePower * 2;
         }
         return basePower;
@@ -79,7 +79,7 @@ public class GameBoard implements Board {
 
     @Override
     public Map<RowType, List<Card>> getPlayerRows(Player player) {
-        return board.getOrDefault(player, Collections.emptyMap());
+        return board.getOrDefault(player.getName(), Collections.emptyMap());
     }
 
     @Override
@@ -111,12 +111,12 @@ public class GameBoard implements Board {
 
     @Override
     public void applyHornEffect(Player player, RowType rowType) {
-        activeHorns.computeIfAbsent(player, p -> new HashSet<>()).add(rowType);
+        activeHorns.computeIfAbsent(player.getName(), p -> new HashSet<>()).add(rowType);
     }
 
     @Override
     public void clearHornEffects(Player player) {
-        activeHorns.getOrDefault(player, Collections.emptySet()).clear();
+        activeHorns.getOrDefault(player.getName(), Collections.emptySet()).clear();
     }
 
     @Override
@@ -125,24 +125,21 @@ public class GameBoard implements Board {
     }
 
     // needed for minimax, to create deepcopys
-    @Override
-    public Board copyWithPlayerMapping(Map<Player, Player> playerMapping) {
+    public Board copy() {
         GameBoard newBoard = new GameBoard();
 
-        // iterate over the player mapping not the boards keys => ensures all players are included in the new state, even if they have no cards on the board
-        playerMapping.forEach((originalPlayer, newPlayer) -> {
-            // copy the player-specific card rows
-            Map<RowType, List<Card>> originalRows = this.board.getOrDefault(originalPlayer, Collections.emptyMap());
+        // iterate through each players rows and creates new lists for each row
+        this.board.forEach((playerName, rows) -> {
             Map<RowType, List<Card>> newRows = new EnumMap<>(RowType.class);
-            originalRows.forEach((rowType, cards) -> newRows.put(rowType, new ArrayList<>(cards)));
-            newBoard.board.put(newPlayer, newRows);
-
-            // copy the player specific horn effects
-            Set<RowType> originalHorns = this.activeHorns.getOrDefault(originalPlayer, Collections.emptySet());
-            newBoard.activeHorns.put(newPlayer, new HashSet<>(originalHorns));
+            rows.forEach((rowType, cards) -> newRows.put(rowType, new ArrayList<>(cards)));
+            newBoard.board.put(playerName, newRows);
         });
 
-        // copy global board effects that are not tied to a specific player
+        // create a new hashset for each players active horns
+        this.activeHorns.forEach((playerName, hornSet) -> {
+            newBoard.activeHorns.put(playerName, new HashSet<>(hornSet));
+        });
+
         newBoard.activeWeather.putAll(this.activeWeather);
         newBoard.activeWeatherCards.addAll(this.activeWeatherCards);
 

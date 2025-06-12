@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="20"
+      fx:controller="org.example.demo3.view.LanSelectionController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+    <Button text="Spiel hosten" fx:id="hostButton" onAction="#handleHostAction"/>
+    <Button text="Spiel beitreten" fx:id="joinButton" onAction="#handleJoinAction"/>
+    <Button text="Zurück" fx:id="backButton" onAction="#handleBackAction"/>
+</VBox>

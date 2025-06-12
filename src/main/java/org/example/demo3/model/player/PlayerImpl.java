@@ -139,16 +139,14 @@ public class PlayerImpl implements Player {
         passed = false;
     }
 
-    @Override
+     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PlayerImpl player = (PlayerImpl) o;
-        return Objects.equals(name, player.name);
+        if (!(o instanceof Player player)) return false;
+
+        return Objects.equals(name, player.getName());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
+    public int hashCode() {return Objects.hash(name);}
 }

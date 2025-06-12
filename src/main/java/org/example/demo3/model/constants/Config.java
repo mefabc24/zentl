@@ -48,6 +48,9 @@ public final class Config {
     public static final String FXML_GAME_SETUP_PATH = FXML_PATH + "GameSetup.fxml";
     public static final String FXML_GAME_PATH = FXML_PATH + "hello-view.fxml";
     public static final String FXML_GAME_MODE_SELECTION_PATH = FXML_PATH + "GameModeSelection.fxml";
+    public static final String FXML_LAN_SELECTION_PATH = FXML_PATH + "LanSelection.fxml";
+    public static final String FXML_HOST_LOBBY_PATH = FXML_PATH + "HostLobby.fxml";
+    public static final String FXML_JOIN_LOBBY_PATH = FXML_PATH + "JoinLobby.fxml";
     
     public static final String JSON_PATH = RESOURCE_PATH + "cards.json";
     public static final String CSS_PATH = RESOURCE_PATH + "styles.css";

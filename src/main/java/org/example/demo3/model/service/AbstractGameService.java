@@ -34,8 +34,8 @@ public abstract class AbstractGameService {
     protected volatile boolean isGameActive = true;
 
     private final EventHandler<RestartGameEvent> restartGameHandler = event -> newGame(event.getGameMode(), event.getBotDifficulty(), event.getP1Faction(), event.getP2Faction());
-    private final EventHandler<PlayCardRequest> playCardHandler = event -> cardPlayed(event);
-    private final EventHandler<PlayerPassed> playerPassedHandler = event -> playerPassed(event);
+    private final EventHandler<PlayCardRequest> playCardHandler = event -> cardPlayed(event.getCard());
+    private final EventHandler<PlayerPassed> playerPassedHandler = event -> playerPassed();
 
     public AbstractGameService() {
         this.cardRepository = CardRepository.getInstance();
@@ -65,30 +65,28 @@ public abstract class AbstractGameService {
         eventBus.unsubscribe(PlayerPassed.class, playerPassedHandler);
     }
 
-    protected void cardPlayed(PlayCardRequest event) {
+    protected void cardPlayed(Card card) {
         if (!isGameActive) return;
-        Player player = event.getPlayer();
-        Card card = event.getCard();
+
         soundService.playSoundForCard(card);
 
-        if (player.removeFromHand(card)) {
+        if (currentPlayer.removeFromHand(card)) {
             if (card.getCardType() == CardType.UNIT) {
-                board.addCardToRow(card, player);
+                board.addCardToRow(card, currentPlayer);
             } else if (card.getCardType() == CardType.WEATHER) {
                 board.addWeatherCard(card);
-            } else { // SPECIAL-Karte
-                player.addToDiscardPile(card);
+            } else {
+                currentPlayer.addToDiscardPile(card);
             }
-            handleCardEffect(card, player);
+            handleCardEffect(card, currentPlayer);
             postGameState();
             nextTurn();
         }
     }
 
-    protected void playerPassed(PlayerPassed event) {
+    protected void playerPassed() {
         if (!isGameActive) return;
-        event.getPlayer().pass();
-        System.out.println("[DEBUG] Player " + event.getPlayer().getName() + " has passed.");
+        currentPlayer.pass();
         postGameState();
         nextTurn();
     }
@@ -157,14 +155,12 @@ public abstract class AbstractGameService {
     protected void updateScores() {
         p1.setScore(board.calculateTotalPower(p1));
         p2.setScore(board.calculateTotalPower(p2));
-        // NEUE DEBUG-AUSGABE: Zeigt die finalen Punktestände nach jeder Aktualisierung.
         System.out.println("--------------------------------------------------");
         System.out.println("[DEBUG] SCORES UPDATED | P1: " + p1.getScore() + " | P2: " + p2.getScore());
         System.out.println("--------------------------------------------------");
     }
 
     protected void handleCardEffect(Card card, Player player) {
-        // NEUE DEBUG-AUSGABE: Zeigt an, welcher Effekt getriggert wird.
         System.out.println("\n============== EFFECT TRIGGER ==============");
         System.out.println("[DEBUG] Player:      " + player.getName());
         System.out.println("[DEBUG] Card Played: " + card.getName());
@@ -236,7 +232,7 @@ public abstract class AbstractGameService {
                 System.out.println("[DEBUG] Board state updated: SIEGE weather is now active for ALL players.");
                 break;
             case CLEAR_WEATHER:
-            case RALLY: // Ist jetzt absichtlich identisch zu CLEAR_WEATHER
+            case RALLY:
                 board.clearWeatherEffects();
                 board.getActiveWeatherCards().forEach(player::addToDiscardPile);
                 board.clearWeatherCards();

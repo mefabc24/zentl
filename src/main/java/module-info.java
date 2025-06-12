@@ -18,6 +18,11 @@ module org.example.demo3 {
 
     opens org.example.demo3.view to com.google.gson, javafx.fxml;
     opens org.example.demo3.model.cards to com.google.gson;
+    opens org.example.demo3.event to com.google.gson;
+    opens org.example.demo3.network to com.google.gson;
+    opens org.example.demo3.model.player to com.google.gson;
+    opens org.example.demo3.model.board to com.google.gson;
+    opens org.example.demo3.model.enums to com.google.gson;
 
     exports org.example.demo3.model.board;
     exports org.example.demo3.model.cards;
@@ -27,5 +32,6 @@ module org.example.demo3 {
     exports org.example.demo3.model.logic;
     exports org.example.demo3.model.service;
     exports org.example.demo3.view;
-
+    exports org.example.demo3.event;
+    exports org.example.demo3.network;
 }
