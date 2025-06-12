@@ -9,8 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import org.example.demo3.event.*;
 import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
@@ -22,57 +23,62 @@ import org.example.demo3.model.service.NavigationService;
 import org.example.demo3.model.service.SoundService;
 
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static org.example.demo3.model.constants.Config.FXML_MAINMENU_PATH;
 
 public class GameController implements Initializable, Cleanable {
     private final EventBus eventBus = EventBus.getInstanz();
-    @FXML private VBox player1Side, player2Side, weatherArea, infoPanel;
-    @FXML private HBox playerHand, Board;
-    @FXML private Label roundLabel, currentPlayerLabel, p1Score, p2Score;
-    @FXML private Button restartGameButton, backToMenuButton;
 
+    //<editor-fold desc="FXML Fields">
+    @FXML private StackPane rootPane;
+    @FXML private VBox player1Side, player2Side, weatherArea;
+    @FXML private HBox playerHand;
+    @FXML private Label p1NameLabel, p1ScoreLabel, p2NameLabel, p2ScoreLabel, roundLabel;
+    @FXML private Button restartGameButton, backToMenuButton, passButton;
+    @FXML private Label currentPlayerHandLabel; // Das neue Label für die Hand-Info
+    //</editor-fold>
+
+    //<editor-fold desc="Game State Fields">
     private Player p1, p2, currentPlayer;
-    private String localPlayerName; // needed to find the correct player object for first gamestate update (player2 doesnt exist before the first gamestate update comes from the server)
-    private Player localPlayer; // gets updated with every gamestate update
-    private int round;
+    private String localPlayerName;
+    private Player localPlayer;
     private Board gameBoard;
     private boolean gameEnded = false;
     private GameMode gameMode;
     private BotDifficulty botDifficulty;
-
     private NavigationService navigationService;
     private GameService gameService;
+    //</editor-fold>
 
+    //<editor-fold desc="Image & Asset Fields">
+    private static final String UI_PATH = "/org/example/demo3/assets/UI_Components/table/";
+    private static final String CARDS_ASSETS_PATH = "/org/example/demo3/assets/";
+    private static final String DEFAULT_CARD_IMAGE_NAME = "default.png";
+    private static final String HIDDEN_CARD_IMAGE_NAME = "hidden.png";
+    private static final double CARD_WIDTH = 80;
+    private static final double CARD_HEIGHT = 110;
+    private final Map<String, Image> imageCache = new HashMap<>();
+    //</editor-fold>
+
+    //<editor-fold desc="Event Handlers">
     private final EventHandler<GameStateUpdateEve> gameStateUpdateHandler = event -> Platform.runLater(() -> updateGameState(event));
     private final EventHandler<RoundEndedEve> roundEndedHandler = event -> Platform.runLater(() -> displayRoundResult(event));
     private final EventHandler<GameEndedEve> gameEndedHandler = event -> Platform.runLater(() -> displayGameOver(event));
     private final EventHandler<EffectLogEvent> effectLogHandler = event -> Platform.runLater(() -> showEffectLog(event.getMessage()));
-
-    public void setNavigationService(NavigationService navigationService) {
-        this.navigationService = navigationService;
-    }
-
-    public void setGameService(GameService gameService) {
-        this.gameService = gameService;
-    }
+    //</editor-fold>
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToEvents();
         restartGameButton.setVisible(false);
-        backToMenuButton.setVisible(true);
-
-        // Apply the class to the info panel labels to make their text black
-        String blackTextClass = "game-board-label";
-        roundLabel.getStyleClass().add(blackTextClass);
-        currentPlayerLabel.getStyleClass().add(blackTextClass);
-        p1Score.getStyleClass().add(blackTextClass);
-        p2Score.getStyleClass().add(blackTextClass);
+        currentPlayerHandLabel.setVisible(false); // Initial ausblenden
     }
+
+    //<editor-fold desc="Setup & Cleanup">
+    public void setNavigationService(NavigationService navigationService) { this.navigationService = navigationService; }
+    public void setGameService(GameService gameService) { this.gameService = gameService; }
+    public void setLocalPlayerIdentity(String name) { this.localPlayerName = name; }
 
     private void subscribeToEvents() {
         eventBus.subscribe(GameStateUpdateEve.class, gameStateUpdateHandler);
@@ -81,16 +87,10 @@ public class GameController implements Initializable, Cleanable {
         eventBus.subscribe(EffectLogEvent.class, effectLogHandler);
     }
 
-    // sets the identity of the local player for lan games
-    public void setLocalPlayerIdentity(String name) {
-        this.localPlayerName = name;
-    }
-
     @Override
     public void cleanup() {
         System.out.println("GameController cleaning up...");
         if (gameService != null) {
-            // shut down server or client connections
             gameService.shutdownNetwork();
             gameService.shutdown();
         }
@@ -99,22 +99,20 @@ public class GameController implements Initializable, Cleanable {
         eventBus.unsubscribe(GameEndedEve.class, gameEndedHandler);
         eventBus.unsubscribe(EffectLogEvent.class, effectLogHandler);
     }
+    //</editor-fold>
 
-    @FXML
-    void handleBackToMenu(ActionEvent event) {
+    //<editor-fold desc="FXML Actions">
+    @FXML void handleBackToMenu(ActionEvent event) {
         cleanup();
         SoundService.getInstance().startMenuMusic();
         if (navigationService != null) {
-            navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", controller -> {
-                if (controller instanceof MainMenuController) {
-                    ((MainMenuController) controller).setNavigationService(navigationService);
-                }
+            navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", c -> {
+                if (c instanceof MainMenuController) ((MainMenuController) c).setNavigationService(navigationService);
             });
         }
     }
 
-    @FXML
-    void handleRestartGame(ActionEvent event) {
+    @FXML void handleRestartGame(ActionEvent event) {
         cleanup();
         subscribeToEvents();
         gameEnded = false;
@@ -122,209 +120,260 @@ public class GameController implements Initializable, Cleanable {
         gameService.newGame(gameMode, botDifficulty, p1.getfraction(), p2.getfraction());
     }
 
-    // updates the entire game state based on an event from the game service
+    @FXML void handlePassAction(ActionEvent event) {
+        eventBus.post(new PlayerPassed());
+    }
+    //</editor-fold>
+
     private void updateGameState(GameStateUpdateEve event) {
         if (this.gameMode == null) {
             this.gameMode = event.getGameMode();
             this.botDifficulty = event.getBotDifficulty();
         }
-
         this.p1 = event.getPlayer1();
         this.p2 = event.getPlayer2();
         this.currentPlayer = event.getCurrentPlayer();
-        this.round = event.getRound();
         this.gameBoard = event.getGameBoard();
 
-        // (LAN) determine which player object corresponds to the local user
         if (localPlayerName != null) {
-            if (p1 != null && p1.getName().equals(localPlayerName)) {
-                this.localPlayer = p1;
-            } else if (p2 != null && p2.getName().equals(localPlayerName)) {
-                this.localPlayer = p2;
-            }
+            localPlayer = (p1 != null && p1.getName().equals(localPlayerName)) ? p1 : p2;
         }
 
         if (gameEnded) return;
 
         restartGameButton.setVisible(false);
-        playerHand.setDisable(false);
-        updateUI();
+        updateUI(event.getRound());
+    }
+
+    private void updateUI(int round) {
+        if (p1 == null || p2 == null || currentPlayer == null) return;
+
+        // Update top info bar
+        p1NameLabel.setText(p1.getName());
+        p1ScoreLabel.setText(String.valueOf(p1.getScore()));
+        p2NameLabel.setText(p2.getName());
+        p2ScoreLabel.setText(String.valueOf(p2.getScore()));
+        roundLabel.setText("RUNDE " + round);
+
+        // Update Board
+        updatePlayerSide(player1Side, p1);
+        updatePlayerSide(player2Side, p2);
+        updateWeatherArea();
+        updatePlayerHand();
+    }
+
+    private void updatePlayerSide(VBox playerSide, Player player) {
+        playerSide.getChildren().clear();
+        for (RowType rowType : List.of(RowType.MELEE, RowType.RANGED, RowType.SIEGE)) {
+            playerSide.getChildren().add(createFullRow(rowType, player));
+        }
+    }
+
+    private Node createFullRow(RowType rowType, Player player) {
+        HBox container = new HBox();
+        container.getStyleClass().add("full-row-container");
+        container.setMaxWidth(Double.MAX_VALUE); // Allows the HBox to grow to the full width of its parent VBox.
+
+        int power = gameBoard.calculateRowPower(rowType, player);
+        Label scoreLabel = new Label(String.valueOf(power));
+        scoreLabel.getStyleClass().add("row-score-label");
+
+        StackPane rowBox = createCardRowBox(rowType, player);
+        HBox.setHgrow(rowBox, Priority.ALWAYS); // Tells the container HBox to give all extra space to the rowBox.
+
+        if (player == p1) {
+            container.getChildren().addAll(scoreLabel, rowBox);
+        } else {
+            container.getChildren().addAll(rowBox, scoreLabel);
+        }
+        return container;
+    }
+
+    private StackPane createCardRowBox(RowType rowType, Player player) {
+        StackPane rowBox = new StackPane();
+        rowBox.getStyleClass().add("game-row-box");
+        List<Card> cards = gameBoard.getPlayerRows(player).getOrDefault(rowType, Collections.emptyList());
+
+        if (cards.isEmpty()) {
+            String iconName = switch (rowType) {
+                case MELEE -> "melee.png";
+                case RANGED -> "ranged.png";
+                case SIEGE -> "siege.png";
+                default -> null;
+            };
+
+            if (iconName != null) {
+                ImageView icon = new ImageView(loadImage(UI_PATH + iconName));
+                icon.setFitHeight(60);
+                icon.setPreserveRatio(true);
+                icon.setOpacity(0.5);
+                rowBox.getChildren().add(icon);
+            }
+        } else {
+            HBox cardsBox = new HBox(5);
+            cardsBox.setAlignment(Pos.CENTER);
+            for (Card card : cards) {
+                cardsBox.getChildren().add(createCardUI(card, false));
+            }
+            rowBox.getChildren().add(cardsBox);
+        }
+        return rowBox;
+    }
+
+    private void updateWeatherArea() {
+        weatherArea.getChildren().clear();
+        StackPane weatherBox = new StackPane();
+        weatherBox.getStyleClass().add("weather-box");
+
+        List<Card> activeWeather = gameBoard.getActiveWeatherCards();
+        if (activeWeather.isEmpty()) {
+            ImageView icon = new ImageView(loadImage(UI_PATH + "effect.png"));
+            icon.setFitHeight(60);
+            icon.setPreserveRatio(true);
+            icon.setOpacity(0.5);
+            weatherBox.getChildren().add(icon);
+        } else {
+            HBox cardsBox = new HBox(5);
+            cardsBox.setAlignment(Pos.CENTER);
+            for (Card card : activeWeather) {
+                cardsBox.getChildren().add(createCardUI(card, false));
+            }
+            weatherBox.getChildren().add(cardsBox);
+        }
+        weatherArea.getChildren().add(weatherBox);
+    }
+
+    private void updatePlayerHand() {
+        playerHand.getChildren().clear();
+        if (currentPlayer == null) {
+            passButton.setDisable(true);
+            currentPlayerHandLabel.setVisible(false); // Label ausblenden
+            return;
+        }
+
+        List<Card> handToShow = null;
+        boolean canPlay = false;
+        String labelText = "";
+        boolean showLabel = true;
+
+        if (gameMode == GameMode.PLAYER_VS_BOT) {
+            if (currentPlayer == p1) {
+                handToShow = p1.getHand();
+                canPlay = !p1.hasPassed();
+                labelText = "Am Zug: " + p1.getName();
+            } else {
+                for (int i = 0; i < p2.getHand().size(); i++) {
+                    playerHand.getChildren().add(createCardBackUI());
+                }
+                passButton.setDisable(true);
+                labelText = "Gegner ist am Zug...";
+            }
+        } else if (gameMode == GameMode.BOT_VS_BOT || (gameMode == GameMode.PLAYER_VS_PLAYER && !gameService.isLanGame())) {
+            handToShow = currentPlayer.getHand();
+            canPlay = gameMode == GameMode.PLAYER_VS_PLAYER && !currentPlayer.hasPassed();
+            labelText = "Am Zug: " + currentPlayer.getName();
+        } else if (gameMode == GameMode.PLAYER_VS_PLAYER && gameService.isLanGame()) {
+            if (localPlayer != null) {
+                handToShow = localPlayer.getHand();
+                canPlay = localPlayer.equals(currentPlayer) && !localPlayer.hasPassed();
+                if (canPlay) {
+                    labelText = "Du bist am Zug: " + localPlayer.getName();
+                } else {
+                    labelText = "Gegner ist am Zug...";
+                }
+            } else {
+                showLabel = false; // Noch keine Infos
+            }
+        }
+
+        // Label-Text und Sichtbarkeit setzen
+        currentPlayerHandLabel.setText(labelText);
+        currentPlayerHandLabel.setVisible(showLabel);
+
+        // Pass-Button und Handkarten aktualisieren
+        passButton.setDisable(!canPlay);
+        if (handToShow != null) {
+            for (Card card : handToShow) {
+                playerHand.getChildren().add(createCardUI(card, canPlay));
+            }
+        }
+    }
+
+
+    private Node createCardUI(Card card, boolean clickable) {
+        String specificImageName = card.getName() + ".png";
+        Image image = loadImage(CARDS_ASSETS_PATH + specificImageName);
+        if (image == null || image.isError()) {
+            image = loadImage(CARDS_ASSETS_PATH + DEFAULT_CARD_IMAGE_NAME);
+        }
+
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(CARD_WIDTH);
+        imageView.setFitHeight(CARD_HEIGHT);
+        imageView.setPreserveRatio(true);
+        imageView.getStyleClass().add("game-card-image");
+
+        if (clickable) {
+            imageView.setOnMouseClicked(e -> eventBus.post(new PlayCardRequest(card)));
+        }
+        return imageView;
+    }
+
+    private Node createCardBackUI() {
+        Image hiddenImage = loadImage(CARDS_ASSETS_PATH + HIDDEN_CARD_IMAGE_NAME);
+        ImageView imageView = new ImageView(hiddenImage);
+        imageView.setFitWidth(CARD_WIDTH);
+        imageView.setFitHeight(CARD_HEIGHT);
+        imageView.setPreserveRatio(true);
+        imageView.getStyleClass().add("game-card-image");
+        return imageView;
+    }
+
+    private Image loadImage(String imagePath) {
+        if (imageCache.containsKey(imagePath)) return imageCache.get(imagePath);
+        try {
+            URL imageUrl = getClass().getResource(imagePath);
+            if (imageUrl != null) {
+                Image image = new Image(imageUrl.toExternalForm());
+                if (!image.isError()) {
+                    imageCache.put(imagePath, image);
+                    return image;
+                }
+            }
+        } catch (Exception e) { System.err.println("Could not load image: " + imagePath); }
+        return null;
     }
 
     private void showEffectLog(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Card Effect");
+        alert.setTitle("Karteneffekt");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.show();
     }
 
-    private void updateUI() {
-        if(p1 == null || p2 == null || currentPlayer == null) return;
-        updatePlayerUI(player1Side, p1);
-        updatePlayerUI(player2Side, p2);
-        updateWeatherArea();
-        updatePlayerHand();
-        roundLabel.setText("Round: " + round);
-        currentPlayerLabel.setText("Current: " + currentPlayer.getName() + (currentPlayer.hasPassed() ? " (Passed)" : ""));
-        p1Score.setText(p1.getName() + " score: " + p1.getScore());
-        p2Score.setText(p2.getName() + " score: " + p2.getScore());
-    }
-
-    private void updateWeatherArea() {
-        weatherArea.getChildren().removeIf(node -> !(node instanceof Label));
-        if (gameBoard != null) {
-            for (Card card : gameBoard.getActiveWeatherCards()) {
-                weatherArea.getChildren().add(createCardUI(card));
-            }
-        }
-    }
-
-    private void updatePlayerUI(VBox side, Player player) {
-        side.getChildren().clear();
-        Label name = new Label(player.getName() + " (Wins: " + player.getWins() + ")");
-        name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-        // This label is on the dark background, so it should keep the default white text.
-        // The incorrect line that added 'game-board-label' has been removed.
-        side.getChildren().add(name);
-        for (RowType row : List.of(RowType.MELEE, RowType.RANGED, RowType.SIEGE)) {
-            side.getChildren().add(createRowUI(row, player));
-        }
-    }
-
-    // updates the player's hand view => for lan to determine whose turn it is and who can play
-    private void updatePlayerHand() {
-        playerHand.getChildren().clear();
-
-        if (currentPlayer == null) {
-            playerHand.setDisable(true);
-            return;
-        }
-
-        boolean canPlay;
-        List<Card> handToShow;
-
-        if (gameMode == GameMode.PLAYER_VS_PLAYER && (gameService != null && !gameService.isLanGame())) {
-            // (hotseat)
-            handToShow = currentPlayer.getHand();
-            canPlay = !currentPlayer.hasPassed();
-
-        } else if (gameMode == GameMode.PLAYER_VS_BOT) {
-            // (PvB)
-            handToShow = p1.getHand();
-            canPlay = (currentPlayer == p1) && !p1.hasPassed();
-
-        } else {
-            // (LAN)
-            if (localPlayer == null) {
-                playerHand.setDisable(true);
-                return;
-            }
-            handToShow = localPlayer.getHand();
-            boolean isMyTurn = localPlayer.equals(currentPlayer);
-            canPlay = isMyTurn && !localPlayer.hasPassed();
-        }
-
-
-        playerHand.setDisable(!canPlay);
-
-        for (Card card : handToShow) {
-            Node cardUI = createCardUI(card);
-            if (canPlay) {
-                cardUI.setOnMouseClicked(e -> {eventBus.post(new PlayCardRequest(card));});
-            }
-            playerHand.getChildren().add(cardUI);
-        }
-
-        if (canPlay) {
-            Button passBtn = new Button("Pass");
-            passBtn.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
-            passBtn.setOnAction(e -> eventBus.post(new PlayerPassed()));
-            playerHand.getChildren().add(passBtn);
-        }
-    }
-
-    private VBox createRowUI(RowType rowType, Player player) {
-        VBox rowBox = new VBox(5);
-        rowBox.setAlignment(Pos.CENTER);
-        rowBox.setStyle("-fx-background-color: " + getRowColor(rowType) + "; -fx-padding: 5px; -fx-min-width: 300px;");
-
-        Label rowLabel = new Label(rowType.name());
-        rowLabel.setStyle("-fx-font-weight: bold;");
-        // Add the new style class to this label to make the text black
-        rowLabel.getStyleClass().add("game-board-label");
-
-        HBox cardsBox = new HBox(5);
-        cardsBox.setAlignment(Pos.CENTER);
-        List<Card> cards = gameBoard.getPlayerRows(player).getOrDefault(rowType, Collections.emptyList());
-        for (Card card : cards) {
-            cardsBox.getChildren().add(createCardUI(card));
-        }
-
-        int power = gameBoard.calculateRowPower(rowType, player);
-        Label powerLabel = new Label("Power: " + power);
-        powerLabel.setStyle("-fx-font-weight: bold;");
-        powerLabel.getStyleClass().add("game-board-label");
-
-        rowBox.getChildren().addAll(rowLabel, cardsBox, powerLabel);
-        return rowBox;
-    }
-
-    private Node createCardUI(Card card) {
-        VBox box = new VBox(3);
-        box.setAlignment(Pos.CENTER);
-        box.getStyleClass().add("game-card");
-
-        Label name = new Label(card.getName());
-        name.setStyle("-fx-font-weight: bold;");
-        name.getStyleClass().add("game-card-label");
-
-        String powerText = (card.getCardType() == CardType.UNIT) ? "Power: " + card.getPower() : "Effect";
-        Label power = new Label(powerText);
-        power.getStyleClass().add("game-card-label");
-
-        box.getChildren().addAll(name, power);
-        return box;
-    }
-
     private void displayRoundResult(RoundEndedEve event) {
-        playerHand.setDisable(true);
-        playerHand.getChildren().clear();
-        p1Score.setText(event.getP1().getName() + " Score: " + event.getP1().getScore());
-        p2Score.setText(event.getP2().getName() + " Score: " + event.getP2().getScore());
-        String winner = (event.getWinner() != null) ? event.getWinner().getName() : "Draw: Counts as win for both";
+        passButton.setDisable(true);
+        String winner = (event.getWinner() != null) ? event.getWinner().getName() : "Unentschieden";
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Round over");
-        alert.setHeaderText("Round " + event.getRound() + " over");
-        alert.setContentText("Round Winner: " + winner + "\n\n" + event.getP1().getName() + ": " + event.getP1().getScore() + " (Wins: " + event.getP1().getWins() + ")\n" + event.getP2().getName() + ": " + event.getP2().getScore() + " (Wins: " + event.getP2().getWins() + ")");
+        alert.setTitle("Runde vorbei");
+        alert.setHeaderText("Runde " + event.getRound() + " ist vorbei!");
+        alert.setContentText("Gewinner: " + winner);
         alert.showAndWait();
     }
 
     private void displayGameOver(GameEndedEve event) {
         gameEnded = true;
-
         if (gameService != null) gameService.shutdown();
-
-        p1Score.setText(event.getP1Name() + " Score: " + event.getP1().getScore() + " (Wins: " + event.getPl1Wins() + ")");
-        p2Score.setText(event.getP2Name() + " score: " + event.getP2().getScore() + " (Wins: " + event.getP2Wins() + ")");
-        String winner = (event.getWinner() != null) ? event.getWinner().getName() : "Draw";
+        String winner = (event.getWinner() != null) ? event.getWinner().getName() : "Unentschieden";
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText("Game Over");
-        alert.setContentText("Winner: " + winner + "\nFinal Score:\n" + event.getP1Name() + ": " + event.getPl1Wins() + " Wins\n" + event.getP2Name() + ": " + event.getP2Wins() + " Wins\n");
+        alert.setTitle("Spiel vorbei");
+        alert.setHeaderText("DAS SPIEL IST VORBEI!");
+        alert.setContentText("Endgültiger Gewinner: " + winner);
         alert.showAndWait();
-        currentPlayerLabel.setText("Game Over");
-        playerHand.setDisable(true);
+        passButton.setDisable(true);
         playerHand.getChildren().clear();
         restartGameButton.setVisible(true);
-    }
-
-    private String getRowColor(RowType rowType) {
-        return switch (rowType) {
-            case MELEE -> "#ffdddd";
-            case RANGED -> "#ddffdd";
-            case SIEGE -> "#ddddff";
-            default -> "#ffffff";
-        };
+        currentPlayerHandLabel.setVisible(false); // Label am Ende des Spiels ausblenden
     }
 }

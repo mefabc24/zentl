@@ -748,3 +748,97 @@
     -fx-text-fill: #E0E0E0;
     -fx-font-weight: bold;
 }
+
+/* ================================================================== */
+/* STYLES FÜR DEN GAME-SCREEN (FINALES LAYOUT)                        */
+/* ================================================================== */
+
+/* Hintergrund des gesamten Spielbildschirms */
+.game-screen-root {
+    -fx-background-image: url('assets/UI_Components/menu/background.gif');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+/* Obere Leiste für Spieler-Infos und Runde */
+.top-info-bar .label {
+    -fx-text-fill: white;
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-effect: dropshadow(gaussian, black, 3, 0.7, 0, 1);
+}
+.player-name-label { -fx-font-size: 24px; }
+.player-score-label { -fx-font-size: 32px; }
+.round-label { -fx-font-size: 36px; -fx-font-weight: bold; -fx-alignment: center; }
+
+/* Die Boxen für die Kartenreihen und Wetter */
+.game-row-box, .weather-box {
+    -fx-min-height: 120px; -fx-min-width: 450px; -fx-alignment: center;
+    -fx-background-image: url('assets/UI_Components/table/row_background.png');
+    -fx-background-size: stretch; -fx-background-repeat: no-repeat;
+    -fx-background-position: center; -fx-padding: 10px;
+}
+.weather-box { -fx-min-width: 150px; }
+
+/* Container für eine Reihe (Score + Kartenbox) */
+.full-row-container { -fx-alignment: center; -fx-spacing: 5; }
+
+/* Die Anzeige für die Stärke einer Reihe */
+.row-score-label {
+    -fx-min-width: 50px; -fx-min-height: 50px; -fx-alignment: center;
+    -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 2, 0, 0, 1);
+    -fx-background-image: url('assets/UI_Components/table/score_background.png');
+    -fx-background-size: contain; -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+/* Die untere Leiste für die Handkarten */
+.player-hand-bar {
+    -fx-min-height: 130px;
+    -fx-padding: 10px;
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+}
+
+/* Label für aktuelle Hand */
+.hand-info-label {
+    -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, black, 2, 0.8, 0, 1);
+    -fx-padding: 0 0 5px 0;
+}
+
+/* Das Panel für die rechten Buttons */
+.right-button-panel {
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER_RIGHT; /* Passt sich gut in die neue Position ein */
+    -fx-padding: 0; /* Padding kommt von der umgebenden BorderPane */
+    -fx-spacing: 15px;
+}
+
+/* Buttons */
+.game-menu-button, .new-round-button, .pass-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0; -fx-border-width: 0; -fx-cursor: hand;
+    -fx-background-size: contain; -fx-background-repeat: no-repeat;
+    -fx-background-position: center; -fx-text-fill: transparent;
+}
+
+.game-menu-button:hover, .new-round-button:hover, .pass-button:hover {
+    -fx-background-color: transparent !important;
+    -fx-effect: dropshadow(gaussian, cyan, 15, 0.7, 0, 0);
+}
+
+.game-menu-button { -fx-background-image: url('assets/UI_Components/table/back_low.png'); -fx-min-width: 150px; -fx-min-height: 50px; }
+.game-menu-button:hover { -fx-background-image: url('assets/UI_Components/table/back_active.png'); }
+
+.new-round-button { -fx-background-image: url('assets/UI_Components/table/new_low.png'); -fx-min-width: 150px; -fx-min-height: 50px; }
+.new-round-button:hover { -fx-background-image: url('assets/UI_Components/table/new_active.png'); }
+.new-round-button:disabled, .new-round-button:default:disabled { -fx-opacity: 0.4; -fx-effect: none; }
+
+.pass-button { -fx-background-image: url('assets/UI_Components/table/pass_low.png'); -fx-min-width: 150px; -fx-min-height: 50px; }
+.pass-button:hover { -fx-background-image: url('assets/UI_Components/table/pass_active.png'); }
+.pass-button:disabled, .pass-button:default:disabled { -fx-opacity: 0.4; -fx-effect: none; }
+
+/* Styling der Bild-Karten im Spiel */
+.game-card-image { -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 3, 3); }
+.game-card-image:hover { -fx-effect: dropshadow(three-pass-box, cyan, 15, 0.8, 0, 0); }

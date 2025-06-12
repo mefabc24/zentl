@@ -1,35 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1"
-            fx:controller="org.example.demo3.view.GameController">
-    <center>
-        <HBox fx:id="Board" spacing="20" alignment="CENTER" style="-fx-padding: 10;">
-            <VBox fx:id="player1Side" spacing="10" alignment="CENTER"/>
-            <VBox fx:id="weatherArea" spacing="5" alignment="CENTER" style="-fx-border-color: #a0a0a0; -fx-border-style: dashed; -fx-padding: 10; -fx-min-width: 150;">
-                <children>
-                    <Label text="Weather"/>
-                </children>
-            </VBox>
-            <VBox fx:id="player2Side" spacing="10" alignment="CENTER"/>
-        </HBox>
-    </center>
 
-    <bottom>
-        <HBox fx:id="playerHand" spacing="10" style="-fx-background-color: #333; -fx-padding: 10;" alignment="CENTER"/>
-    </bottom>
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:id="rootPane" styleClass="game-screen-root"
+           fx:controller="org.example.demo3.view.GameController">
 
-    <right>
-        <VBox fx:id="infoPanel" spacing="10" style="-fx-background-color: #eee; -fx-padding: 10;">
-            <Label fx:id="roundLabel" text="Round: 1" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <Label fx:id="currentPlayerLabel" text="Current: " style="-fx-font-size: 14px;"/>
-            <Label fx:id="p1Score" text="Player 1 score: 0"/>
-            <Label fx:id="p2Score" text="Player 2 score: 0"/>
-            <Region VBox.vgrow="ALWAYS"/>
-            <Button fx:id="backToMenuButton" text="Back to Main Menu" onAction="#handleBackToMenu" maxWidth="Infinity"/>
-            <Button fx:id="restartGameButton" text="Restart Game" onAction="#handleRestartGame" maxWidth="Infinity"/>
-        </VBox>
-    </right>
-</BorderPane>
+    <BorderPane>
+        <top>
+            <BorderPane styleClass="top-info-bar">
+                <padding><Insets top="15" bottom="10" left="50" right="50"/></padding>
+                <left>
+                    <VBox fx:id="player1Info" alignment="CENTER_LEFT">
+                        <Label fx:id="p1NameLabel" styleClass="player-name-label"/>
+                        <Label fx:id="p1ScoreLabel" styleClass="player-score-label"/>
+                    </VBox>
+                </left>
+                <center>
+                    <Label fx:id="roundLabel" styleClass="round-label" alignment="CENTER"/>
+                </center>
+                <right>
+                    <VBox fx:id="player2Info" alignment="CENTER_RIGHT">
+                        <Label fx:id="p2NameLabel" styleClass="player-name-label"/>
+                        <Label fx:id="p2ScoreLabel" styleClass="player-score-label"/>
+                    </VBox>
+                </right>
+            </BorderPane>
+        </top>
+
+        <center>
+            <HBox fx:id="Board" spacing="20" alignment="CENTER" maxWidth="Infinity">
+                <padding>
+                    <Insets left="20" right="20"/>
+                </padding>
+
+                <VBox fx:id="player1Side" spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS"/>
+
+                <VBox fx:id="middleArea" spacing="20" alignment="CENTER">
+                    <Region VBox.vgrow="ALWAYS" />
+                    <VBox fx:id="weatherArea" alignment="CENTER"/>
+
+                    <VBox alignment="CENTER" spacing="10">
+                        <Button fx:id="passButton" onAction="#handlePassAction" styleClass="pass-button"/>
+                        <Button fx:id="backToMenuButton" onAction="#handleBackToMenu" styleClass="game-menu-button"/>
+                        <Button fx:id="restartGameButton" onAction="#handleRestartGame" styleClass="new-round-button"/>
+                    </VBox>
+
+                    <Region VBox.vgrow="ALWAYS" />
+                </VBox>
+
+                <VBox fx:id="player2Side" spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS"/>
+            </HBox>
+        </center>
+
+        <bottom>
+            <StackPane>
+                <padding><Insets bottom="20"/></padding>
+                <VBox spacing="5" alignment="CENTER">
+                    <Label fx:id="currentPlayerHandLabel" styleClass="hand-info-label" />
+                    <HBox fx:id="playerHand" spacing="10" alignment="CENTER" styleClass="player-hand-bar"/>
+                </VBox>
+            </StackPane>
+        </bottom>
+
+    </BorderPane>
+</StackPane>
