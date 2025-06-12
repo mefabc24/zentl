@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.enums.*;
 import org.example.demo3.model.player.Player;
+import org.example.demo3.model.service.Cleanable;
 import org.example.demo3.model.service.GameService;
 import org.example.demo3.model.service.NavigationService;
 import org.example.demo3.model.service.SoundService;
@@ -26,7 +28,7 @@ import java.util.ResourceBundle;
 
 import static org.example.demo3.model.constants.Config.FXML_MAINMENU_PATH;
 
-public class GameController implements Initializable {
+public class GameController implements Initializable, Cleanable {
     private final EventBus eventBus = EventBus.getInstanz();
     @FXML private VBox player1Side, player2Side, weatherArea, infoPanel;
     @FXML private HBox playerHand, Board;
@@ -63,6 +65,13 @@ public class GameController implements Initializable {
         subscribeToEvents();
         restartGameButton.setVisible(false);
         backToMenuButton.setVisible(true);
+
+        // Apply the class to the info panel labels to make their text black
+        String blackTextClass = "game-board-label";
+        roundLabel.getStyleClass().add(blackTextClass);
+        currentPlayerLabel.getStyleClass().add(blackTextClass);
+        p1Score.getStyleClass().add(blackTextClass);
+        p2Score.getStyleClass().add(blackTextClass);
     }
 
     private void subscribeToEvents() {
@@ -77,7 +86,8 @@ public class GameController implements Initializable {
         this.localPlayerName = name;
     }
 
-    private void cleanup() {
+    @Override
+    public void cleanup() {
         System.out.println("GameController cleaning up...");
         if (gameService != null) {
             // shut down server or client connections
@@ -93,7 +103,6 @@ public class GameController implements Initializable {
     @FXML
     void handleBackToMenu(ActionEvent event) {
         cleanup();
-
         SoundService.getInstance().startMenuMusic();
         if (navigationService != null) {
             navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", controller -> {
@@ -106,21 +115,10 @@ public class GameController implements Initializable {
 
     @FXML
     void handleRestartGame(ActionEvent event) {
-        // 1. Clean up the old game and its listeners.
-        // This shuts down the old gameService and unsubscribes its event handlers.
         cleanup();
-
-        // 2. Re-subscribe the UI listeners of this controller for the new game.
         subscribeToEvents();
-
-        // 3. Reset the game-over flag.
         gameEnded = false;
-
-        // This ensures a clean state, and its constructor will subscribe its own event handlers once.
         this.gameService = new GameService();
-
-        // 5. Tell the new service to start a new game with the previous settings.
-        // We use the p1 and p2 objects from the last game state just to get their faction info.
         gameService.newGame(gameMode, botDifficulty, p1.getfraction(), p2.getfraction());
     }
 
@@ -149,6 +147,7 @@ public class GameController implements Initializable {
         if (gameEnded) return;
 
         restartGameButton.setVisible(false);
+        playerHand.setDisable(false);
         updateUI();
     }
 
@@ -185,6 +184,8 @@ public class GameController implements Initializable {
         side.getChildren().clear();
         Label name = new Label(player.getName() + " (Wins: " + player.getWins() + ")");
         name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        // This label is on the dark background, so it should keep the default white text.
+        // The incorrect line that added 'game-board-label' has been removed.
         side.getChildren().add(name);
         for (RowType row : List.of(RowType.MELEE, RowType.RANGED, RowType.SIEGE)) {
             side.getChildren().add(createRowUI(row, player));
@@ -200,36 +201,36 @@ public class GameController implements Initializable {
             return;
         }
 
-        if(localPlayer != null) {
-        } else {
-        }
-
         boolean canPlay;
         List<Card> handToShow;
 
-        // (HOTSEAT) in local pvp show the hand of whoever turn it is
         if (gameMode == GameMode.PLAYER_VS_PLAYER && (gameService != null && !gameService.isLanGame())) {
-            canPlay = !currentPlayer.hasPassed();
+            // (hotseat)
             handToShow = currentPlayer.getHand();
-        } else { // (LAN or PVB) disable hand when its the turn of the other player
+            canPlay = !currentPlayer.hasPassed();
+
+        } else if (gameMode == GameMode.PLAYER_VS_BOT) {
+            // (PvB)
+            handToShow = p1.getHand();
+            canPlay = (currentPlayer == p1) && !p1.hasPassed();
+
+        } else {
+            // (LAN)
             if (localPlayer == null) {
                 playerHand.setDisable(true);
                 return;
             }
-            // determine if it is this machine turn to play
+            handToShow = localPlayer.getHand();
             boolean isMyTurn = localPlayer.equals(currentPlayer);
             canPlay = isMyTurn && !localPlayer.hasPassed();
-            // always show the local player hand regardless of whose turn it is
-            handToShow = localPlayer.getHand();
         }
 
-        // disable the hand if the player cannot play
+
         playerHand.setDisable(!canPlay);
 
         for (Card card : handToShow) {
-            VBox cardUI = createCardUI(card);
+            Node cardUI = createCardUI(card);
             if (canPlay) {
-                // if playable add listener to send play card request
                 cardUI.setOnMouseClicked(e -> {eventBus.post(new PlayCardRequest(card));});
             }
             playerHand.getChildren().add(cardUI);
@@ -238,7 +239,7 @@ public class GameController implements Initializable {
         if (canPlay) {
             Button passBtn = new Button("Pass");
             passBtn.setStyle("-fx-font-size: 14px; -fx-padding: 5px 15px;");
-            passBtn.setOnAction(e -> {eventBus.post(new PlayerPassed());});
+            passBtn.setOnAction(e -> eventBus.post(new PlayerPassed()));
             playerHand.getChildren().add(passBtn);
         }
     }
@@ -247,32 +248,42 @@ public class GameController implements Initializable {
         VBox rowBox = new VBox(5);
         rowBox.setAlignment(Pos.CENTER);
         rowBox.setStyle("-fx-background-color: " + getRowColor(rowType) + "; -fx-padding: 5px; -fx-min-width: 300px;");
+
         Label rowLabel = new Label(rowType.name());
         rowLabel.setStyle("-fx-font-weight: bold;");
+        // Add the new style class to this label to make the text black
+        rowLabel.getStyleClass().add("game-board-label");
+
         HBox cardsBox = new HBox(5);
         cardsBox.setAlignment(Pos.CENTER);
         List<Card> cards = gameBoard.getPlayerRows(player).getOrDefault(rowType, Collections.emptyList());
         for (Card card : cards) {
             cardsBox.getChildren().add(createCardUI(card));
         }
+
         int power = gameBoard.calculateRowPower(rowType, player);
         Label powerLabel = new Label("Power: " + power);
         powerLabel.setStyle("-fx-font-weight: bold;");
+        powerLabel.getStyleClass().add("game-board-label");
+
         rowBox.getChildren().addAll(rowLabel, cardsBox, powerLabel);
         return rowBox;
     }
 
-    private VBox createCardUI(Card card) {
+    private Node createCardUI(Card card) {
         VBox box = new VBox(3);
         box.setAlignment(Pos.CENTER);
-        box.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #333; -fx-border-width: 1px; -fx-padding: 5px; -fx-cursor: hand;");
+        box.getStyleClass().add("game-card");
+
         Label name = new Label(card.getName());
         name.setStyle("-fx-font-weight: bold;");
+        name.getStyleClass().add("game-card-label");
+
         String powerText = (card.getCardType() == CardType.UNIT) ? "Power: " + card.getPower() : "Effect";
         Label power = new Label(powerText);
+        power.getStyleClass().add("game-card-label");
+
         box.getChildren().addAll(name, power);
-        box.setOnMouseEntered(e -> box.setStyle("-fx-background-color: #e0e0e0; -fx-border-color: #000; -fx-border-width: 2px; -fx-padding: 5px; -fx-cursor: hand;"));
-        box.setOnMouseExited(e -> box.setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #333; -fx-border-width: 1px; -fx-padding: 5px; -fx-cursor: hand;"));
         return box;
     }
 

@@ -1,38 +1,72 @@
 package org.example.demo3.model.service;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.example.demo3.model.constants.Config.*;
+import static org.example.demo3.model.constants.Config.FXML_GAME_PATH;
+import static org.example.demo3.model.constants.Config.FXML_GAME_SETUP_PATH;
+import static org.example.demo3.model.constants.Config.FXML_GAME_MODE_SELECTION_PATH;
 
 public class NavigationService {
 
-    private final Scene mainScene;
+    private final StackPane mainContentPane;
     private final Stage primaryStage;
-    private final String menuCssPath;
 
-    private Object currentController;
-
-    private static final Set<String> FXMLS_WITH_MENU_CSS = Set.of(
-            FXML_INVENTORY_PATH,
-            FXML_EDITOR_PATH,
-            FXML_MAINMENU_PATH,
-            FXML_FACTION_TAB_PATH,
-            FXML_UNLOCKER_PATH
+    private final Map<String, Parent> viewCache = new HashMap<>();
+    private final Map<String, Object> controllerCache = new HashMap<>();
+    private final Set<String> initializedControllers = new HashSet<>();
+    
+    private static final Set<String> NON_CACHEABLE_VIEWS = Set.of(
+            FXML_GAME_PATH,
+            FXML_GAME_SETUP_PATH,
+            FXML_GAME_MODE_SELECTION_PATH
     );
 
+    private Object currentController;
+    private String currentFxmlPath;
 
-    public NavigationService(Scene mainScene, Stage primaryStage) {
-        this.mainScene = Objects.requireNonNull(mainScene, "Main scene cannot be null");
+    public NavigationService(StackPane mainContentPane, Stage primaryStage) {
+        this.mainContentPane = Objects.requireNonNull(mainContentPane, "Main content pane cannot be null");
         this.primaryStage = Objects.requireNonNull(primaryStage, "Primary stage cannot be null");
-        this.menuCssPath = CSS_PATH;
+    }
+
+    public void preLoadView(String fxmlPath) {
+        if (viewCache.containsKey(fxmlPath) || NON_CACHEABLE_VIEWS.contains(fxmlPath)) {
+            return;
+        }
+
+        new Thread(() -> {
+            System.out.println("[BACKGROUND] Starting preload for: " + fxmlPath);
+            try {
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath)));
+                Platform.runLater(() -> {
+                    try {
+                        Parent view = loader.load();
+                        Object controller = loader.getController();
+
+                        viewCache.put(fxmlPath, view);
+                        controllerCache.put(fxmlPath, controller);
+                        System.out.println("[UI THREAD] Finished preload and cached: " + fxmlPath);
+                    } catch (IOException e) {
+                        System.err.println("Error during UI-thread part of preload for: " + fxmlPath);
+                        e.printStackTrace();
+                    }
+                });
+            } catch (Exception e) {
+                System.err.println("Error during background part of preload for: " + fxmlPath);
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public void navigateTo(String fxmlPath, String title) {
@@ -41,63 +75,57 @@ public class NavigationService {
 
     public <T> void navigateTo(String fxmlPath, String title, ControllerInitializer<T> controllerSetup) {
         try {
-            if (currentController instanceof Cleanable) {
-                System.out.println("Calling cleanup() on old controller: " + currentController.getClass().getSimpleName());
-                ((Cleanable) currentController).cleanup();
-            }
-
-            System.out.println("Navigating to: " + fxmlPath);
-            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath), "FXML not found: " + fxmlPath));
-            Parent newRoot = loader.load();
-
-            this.currentController = loader.getController();
-
-            if (controllerSetup != null) {
-                T controller = loader.getController();
-                if (controller != null) {
-                    controllerSetup.initialize(controller);
-                } else {
-                    System.err.println("Warning: Controller for " + fxmlPath + " is null.");
+            if (currentFxmlPath != null && NON_CACHEABLE_VIEWS.contains(currentFxmlPath)) {
+                if (currentController instanceof Cleanable) {
+                    ((Cleanable) currentController).cleanup();
                 }
             }
 
-            mainScene.setRoot(newRoot);
-            applyStylesIfNeeded(fxmlPath);
+            Parent view;
+            Object controller;
+            boolean isCacheable = !NON_CACHEABLE_VIEWS.contains(fxmlPath);
+
+            if (isCacheable && viewCache.containsKey(fxmlPath)) {
+                System.out.println("Loading view from cache: " + fxmlPath);
+                view = viewCache.get(fxmlPath);
+                controller = controllerCache.get(fxmlPath);
+            } else {
+                System.out.println("Loading view from FXML: " + fxmlPath);
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlPath), "FXML not found: " + fxmlPath));
+                view = loader.load();
+                controller = loader.getController();
+
+                if (isCacheable) {
+                    viewCache.put(fxmlPath, view);
+                    controllerCache.put(fxmlPath, controller);
+                }
+            }
+
+            if (controllerSetup != null && (!isCacheable || !initializedControllers.contains(fxmlPath))) {
+                @SuppressWarnings("unchecked")
+                T typedController = (T) controller;
+                if (typedController != null) {
+                    System.out.println("Running initialization for controller of: " + fxmlPath);
+                    controllerSetup.initialize(typedController);
+                    if (isCacheable) {
+                        initializedControllers.add(fxmlPath);
+                    }
+                } else {
+                    System.err.println("Warning: Controller for " + fxmlPath + " is null during setup.");
+                }
+            }
+
+            mainContentPane.getChildren().setAll(view);
+
+            this.currentController = controller;
+            this.currentFxmlPath = fxmlPath;
 
             primaryStage.setTitle(title);
-
             System.out.println("Navigation to " + fxmlPath + " successful.");
-        } catch (IOException e) {
-            System.err.println("Failed to load FXML: " + fxmlPath + " - " + e.getMessage());
+
+        } catch (IOException | NullPointerException e) {
+            System.err.println("Navigation failed for FXML: " + fxmlPath);
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            System.err.println("Failed to find resource: " + fxmlPath + " - " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void applyStylesIfNeeded(String fxmlPath) {
-        if (menuCssPath == null || menuCssPath.isEmpty()) {
-            System.err.println("WARNUNG: Pfad zur CSS-Datei (menuCssPath) ist nicht konfiguriert.");
-            return;
-        }
-
-        String cssUrl;
-
-        try {
-            cssUrl = Objects.requireNonNull(getClass().getResource(menuCssPath), "CSS not found" + menuCssPath).toExternalForm();
-        } catch (NullPointerException e) {
-            System.err.println("WARNING: CSS-Datei nicht gefunden unter: " + menuCssPath);
-            return;
-        }
-
-        mainScene.getStylesheets().remove(cssUrl);
-
-        if (FXMLS_WITH_MENU_CSS.contains(fxmlPath)) {
-            mainScene.getStylesheets().add(cssUrl);
-            System.out.println("Applied CSS '" + menuCssPath + "' to: " + fxmlPath);
-        } else {
-            System.out.println("Ensured CSS '" + menuCssPath + "' is not applied to: " + fxmlPath);
         }
     }
 

@@ -1,5 +1,6 @@
 package org.example.demo3.model.service;
 
+import com.google.gson.JsonSyntaxException;
 import javafx.application.Platform;
 import org.example.demo3.event.Event;
 import org.example.demo3.event.GameStateUpdateEve;
@@ -13,13 +14,12 @@ import org.example.demo3.model.enums.GameMode;
 import org.example.demo3.model.logic.PlayerFactory;
 import org.example.demo3.model.player.AdvancedBot;
 import org.example.demo3.model.player.EasyBot;
+import org.example.demo3.model.player.Player;
 import org.example.demo3.network.Client;
 import org.example.demo3.network.NetworkGson;
 import org.example.demo3.network.NetworkMessage;
 import org.example.demo3.network.Server;
-import com.google.gson.JsonSyntaxException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameService extends AbstractGameService {
@@ -31,20 +31,72 @@ public class GameService extends AbstractGameService {
         super();
     }
 
-    @Override
-    public void newGame(GameMode mode, BotDifficulty difficulty, Faction p1Faction, Faction p2Faction) {
+    // This is an overloaded method for convenience, it calls the main one
+    public void newGame(
+            GameMode mode,
+            BotDifficulty difficulty,
+            Faction p1Faction,
+            Faction p2Faction
+    ) {
+        this.newGame(
+                mode,
+                difficulty,
+                BotDifficulty.NONE,
+                p1Faction,
+                p2Faction
+        );
+    }
+
+    // This is the main method that handles all game modes, including LAN setup
+    public void newGame(
+            GameMode mode,
+            BotDifficulty bot1Difficulty,
+            BotDifficulty bot2Difficulty,
+            Faction p1Faction,
+            Faction p2Faction
+    ) {
         this.isGameActive = true;
         this.gameMode = mode;
-        this.botDifficulty = difficulty;
+        this.botDifficulty = bot1Difficulty; // Legacy for GameState, primarily use bot1/bot2 diffs
 
         this.board = new GameBoard();
-        this.p1 = createPlayer("Player 1", p1Faction);
 
-        List<Card> p2Deck = cardRepository.getSavedDeck(p2Faction);
-        if (p2Deck.isEmpty()) {
-            p2Deck = createCustomBotDeck();
+        // Create Player 1
+        if (mode == GameMode.BOT_VS_BOT) {
+            List<Card> p1Deck = cardRepository.getRandomDeck(p1Faction);
+            this.p1 = PlayerFactory.createPlayer(
+                    "Bot 1",
+                    bot1Difficulty,
+                    p1Faction,
+                    p1Deck
+            );
+        } else {
+            // For PvP, PvB, and LAN, Player 1 is human
+            this.p1 = createPlayer("Player 1", p1Faction);
         }
-        this.p2 = PlayerFactory.createPlayer2(mode, difficulty, p2Faction, p2Deck);
+
+        // Create Player 2
+        if (mode == GameMode.BOT_VS_BOT) {
+            List<Card> p2Deck = cardRepository.getRandomDeck(p2Faction);
+            this.p2 = PlayerFactory.createPlayer(
+                    "Bot 2",
+                    bot2Difficulty,
+                    p2Faction,
+                    p2Deck
+            );
+        } else {
+            // For PvP, PvB, and LAN, Player 2 is created based on mode
+            List<Card> p2Deck = cardRepository.getSavedDeck(p2Faction);
+            if (p2Deck.isEmpty()) {
+                p2Deck = cardRepository.getRandomDeck(p2Faction);
+            }
+            this.p2 = PlayerFactory.createPlayer2(
+                    mode,
+                    bot1Difficulty,
+                    p2Faction,
+                    p2Deck
+            );
+        }
 
         if (p1.getDeck().isEmpty() || p2.getDeck().isEmpty()) {
             endGame();
@@ -55,10 +107,15 @@ public class GameService extends AbstractGameService {
         this.currentPlayer = p1;
         dealInitialHands();
         postGameState();
-    }
 
-    public boolean isLanGame() {
-        return this.server != null || this.client != null;
+        // If the very first player is a bot (in BvB mode), kick off its turn.
+        if (
+                !isLanGame() &&
+                        (currentPlayer instanceof EasyBot ||
+                                currentPlayer instanceof AdvancedBot)
+        ) {
+            handleBotTurn();
+        }
     }
 
     @Override
@@ -77,81 +134,46 @@ public class GameService extends AbstractGameService {
 
         postGameState();
 
-        if (currentPlayer instanceof AdvancedBot bot) {
-            // prevent UI freeze while bot thinks
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1000);
-                    if (!isGameActive) return;
-
-                    Card cardToPlay = bot.chooseCardToPlay(p1, board, round);
-
-                    // return to javafx thread with the card the bot wants to play
-                    Platform.runLater(() -> {
-                        if (!isGameActive) return;
-                        if (cardToPlay != null) {
-                            eventBus.post(new PlayCardRequest(cardToPlay));
-                        } else {
-                            eventBus.post(new PlayerPassed());
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }).start();
-
-        } else if (currentPlayer instanceof EasyBot bot) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1000);
-                    if (!isGameActive) return;
-
-                    Card cardToPlay = ((EasyBot) currentPlayer).chooseCardToPlay();
-                    Platform.runLater(() -> {
-                        if (!isGameActive) return;
-                        if (cardToPlay != null) {
-                            eventBus.post(new PlayCardRequest(cardToPlay));
-                        } else {
-                            eventBus.post(new PlayerPassed());
-                        }
-                    });
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }).start();
+        // Handle bot turn logic only for local games
+        if (
+                !isLanGame() &&
+                        (currentPlayer instanceof EasyBot ||
+                                currentPlayer instanceof AdvancedBot)
+        ) {
+            handleBotTurn();
         }
     }
 
-    // FOR TESTING THE BOTS
-    private List<Card> createCustomBotDeck() {
-        List<Card> customDeck = new ArrayList<>();
+    private void handleBotTurn() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                if (!isGameActive) return;
 
-        addCardByName(customDeck, "Paladin", 2);
-        addCardByName(customDeck, "Pikeman", 2);
-        addCardByName(customDeck, "Knight Errant", 2);
-        addCardByName(customDeck, "Ballista Crew", 2);
+                Card cardToPlay = null;
+                if (currentPlayer instanceof AdvancedBot bot) {
+                    Player opponent = (currentPlayer == p1) ? p2 : p1;
+                    cardToPlay = bot.chooseCardToPlay(opponent, board, round);
+                } else if (currentPlayer instanceof EasyBot bot) {
+                    cardToPlay = bot.chooseCardToPlay();
+                }
 
-        addCardByName(customDeck, "Heavy Cavalry", 2);
-        addCardByName(customDeck, "Crossbowman", 2);
-        addCardByName(customDeck, "Field Medic", 1);
-
-        addCardByName(customDeck, "Commander's Horn", 1);
-        addCardByName(customDeck, "Scorch", 1);
-        addCardByName(customDeck, "Biting Frost", 1);
-        addCardByName(customDeck, "Clear Skies", 1);
-
-        return customDeck;
-    }
-
-    private void addCardByName(List<Card> deck, String name, int count) {
-        cardRepository.getAllCards().stream()
-                .filter(c -> c.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .ifPresent(card -> {
-                    for (int i = 0; i < count; i++) {
-                        deck.add(card);
+                final Card finalCardToPlay = cardToPlay;
+                Platform.runLater(() -> {
+                    if (!isGameActive) return;
+                    if (finalCardToPlay != null) {
+                        eventBus.post(
+                                new PlayCardRequest(finalCardToPlay)
+                        );
+                    } else {
+                        eventBus.post(new PlayerPassed());
                     }
                 });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        })
+                .start();
     }
 
     @Override
@@ -170,6 +192,7 @@ public class GameService extends AbstractGameService {
         }
     }
 
+
     @Override
     protected void playerPassed() {
         if (!isGameActive) return;
@@ -185,6 +208,7 @@ public class GameService extends AbstractGameService {
         }
     }
 
+
     // (CLIENT) serialize event and send it to server
     private void sendActionToServer(Event action) {
         String eventType = action.getClass().getSimpleName();
@@ -198,12 +222,23 @@ public class GameService extends AbstractGameService {
     protected void postGameState() {
         if (!isGameActive) return;
         updateScores();
-        GameStateUpdateEve eve = new GameStateUpdateEve(p1, p2, currentPlayer, round, board, gameMode, botDifficulty);
+        GameStateUpdateEve eve = new GameStateUpdateEve(
+                p1,
+                p2,
+                currentPlayer,
+                round,
+                board,
+                gameMode,
+                botDifficulty
+        );
 
-        // (HOST) send the new game state to the client => this is the main synchronization mechanism
+        // (HOST) send the new game state to the client
         if (isHost && server != null) {
             String json = NetworkGson.getInstance().toJson(eve);
-            NetworkMessage msg = new NetworkMessage(eve.getClass().getSimpleName(), json);
+            NetworkMessage msg = new NetworkMessage(
+                    eve.getClass().getSimpleName(),
+                    json
+            );
             server.sendMessage(NetworkGson.getInstance().toJson(msg));
         }
 
@@ -211,11 +246,14 @@ public class GameService extends AbstractGameService {
         eventBus.post(eve);
     }
 
+    public boolean isLanGame() {
+        return this.server != null || this.client != null;
+    }
+
     // configures game service to act as host
     public void startLanGameAsHost(Server server) {
         this.isHost = true;
         this.server = server;
-        // re-assign the message handler to this classes method
         this.server.setOnMessageReceived(this::handleClientMessage);
     }
 
@@ -229,38 +267,53 @@ public class GameService extends AbstractGameService {
     // (HOST) processes incoming messages from the client
     private void handleClientMessage(String jsonMessage) {
         try {
-            NetworkMessage msg = NetworkGson.getInstance().fromJson(jsonMessage, NetworkMessage.class);
+            NetworkMessage msg = NetworkGson
+                    .getInstance()
+                    .fromJson(jsonMessage, NetworkMessage.class);
             String eventType = msg.getEventType();
             String jsonData = msg.getJsonData();
 
-            if (eventType.equals(PlayCardRequest.class.getSimpleName())) {
-                PlayCardRequest event = NetworkGson.getInstance().fromJson(jsonData, PlayCardRequest.class);
-                super.cardPlayed(event.getCard());
-            } else if (eventType.equals(PlayerPassed.class.getSimpleName())) {
-                super.playerPassed();
-            }
+            Platform.runLater(() -> {
+                if (eventType.equals(PlayCardRequest.class.getSimpleName())) {
+                    PlayCardRequest event = NetworkGson
+                            .getInstance()
+                            .fromJson(jsonData, PlayCardRequest.class);
+                    // Host executes the action on behalf of Player 2
+                    super.cardPlayed(event.getCard());
+                } else if (eventType.equals(PlayerPassed.class.getSimpleName())) {
+                    // Host executes the action on behalf of Player 2
+                    super.playerPassed();
+                }
+            });
         } catch (JsonSyntaxException e) {
-            System.err.println("rrror deserializing client message: " + jsonMessage);
+            System.err.println(
+                    "Error deserializing client message: " + jsonMessage
+            );
         }
     }
 
-    // CLIENT) processes incoming messages from the server
+    // (CLIENT) processes incoming messages from the server
     private void handleServerMessage(String jsonMessage) {
         try {
-            NetworkMessage msg = NetworkGson.getInstance().fromJson(jsonMessage, NetworkMessage.class);
+            NetworkMessage msg = NetworkGson
+                    .getInstance()
+                    .fromJson(jsonMessage, NetworkMessage.class);
             String eventType = msg.getEventType();
             String jsonData = msg.getJsonData();
 
-            // the client only receives state updates and posts them to its local event bus for the UI
+            // The client only receives state updates and posts them to its local event bus
             Platform.runLater(() -> {
                 if (eventType.equals(GameStateUpdateEve.class.getSimpleName())) {
-                    GameStateUpdateEve event = NetworkGson.getInstance().fromJson(jsonData, GameStateUpdateEve.class);
+                    GameStateUpdateEve event = NetworkGson
+                            .getInstance()
+                            .fromJson(jsonData, GameStateUpdateEve.class);
                     eventBus.post(event);
                 }
             });
-
         } catch (JsonSyntaxException e) {
-            System.err.println("error deserializing server message: " + jsonMessage);
+            System.err.println(
+                    "Error deserializing server message: " + jsonMessage
+            );
         }
     }
 
