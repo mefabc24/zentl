@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 // => determines the optimal move by simulating thousands of future game states and scoring them with a heuristic function (evaluateState)
 public class AdvancedBot extends PlayerImpl {
     // MAX_DEPTH should be uneven
-    private static final int MAX_DEPTH = 11; // controlls foresight, but time complexity: O(b^d) in worst case | d = depth, b = number of possible moves (how many cards can be played) => has huge impact on performance
+    private static final int MAX_DEPTH = 9; // controlls foresight, but time complexity: O(b^d) in worst case | d = depth, b = number of possible moves (how many cards can be played) => has huge impact on performance
 
     public AdvancedBot(String name, Faction faction, List<Card> deck) {
         super(name, faction, deck);
@@ -21,14 +21,30 @@ public class AdvancedBot extends PlayerImpl {
     // chooses the best card to play
     public Card chooseCardToPlay(Player opponent, Board board, int round) {
         if (getHand().isEmpty()) return null;
+        GameState initialState = new GameState(this, opponent, board, round);
 
-        /*
-        int scorediff = board.calculateTotalPower(this) - board.calculateTotalPower(opponent);
-        if(opponent.hasPassed() && scorediff > 0) return null;
-        */
+        // get possible moves at the top level
+        List<Card> possibleMoves = getPossibleMoves(initialState, true);
+        Move bestMove = new Move(null, Integer.MIN_VALUE);
+        int alpha = Integer.MIN_VALUE;
+        int beta = Integer.MAX_VALUE;
 
-        GameState initialState = new GameState(this, opponent, board, round); // deepcopy the gamestate
-        return minimax(initialState, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, true).card; // use minimax to get the best possible card to play, looking 7 turns in advance
+        System.out.println("--- advanced bot is thinking... ---");
+        for (Card move : possibleMoves) {
+            GameState newState = simulateMove(initialState, move, true);
+            Move result = minimax(newState, MAX_DEPTH - 1, alpha, beta, false); // start recursion
+
+            String moveName = (move == null) ? "PASS" : move.getName();
+            System.out.println("evaluated move: " + moveName + " | final score: " + result.score);
+
+            if (result.score > bestMove.score) {
+                bestMove = new Move(move, result.score);
+            }
+            alpha = Math.max(alpha, result.score);
+        }
+        System.out.println("---  advanced bot best move: " + (bestMove.card == null ? "PASS" : bestMove.card.getName()) + " with score " + bestMove.score + " ---");
+
+        return bestMove.card;
     }
 
     // minimax with alpha-beta pruning
@@ -78,7 +94,6 @@ public class AdvancedBot extends PlayerImpl {
             if (beta <= alpha) break;
         }
 
-        // System.out.println((isBotTurn ? "BOT" : "OPP") + " depth=" + depth + " | BestMove=" + (bestMove.card == null ? "PASS" : bestMove.card.getName()) + " | Score=" + bestMove.score);
         return bestMove;
     }
 
@@ -132,8 +147,8 @@ public class AdvancedBot extends PlayerImpl {
 
         if (isMustWinRound) {
             // in a must win round, the score difference is most important
-            scoreMultiplier = 200; // extremely high focus on points
-            handAdvantageMultiplier = 5; // card advantage less relevant
+            scoreMultiplier = 60; // extremely high focus on points
+            handAdvantageMultiplier = 15; // card advantage less relevant
         } else {
             // if it's round 1 or the bot is up 1-0, a strategic loss is ok
             scoreMultiplier = 20; // points matter less
@@ -141,20 +156,23 @@ public class AdvancedBot extends PlayerImpl {
         }
 
         // other bonuses/penalties
-        int cardValuePenalty = 0;
-        if (state.round <= 2 && !isMustWinRound) {
-            cardValuePenalty = calculateCardValuePenalty(state);
+        int cardValuePenalty =  calculateCardValuePenalty(state);
+
+        if (isMustWinRound) {
+            cardValuePenalty /= 2; // Halve the penalty, but don't ignore it.
         }
+
         int overkillPenalty = 0;
-        if (scoreDiff > 7) {
-            overkillPenalty = -(scoreDiff - 10) * 10;
+
+        if (scoreDiff > 5) {
+            overkillPenalty = -(scoreDiff - 5) * 25;
         }
 
 
         int score = scoreDiff * scoreMultiplier;
         int hand = handDiff * handAdvantageMultiplier;
         int finalScore = score + hand + cardValuePenalty + overkillPenalty;
-        /*
+/*
         System.out.println();
         System.out.println("--- Evaluation Details ---");
         System.out.println("[Eval] Score Comp: (scoreDiff " + scoreDiff + " * scoreMultiplier " + scoreMultiplier + ") = " + score);
@@ -244,7 +262,6 @@ public class AdvancedBot extends PlayerImpl {
     private void applyWeatherEffect(GameState state, WeatherCard card) {
         WeatherType type = card.getWeatherType();
         RowType targetRow;
-
         switch (type) {
             case FROST:
                 targetRow = RowType.MELEE;
