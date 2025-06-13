@@ -26,16 +26,6 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        try (
-                InputStream arialStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/ariblk.ttf");
-                InputStream impactStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/impact.ttf")
-        ) {
-            if (arialStream != null) Font.loadFont(arialStream, 10);
-            if (impactStream != null) Font.loadFont(impactStream, 10);
-        } catch (Exception e) {
-            System.err.println("Fehler beim Laden der Schriftarten aufgetreten.");
-            e.printStackTrace();
-        }
 
         FXMLLoader mainLoader = new FXMLLoader(HelloApplication.class.getResource("/org/example/demo3/main-view.fxml"));
         StackPane root = mainLoader.load();

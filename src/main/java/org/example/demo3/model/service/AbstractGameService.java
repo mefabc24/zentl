@@ -155,17 +155,17 @@ public abstract class AbstractGameService {
     protected void updateScores() {
         p1.setScore(board.calculateTotalPower(p1));
         p2.setScore(board.calculateTotalPower(p2));
-        System.out.println("--------------------------------------------------");
+        /*System.out.println("--------------------------------------------------");
         System.out.println("[DEBUG] SCORES UPDATED | P1: " + p1.getScore() + " | P2: " + p2.getScore());
-        System.out.println("--------------------------------------------------");
+        System.out.println("--------------------------------------------------");*/
     }
 
     protected void handleCardEffect(Card card, Player player) {
-        System.out.println("\n============== EFFECT TRIGGER ==============");
+        /*System.out.println("\n============== EFFECT TRIGGER ==============");
         System.out.println("[DEBUG] Player:      " + player.getName());
         System.out.println("[DEBUG] Card Played: " + card.getName());
         System.out.println("[DEBUG] EffectType:  " + card.getEffectType());
-        System.out.println("============================================");
+        System.out.println("============================================");*/
 
         if (card.getEffectType() == null) return;
         String effectMessage = "";

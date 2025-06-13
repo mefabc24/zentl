@@ -120,6 +120,7 @@ public class GameSetupController {
                 p1FactionComboBox.setDisable(false);
                 p2FactionComboBox.setDisable(true);
                 p2DeckStatusLabel.setText("Bot will use a random deck");
+                p2FactionComboBox.setValue(Faction.KNIGHTS);
                 break;
             case BOT_VS_BOT:
                 player1Label.setText("Bot 1 (" + bot1Difficulty.name() + ")");
@@ -128,6 +129,8 @@ public class GameSetupController {
                 p2FactionComboBox.setDisable(true);
                 p1DeckStatusLabel.setText("Bot will use a random deck");
                 p2DeckStatusLabel.setText("Bot will use a random deck");
+                p1FactionComboBox.setValue(Faction.KNIGHTS);
+                p2FactionComboBox.setValue(Faction.KNIGHTS);
                 break;
         }
         updateDeckStatusLabels();

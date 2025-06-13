@@ -150,9 +150,11 @@ public class GameService extends AbstractGameService {
                 if (currentPlayer instanceof AdvancedBot bot) {
                     Player opponent = (currentPlayer == p1) ? p2 : p1;
                     cardToPlay = bot.chooseCardToPlay(opponent, board, round);
+                    System.out.println("Advanced Bot plays: " +cardToPlay);
                 } else if (currentPlayer instanceof TacticalBot bot) {
                     Player opponent = (currentPlayer == p1) ? p2 : p1;
                     cardToPlay = bot.chooseCardToPlay(opponent, board, round);
+                    System.out.println("Tactical Bot plays: " +cardToPlay);
                 }
 
                 final Card finalCardToPlay = cardToPlay;
