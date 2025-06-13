@@ -26,6 +26,12 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        try (InputStream CodaStream = getClass().getResourceAsStream("/org/example/demo3/assets/fonts/Coda-Regular.ttf")) {
+            Font.loadFont(CodaStream, 10);
+        } catch (Exception e) {
+            System.err.println("Fehler beim Laden der Schriftarten aufgetreten.");
+            e.printStackTrace();
+        }
 
         FXMLLoader mainLoader = new FXMLLoader(HelloApplication.class.getResource("/org/example/demo3/main-view.fxml"));
         StackPane root = mainLoader.load();
@@ -52,7 +58,7 @@ public class HelloApplication extends Application {
 
         // ================== TRIGGER THE PRE-LOAD ==================
         System.out.println("Kicking off preload for Inventory...");
-        navigationService.preLoadView(FXML_INVENTORY_PATH);
+        navigationService.preLoadView(FXML_DECKBUILDER_PATH);
 
         SoundService.getInstance().startMenuMusic();
         stage.setTitle("GWENT");

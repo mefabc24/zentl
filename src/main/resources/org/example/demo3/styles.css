@@ -842,3 +842,157 @@
 /* Styling der Bild-Karten im Spiel */
 .game-card-image { -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 3, 3); }
 .game-card-image:hover { -fx-effect: dropshadow(three-pass-box, cyan, 15, 0.8, 0, 0); }
+
+
+
+
+
+
+
+/* Deckbuilder */
+.card-frame-border {
+    /* Der gewünschte Farbverlauf als Hintergrund */
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-border-width: 6px;
+    -fx-border-color: linear-gradient(from 0% 50% to 100% 50%, #4F4F4F 0%, #DBDBDB 50%, #4F4F4F 100%);;
+
+
+    /* Das Padding erzeugt die "Dicke" des Rahmens */
+    -fx-padding: 6px;
+    -fx-background-radius: 0; /* Optional: abgerundete Ecken für den Rahmen */
+}
+
+/* Diese Klasse für das innere FlowPane füllt den Inhalt */
+.card-frame-content {
+    /* Solider Hintergrund, der den Farbverlauf verdeckt */
+    -fx-background-color: transparent; /* Ein dunkles Grau als Inhalts-Hintergrund */
+
+    /* Padding für den Inhalt, damit die Karten nicht am Rand kleben */
+    -fx-padding: 10px;
+    -fx-background-radius: 3; /* Optional: leicht abgerundete Ecken für den Inhalt */
+}
+
+/* Wichtig: Macht den ScrollPane transparent, damit er das Layout nicht stört */
+.card-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 0;
+}
+.card-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.deckbuilder-nav-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.deckbuilder-nav-button:hover {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.icon-button {
+    -fx-background-color: transparent; /* Entfernt den Hintergrund */
+    -fx-background-radius: 0;         /* Entfernt abgerundete Ecken */
+    -fx-border-color: transparent;    /* Entfernt den Rahmen */
+    -fx-padding: 2px;                 /* Kleiner Abstand, damit das Icon nicht gequetscht wird */
+    -fx-opacity: 0.5;
+    -fx-cursor: hand;                 /* Zeigt eine Hand, wenn man darüberfährt */
+}
+
+/* Visuelles Feedback, wenn die Maus über dem Button ist */
+.icon-button:hover {
+    -fx-opacity: 1.0;
+    -fx-background-color: transparent;
+}
+
+/* Optional: Visuelles Feedback, wenn der Button gedrückt wird */
+.icon-button:pressed {
+    -fx-background-color: transparent;
+    -fx-opacity: 0.7;
+
+}
+
+.deckbuilder-label {
+    -fx-font-family: "Copperplate Gothic Bold";
+    -fx-font-size: 22; /* Default */
+    -fx-text-fill: white;
+}
+
+.deckbuilder-other-faction-label {
+    -fx-font-family: "Copperplate Gothic Bold";
+    -fx-font-size: 20;
+}
+
+.deckbuilder-sort-label {
+    -fx-font-family: "Coda";
+    -fx-font-size: 22;
+    -fx-text-fill: #696969;
+}
+
+
+.deckbuilder-background {
+    -fx-background-image: url("assets/UI_Components/deckbuilder/background.gif");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+}
+
+.deckbuilder-button {
+    -fx-border-width: 2;
+    -fx-border-style: solid;
+    -fx-border-color: linear-gradient(to right, #4F4F4F, #DBDBDB, #4F4F4F);
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-border-radius: 0;
+    -fx-text-fill: #696969;
+    -fx-font-family: "Copperplate Gothic Bold";
+    -fx-font-size: 20;
+}
+
+.deckbuilder-button:hover {
+    -fx-border-color: linear-gradient(to right, #ACE2F3, #9AF1F9, #ACE2F3);
+    -fx-background-color: linear-gradient(to bottom, #1E6DA1, #083D73);
+    -fx-text-fill: white;
+}
+
+.card-scroll-pane-inner {
+    -fx-background-color: transparent; /* Macht den Hintergrund des ScrollPane unsichtbar */
+    -fx-background: transparent;
+    -fx-border-color: transparent; /* Entfernt jegliche eigene Border */
+    -fx-border-width: 0;
+
+    -fx-vbar-policy: as-needed;
+    -fx-hbar-policy: never;
+    -fx-padding: 0;
+}
+
+.card-scroll-pane-inner .scroll-bar:vertical {
+    -fx-max-width: 0;
+    -fx-pref-width: 0;
+    -fx-opacity: 0;
+    -fx-padding: 0;
+}
+
+.card-scroll-pane-inner .viewport {
+    -fx-background-color: transparent; /* Stellt sicher, dass auch der "Viewport" transparent ist */
+}
+
+/* Der FlowPane-Inhalt kann einen leichten Hintergrund haben, wenn gewünscht */
+.card-frame-content {
+    /* Dein alter Stil hier, z.B. -fx-padding: 10px; */
+    -fx-padding: 10px;
+}
+
+/* Dein alter Rahmen-Stil. Der funktioniert hier perfekt. */
+.card-frame-border {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-border-width: 6px;
+    -fx-border-color: linear-gradient(from 0% 50% to 100% 50%, #4F4F4F 0%, #DBDBDB 50%, #4F4F4F 100%);
+    -fx-padding: 6px; /* Dieses Padding ist jetzt der Raum ZWISCHEN der Border und dem ScrollPane */
+}
+

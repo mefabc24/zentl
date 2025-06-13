@@ -47,7 +47,7 @@ public class MainMenuController implements Initializable {
     private void handleInventoryButtonAction() {
         System.out.println("Inventory button clicked");
         if (navigationService != null) {
-            navigationService.navigateTo(FXML_INVENTORY_PATH, "Card Inventory", (InventoryController controller) ->
+            navigationService.navigateTo(FXML_DECKBUILDER_PATH, "Card Inventory", (DeckbuilderController controller) ->
                     controller.setNavigationService(navigationService));
         } else {
             System.err.println("NavigationService not initialized in MainMenuController.");
