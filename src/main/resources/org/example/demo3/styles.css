@@ -938,7 +938,7 @@
 
 
 .deckbuilder-background {
-    -fx-background-image: url("assets/UI_Components/deckbuilder/background.gif");
+    -fx-background-image: url("assets/UI_Components/menu/background.gif");
     -fx-background-size: cover;
     -fx-background-position: center center;
 }

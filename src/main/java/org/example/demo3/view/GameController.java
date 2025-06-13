@@ -53,7 +53,7 @@ public class GameController implements Initializable, Cleanable {
 
     //<editor-fold desc="Image & Asset Fields">
     private static final String UI_PATH = "/org/example/demo3/assets/UI_Components/table/";
-    private static final String CARDS_ASSETS_PATH = "/org/example/demo3/assets/";
+    private static final String CARDS_ASSETS_PATH = "/org/example/demo3/assets/cards/";
     private static final String DEFAULT_CARD_IMAGE_NAME = "default.png";
     private static final String HIDDEN_CARD_IMAGE_NAME = "hidden.png";
     private static final double CARD_WIDTH = 80;
