@@ -20,8 +20,9 @@ public class TacticalBot extends PlayerImpl {
     }
 
     public Card chooseCardToPlay(Player opponent, Board board, int round) {
+
+        // no cards left => pass
         if (getHand().isEmpty()) {
-            // no cards left => pass
             return null;
         }
 
@@ -30,16 +31,17 @@ public class TacticalBot extends PlayerImpl {
             return null;
         }
 
-        // finding best card to play
+        // find best card to play
         Card chosenCard = findBestCardToPlay(opponent, board, round);
 
         if (chosenCard != null) {
-            return chosenCard; // return the chosen optimal card
+            return chosenCard;
         } else {
             return getHand().getFirst();
         }
     }
 
+    // evaluate if passing is a good move
     private boolean shouldPass(Player opponent, Board board, int round) {
         int botScore = board.calculateTotalPower(this);
         int opponentScore = board.calculateTotalPower(opponent);
@@ -57,7 +59,7 @@ public class TacticalBot extends PlayerImpl {
             return true;
         }
 
-        // if we have a big advantage then we can pass => player would have to sacrifice a lot of cards for the roundwin
+        // also if we have a big advantage then we can pass => player would have to sacrifice a lot of cards for the roundwin
         if (botScore >= opponentScore + 20) {
             return true;
         }
@@ -81,25 +83,27 @@ public class TacticalBot extends PlayerImpl {
             }
         }
 
+        // when behind look for the strongest play
+
+        // 1. look for a good card to play
         Card weatherMove = findOptimalWeatherCard(opponent, board);
         if (weatherMove != null) {
             return weatherMove;
         }
 
-        // when behind look for the strongest play
-        // 1. find possible high value scorch
+        // 2. find possible high value scorch
         Card scorchMove = findHighValueScorch(opponent, board);
         if (scorchMove != null) {
             return scorchMove;
         }
 
-        //2. find possible horn
+        // 3. find possible horn
         Card hornMove = findOptimalHorn(board);
         if (hornMove != null) {
             return hornMove;
         }
 
-        // 3. play strongest unit to apply pressure, when behind
+        // 4. play strongest unit to catch up, when behind
         return getHand()
                 .stream()
                 .filter(c -> c.getPower() > 0)
@@ -224,6 +228,7 @@ public class TacticalBot extends PlayerImpl {
                     .getOrDefault(currentRowType, List.of())
                     .size();
 
+            // save the row with the most cards
             if (currentCardCount > maxCardCount) {
                 maxCardCount = currentCardCount;
                 targetRowType = currentRowType;
