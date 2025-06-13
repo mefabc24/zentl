@@ -5,7 +5,7 @@ import org.example.demo3.model.board.Board;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.*;
 import org.example.demo3.model.player.AdvancedBot;
-import org.example.demo3.model.player.EasyBot;
+import org.example.demo3.model.player.TacticalBot;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.player.PlayerImpl;
 import org.example.demo3.model.typeadapter.RuntimeTypeAdapterFactory;
@@ -33,7 +33,7 @@ public class NetworkGson {
         RuntimeTypeAdapterFactory<Player> playerAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Player.class, "playerType")
                 .registerSubtype(PlayerImpl.class, "PLAYER_IMPL")
-                .registerSubtype(EasyBot.class, "EASY_BOT")
+                .registerSubtype(TacticalBot.class, "EASY_BOT")
                 .registerSubtype(AdvancedBot.class, "ADVANCED_BOT");
 
         return new GsonBuilder()

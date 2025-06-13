@@ -5,7 +5,7 @@ import org.example.demo3.model.enums.BotDifficulty;
 import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.GameMode;
 import org.example.demo3.model.player.AdvancedBot;
-import org.example.demo3.model.player.EasyBot;
+import org.example.demo3.model.player.TacticalBot;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.player.PlayerImpl;
 
@@ -16,12 +16,12 @@ public class PlayerFactory {
     public static Player createPlayer(String name, BotDifficulty difficulty, Faction faction, List<Card> deck) {
         switch (difficulty) {
             case EASY:
-                return new EasyBot(name, faction, deck);
+                return new TacticalBot(name, faction, deck);
             case ADVANCED:
                 return new AdvancedBot(name, faction, deck);
             default: // A safe fallback in case of NONE or other values
                 System.err.println("Warning: Invalid bot difficulty provided. Defaulting to Easy Bot.");
-                return new EasyBot(name + " (Default)", faction, deck);
+                return new TacticalBot(name + " (Default)", faction, deck);
         }
     }
     

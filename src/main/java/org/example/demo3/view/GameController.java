@@ -36,7 +36,7 @@ public class GameController implements Initializable, Cleanable {
     @FXML private HBox playerHand;
     @FXML private Label p1NameLabel, p1ScoreLabel, p2NameLabel, p2ScoreLabel, roundLabel;
     @FXML private Button restartGameButton, backToMenuButton, passButton;
-    @FXML private Label currentPlayerHandLabel; // Das neue Label für die Hand-Info
+    @FXML private Label currentPlayerHandLabel;
     //</editor-fold>
 
     //<editor-fold desc="Game State Fields">
@@ -72,7 +72,7 @@ public class GameController implements Initializable, Cleanable {
     public void initialize(URL location, ResourceBundle resources) {
         subscribeToEvents();
         restartGameButton.setVisible(false);
-        currentPlayerHandLabel.setVisible(false); // Initial ausblenden
+        currentPlayerHandLabel.setVisible(false);
     }
 
     //<editor-fold desc="Setup & Cleanup">
@@ -373,7 +373,7 @@ public class GameController implements Initializable, Cleanable {
         alert.showAndWait();
         passButton.setDisable(true);
         playerHand.getChildren().clear();
-        restartGameButton.setVisible(true);
-        currentPlayerHandLabel.setVisible(false); // Label am Ende des Spiels ausblenden
+        currentPlayerHandLabel.setVisible(false);
+        restartGameButton.setVisible(gameService != null && !gameService.isLanGame());
     }
 }

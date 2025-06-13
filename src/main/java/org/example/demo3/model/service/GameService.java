@@ -13,7 +13,7 @@ import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.GameMode;
 import org.example.demo3.model.logic.PlayerFactory;
 import org.example.demo3.model.player.AdvancedBot;
-import org.example.demo3.model.player.EasyBot;
+import org.example.demo3.model.player.TacticalBot;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.network.Client;
 import org.example.demo3.network.NetworkGson;
@@ -109,11 +109,7 @@ public class GameService extends AbstractGameService {
         postGameState();
 
         // If the very first player is a bot (in BvB mode), kick off its turn.
-        if (
-                !isLanGame() &&
-                        (currentPlayer instanceof EasyBot ||
-                                currentPlayer instanceof AdvancedBot)
-        ) {
+        if (!isLanGame() && (currentPlayer instanceof TacticalBot || currentPlayer instanceof AdvancedBot)) {
             handleBotTurn();
         }
     }
@@ -137,7 +133,7 @@ public class GameService extends AbstractGameService {
         // Handle bot turn logic only for local games
         if (
                 !isLanGame() &&
-                        (currentPlayer instanceof EasyBot ||
+                        (currentPlayer instanceof TacticalBot ||
                                 currentPlayer instanceof AdvancedBot)
         ) {
             handleBotTurn();
@@ -154,8 +150,9 @@ public class GameService extends AbstractGameService {
                 if (currentPlayer instanceof AdvancedBot bot) {
                     Player opponent = (currentPlayer == p1) ? p2 : p1;
                     cardToPlay = bot.chooseCardToPlay(opponent, board, round);
-                } else if (currentPlayer instanceof EasyBot bot) {
-                    cardToPlay = bot.chooseCardToPlay();
+                } else if (currentPlayer instanceof TacticalBot bot) {
+                    Player opponent = (currentPlayer == p1) ? p2 : p1;
+                    cardToPlay = bot.chooseCardToPlay(opponent, board, round);
                 }
 
                 final Card finalCardToPlay = cardToPlay;
@@ -172,8 +169,7 @@ public class GameService extends AbstractGameService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        })
-                .start();
+        }).start();
     }
 
     @Override
