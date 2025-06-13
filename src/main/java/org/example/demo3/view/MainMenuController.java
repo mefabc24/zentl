@@ -1,5 +1,6 @@
 package org.example.demo3.view;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.StackPane;
@@ -67,11 +68,7 @@ public class MainMenuController implements Initializable {
 
     @FXML
     private void handleQuitButtonAction() {
-        if (navigationService != null) {
-            navigationService.navigateTo(FXML_UNLOCKER_PATH, "Unlocker", (CardUnlockController controller) ->
-                    controller.setNavigationService(navigationService));
-        } else {
-            System.err.println("NavigationService not initialized in MainMenuController.");
-        }
+        System.out.println("Quit button clicked");
+        Platform.exit();
     }
 }
