@@ -2,13 +2,25 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="20"
-      fx:controller="org.example.demo3.view.LanSelectionController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="30.0" styleClass="main-menu-root"
+      xmlns="http://javafx.com/javafx/21" fx:controller="org.example.demo3.view.LanSelectionController">
+    <children>
+        <Label styleClass="lan-title-label" text="Multiplayer"/>
+        <VBox alignment="CENTER" spacing="20.0">
+            <children>
+                <!-- Text und neue Style-Klasse hinzugefügt -->
+                <Button fx:id="hostButton" mnemonicParsing="false" onAction="#handleHostAction"
+                        styleClass="lan-menu-button" text="Host Game"/>
+                <Button fx:id="joinButton" mnemonicParsing="false" onAction="#handleJoinAction"
+                        styleClass="lan-menu-button" text="Join Game"/>
+            </children>
+        </VBox>
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="lan-menu-button"
+                text="Back"/>
+    </children>
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets bottom="50.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
-    <Button text="Spiel hosten" fx:id="hostButton" onAction="#handleHostAction"/>
-    <Button text="Spiel beitreten" fx:id="joinButton" onAction="#handleJoinAction"/>
-    <Button text="Zurück" fx:id="backButton" onAction="#handleBackAction"/>
 </VBox>

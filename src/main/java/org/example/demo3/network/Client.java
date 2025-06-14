@@ -1,6 +1,9 @@
 package org.example.demo3.network;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.function.Consumer;
 
@@ -9,7 +12,7 @@ public class Client implements Runnable {
     private final String hostIp;
     private final int port;
     private Consumer<String> onMessageReceived; // callback for incoming messages
-    private final Runnable onConnectionFailed; // callback for  failed connection
+    private Runnable onConnectionFailed; // callback for  failed connection
     private volatile boolean running = true; // flag to control the main loop
     private PrintWriter out; // stream to send messages to the server
     private Socket socket;
@@ -41,6 +44,9 @@ public class Client implements Runnable {
                 String message = in.readLine();
                 if (message == null) {
                     // connection was closed by server
+                    if (running && onConnectionFailed != null) {
+                        onConnectionFailed.run();
+                    }
                     break;
                 }
                 // callback with received message
@@ -68,7 +74,11 @@ public class Client implements Runnable {
 
     // sends a message to the connected server
     public void sendMessage(String message) {
-            out.println(message);
+        out.println(message);
+    }
+
+    public void setOnConnectionFailed(Runnable handler) {
+        this.onConnectionFailed = handler;
     }
 
     // stops the client and closes the socket

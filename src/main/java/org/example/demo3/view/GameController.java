@@ -8,14 +8,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.example.demo3.event.*;
 import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.enums.*;
+import org.example.demo3.model.enums.BotDifficulty;
+import org.example.demo3.model.enums.GameMode;
+import org.example.demo3.model.enums.RowType;
 import org.example.demo3.model.player.Player;
 import org.example.demo3.model.service.Cleanable;
 import org.example.demo3.model.service.GameService;
@@ -28,29 +34,6 @@ import java.util.*;
 import static org.example.demo3.model.constants.Config.FXML_MAINMENU_PATH;
 
 public class GameController implements Initializable, Cleanable {
-    private final EventBus eventBus = EventBus.getInstanz();
-
-    //<editor-fold desc="FXML Fields">
-    @FXML private StackPane rootPane;
-    @FXML private VBox player1Side, player2Side, weatherArea;
-    @FXML private HBox playerHand;
-    @FXML private Label p1NameLabel, p1ScoreLabel, p2NameLabel, p2ScoreLabel, roundLabel;
-    @FXML private Button restartGameButton, backToMenuButton, passButton;
-    @FXML private Label currentPlayerHandLabel;
-    //</editor-fold>
-
-    //<editor-fold desc="Game State Fields">
-    private Player p1, p2, currentPlayer;
-    private String localPlayerName;
-    private Player localPlayer;
-    private Board gameBoard;
-    private boolean gameEnded = false;
-    private GameMode gameMode;
-    private BotDifficulty botDifficulty;
-    private NavigationService navigationService;
-    private GameService gameService;
-    //</editor-fold>
-
     //<editor-fold desc="Image & Asset Fields">
     private static final String UI_PATH = "/org/example/demo3/assets/UI_Components/table/";
     private static final String CARDS_ASSETS_PATH = "/org/example/demo3/assets/";
@@ -58,15 +41,40 @@ public class GameController implements Initializable, Cleanable {
     private static final String HIDDEN_CARD_IMAGE_NAME = "hidden.png";
     private static final double CARD_WIDTH = 80;
     private static final double CARD_HEIGHT = 110;
-    private final Map<String, Image> imageCache = new HashMap<>();
+    private final EventBus eventBus = EventBus.getInstanz();
     //</editor-fold>
-
+    private final Map<String, Image> imageCache = new HashMap<>();
+    private final EventHandler<RoundEndedEve> roundEndedHandler = event -> Platform.runLater(() -> displayRoundResult(event));
+    private final EventHandler<EffectLogEvent> effectLogHandler = event -> Platform.runLater(() -> showEffectLog(event.getMessage()));
+    //<editor-fold desc="FXML Fields">
+    @FXML
+    private StackPane rootPane;
+    @FXML
+    private VBox player1Side, player2Side, weatherArea;
+    @FXML
+    private HBox playerHand;
+    @FXML
+    private Label p1NameLabel, p1ScoreLabel, p2NameLabel, p2ScoreLabel, roundLabel;
+    @FXML
+    private Button restartGameButton, backToMenuButton, passButton;
+    @FXML
+    private Label currentPlayerHandLabel;
+    //<editor-fold desc="Game State Fields">
+    private Player p1, p2, currentPlayer;
+    //</editor-fold>
+    private String localPlayerName;
+    private Player localPlayer;
+    private Board gameBoard;
+    private boolean gameEnded = false;
+    private GameMode gameMode;
+    private BotDifficulty bot1Difficulty;
+    private BotDifficulty bot2Difficulty;
+    //</editor-fold>
+    private NavigationService navigationService;
+    private GameService gameService;
     //<editor-fold desc="Event Handlers">
     private final EventHandler<GameStateUpdateEve> gameStateUpdateHandler = event -> Platform.runLater(() -> updateGameState(event));
-    private final EventHandler<RoundEndedEve> roundEndedHandler = event -> Platform.runLater(() -> displayRoundResult(event));
     private final EventHandler<GameEndedEve> gameEndedHandler = event -> Platform.runLater(() -> displayGameOver(event));
-    private final EventHandler<EffectLogEvent> effectLogHandler = event -> Platform.runLater(() -> showEffectLog(event.getMessage()));
-    //</editor-fold>
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -76,15 +84,25 @@ public class GameController implements Initializable, Cleanable {
     }
 
     //<editor-fold desc="Setup & Cleanup">
-    public void setNavigationService(NavigationService navigationService) { this.navigationService = navigationService; }
-    public void setGameService(GameService gameService) { this.gameService = gameService; }
-    public void setLocalPlayerIdentity(String name) { this.localPlayerName = name; }
+    public void setNavigationService(NavigationService navigationService) {
+        this.navigationService = navigationService;
+    }
+
+    public void setGameService(GameService gameService) {
+        this.gameService = gameService;
+    }    private final EventHandler<PlayerDisconnectedEvent> playerDisconnectedHandler = event -> Platform.runLater(() -> handlePlayerDisconnected(event));
+    //</editor-fold>
+
+    public void setLocalPlayerIdentity(String name) {
+        this.localPlayerName = name;
+    }
 
     private void subscribeToEvents() {
         eventBus.subscribe(GameStateUpdateEve.class, gameStateUpdateHandler);
         eventBus.subscribe(RoundEndedEve.class, roundEndedHandler);
         eventBus.subscribe(GameEndedEve.class, gameEndedHandler);
         eventBus.subscribe(EffectLogEvent.class, effectLogHandler);
+        eventBus.subscribe(PlayerDisconnectedEvent.class, playerDisconnectedHandler);
     }
 
     @Override
@@ -98,11 +116,16 @@ public class GameController implements Initializable, Cleanable {
         eventBus.unsubscribe(RoundEndedEve.class, roundEndedHandler);
         eventBus.unsubscribe(GameEndedEve.class, gameEndedHandler);
         eventBus.unsubscribe(EffectLogEvent.class, effectLogHandler);
+        eventBus.unsubscribe(PlayerDisconnectedEvent.class, playerDisconnectedHandler);
     }
-    //</editor-fold>
 
     //<editor-fold desc="FXML Actions">
-    @FXML void handleBackToMenu(ActionEvent event) {
+    @FXML
+    void handleBackToMenu(ActionEvent event) {
+        // (LAN) notify the client that the other party disconnected
+        if (gameService != null && gameService.isLanGame()) {
+            gameService.notifyDisconnection();
+        }
         cleanup();
         SoundService.getInstance().startMenuMusic();
         if (navigationService != null) {
@@ -112,15 +135,17 @@ public class GameController implements Initializable, Cleanable {
         }
     }
 
-    @FXML void handleRestartGame(ActionEvent event) {
+    @FXML
+    void handleRestartGame(ActionEvent event) {
         cleanup();
         subscribeToEvents();
         gameEnded = false;
         this.gameService = new GameService();
-        gameService.newGame(gameMode, botDifficulty, p1.getfraction(), p2.getfraction());
+        gameService.newGame(gameMode, bot1Difficulty, bot2Difficulty, p1.getfraction(), p2.getfraction());
     }
 
-    @FXML void handlePassAction(ActionEvent event) {
+    @FXML
+    void handlePassAction(ActionEvent event) {
         eventBus.post(new PlayerPassed());
     }
     //</editor-fold>
@@ -128,7 +153,8 @@ public class GameController implements Initializable, Cleanable {
     private void updateGameState(GameStateUpdateEve event) {
         if (this.gameMode == null) {
             this.gameMode = event.getGameMode();
-            this.botDifficulty = event.getBotDifficulty();
+            this.bot1Difficulty = event.getBot1Difficulty();
+            this.bot2Difficulty = event.getBot2Difficulty();
         }
         this.p1 = event.getPlayer1();
         this.p2 = event.getPlayer2();
@@ -168,6 +194,7 @@ public class GameController implements Initializable, Cleanable {
             playerSide.getChildren().add(createFullRow(rowType, player));
         }
     }
+    //</editor-fold>
 
     private Node createFullRow(RowType rowType, Player player) {
         HBox container = new HBox();
@@ -286,11 +313,11 @@ public class GameController implements Initializable, Cleanable {
             }
         }
 
-        // Label-Text und Sichtbarkeit setzen
+        // set label-text an visibility
         currentPlayerHandLabel.setText(labelText);
         currentPlayerHandLabel.setVisible(showLabel);
 
-        // Pass-Button und Handkarten aktualisieren
+        // update pass button and cards on hand
         passButton.setDisable(!canPlay);
         if (handToShow != null) {
             for (Card card : handToShow) {
@@ -298,7 +325,6 @@ public class GameController implements Initializable, Cleanable {
             }
         }
     }
-
 
     private Node createCardUI(Card card, boolean clickable) {
         String specificImageName = card.getName() + ".png";
@@ -340,7 +366,9 @@ public class GameController implements Initializable, Cleanable {
                     return image;
                 }
             }
-        } catch (Exception e) { System.err.println("Could not load image: " + imagePath); }
+        } catch (Exception e) {
+            System.err.println("Could not load image: " + imagePath);
+        }
         return null;
     }
 
@@ -376,4 +404,26 @@ public class GameController implements Initializable, Cleanable {
         currentPlayerHandLabel.setVisible(false);
         restartGameButton.setVisible(gameService != null && !gameService.isLanGame());
     }
+
+    private void handlePlayerDisconnected(PlayerDisconnectedEvent event) {
+        passButton.setDisable(true);
+        playerHand.getChildren().clear();
+
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Verbindung verloren");
+        alert.setHeaderText("Gegner disconnected");
+        alert.setContentText(event.getMessage() + "\n\n" + "Das Spiel kann nicht fortgesetzt werden");
+
+        ButtonType backToMenuButtonType = new ButtonType("Zurück zum Main Menü");
+        alert.getButtonTypes().setAll(backToMenuButtonType);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == backToMenuButtonType) {
+            handleBackToMenu(null);
+        }
+    }
+
+
+
+
 }

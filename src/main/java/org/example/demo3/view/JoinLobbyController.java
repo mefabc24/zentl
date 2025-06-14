@@ -30,6 +30,12 @@ public class JoinLobbyController {
         this.navigationService = navigationService;
     }
 
+    // set text to localhost for quick connect
+    @FXML
+    public void initialize() {
+        ipTextField.setText("localhost");
+    }
+
     // handle connect button click
     @FXML
     private void handleConnectAction() {
@@ -57,7 +63,7 @@ public class JoinLobbyController {
         if ("CONNECTION_ACCEPTED".equals(message) && !isNavigating) {
             isNavigating = true; // prevent further navigation triggers
             Platform.runLater(() -> {
-                statusLabel.setText("Verbunden! Gehe zum Setup...");
+                statusLabel.setText("Erfolgreich verbunden");
                 navigationService.navigateTo(FXML_GAME_SETUP_PATH, "Gwent - Game Setup", controller -> {
                     if (controller instanceof GameSetupController) {
                         // pass the client instance to the next screen

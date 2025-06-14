@@ -1,6 +1,9 @@
 package org.example.demo3.network;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.function.Consumer;
@@ -8,11 +11,12 @@ import java.util.function.Consumer;
 // simple single client server => listens on a port for one client connection and handles message passing
 public class Server implements Runnable {
     private final int port;
+    private final Runnable onStartupFailed; // callback for when the server cant start
     private Consumer<String> onMessageReceived; // callback for incoming messages
     private volatile boolean running = true; // flag to control the main loop
     private PrintWriter out; // stream to send messages to the client
     private ServerSocket serverSocket;
-    private final Runnable onStartupFailed; // callback for when the server cant start
+    private Runnable onConnectionFailed; // callback for lost connection
 
     public Server(int port, Consumer<String> onMessageReceived, Runnable onStartupFailed) {
         this.port = port;
@@ -32,15 +36,16 @@ public class Server implements Runnable {
 
             // setup input and output streams for traffic
             out = new PrintWriter(clientSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(clientSocket.getInputStream())
-            );
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
             // main loop to listen for messages
             while (running) {
                 String message = in.readLine();
                 if (message == null) {
                     // connection was closed by the client
+                    if (running && onConnectionFailed != null) {
+                        onConnectionFailed.run();
+                    }
                     break;
                 }
                 // callback with the received message
@@ -50,11 +55,18 @@ public class Server implements Runnable {
             if (running) {
                 System.err.println("server error: " + e.getMessage());
                 // failure callback
-                    onStartupFailed.run();
+                onStartupFailed.run();
+                if (onConnectionFailed != null) {
+                    onConnectionFailed.run();
+                }
             }
         } finally {
             stop();
         }
+    }
+
+    public void setOnConnectionFailed(Runnable onConnectionFailed) {
+        this.onConnectionFailed = onConnectionFailed;
     }
 
     // message to the connected client

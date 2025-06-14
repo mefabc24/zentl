@@ -2,10 +2,7 @@ package org.example.demo3.model.service;
 
 import com.google.gson.JsonSyntaxException;
 import javafx.application.Platform;
-import org.example.demo3.event.Event;
-import org.example.demo3.event.GameStateUpdateEve;
-import org.example.demo3.event.PlayCardRequest;
-import org.example.demo3.event.PlayerPassed;
+import org.example.demo3.event.*;
 import org.example.demo3.model.board.GameBoard;
 import org.example.demo3.model.cards.Card;
 import org.example.demo3.model.enums.BotDifficulty;
@@ -13,8 +10,8 @@ import org.example.demo3.model.enums.Faction;
 import org.example.demo3.model.enums.GameMode;
 import org.example.demo3.model.logic.PlayerFactory;
 import org.example.demo3.model.player.AdvancedBot;
-import org.example.demo3.model.player.TacticalBot;
 import org.example.demo3.model.player.Player;
+import org.example.demo3.model.player.TacticalBot;
 import org.example.demo3.network.Client;
 import org.example.demo3.network.NetworkGson;
 import org.example.demo3.network.NetworkMessage;
@@ -32,44 +29,23 @@ public class GameService extends AbstractGameService {
     }
 
     // This is an overloaded method for convenience, it calls the main one
-    public void newGame(
-            GameMode mode,
-            BotDifficulty difficulty,
-            Faction p1Faction,
-            Faction p2Faction
-    ) {
-        this.newGame(
-                mode,
-                difficulty,
-                BotDifficulty.NONE,
-                p1Faction,
-                p2Faction
-        );
+    public void newGame(GameMode mode, BotDifficulty difficulty, Faction p1Faction, Faction p2Faction) {
+        this.newGame(mode, difficulty, BotDifficulty.NONE, p1Faction, p2Faction);
     }
 
     // This is the main method that handles all game modes, including LAN setup
-    public void newGame(
-            GameMode mode,
-            BotDifficulty bot1Difficulty,
-            BotDifficulty bot2Difficulty,
-            Faction p1Faction,
-            Faction p2Faction
-    ) {
+    public void newGame(GameMode mode, BotDifficulty bot1Difficulty, BotDifficulty bot2Difficulty, Faction p1Faction, Faction p2Faction) {
         this.isGameActive = true;
         this.gameMode = mode;
-        this.botDifficulty = bot1Difficulty; // Legacy for GameState, primarily use bot1/bot2 diffs
+        this.bot1Difficulty = bot1Difficulty;
+        this.bot2Difficulty = bot2Difficulty;
 
         this.board = new GameBoard();
 
         // Create Player 1
         if (mode == GameMode.BOT_VS_BOT) {
             List<Card> p1Deck = cardRepository.getRandomDeck(p1Faction);
-            this.p1 = PlayerFactory.createPlayer(
-                    "Bot 1",
-                    bot1Difficulty,
-                    p1Faction,
-                    p1Deck
-            );
+            this.p1 = PlayerFactory.createPlayer("Bot 1", bot1Difficulty, p1Faction, p1Deck);
         } else {
             // For PvP, PvB, and LAN, Player 1 is human
             this.p1 = createPlayer("Player 1", p1Faction);
@@ -78,24 +54,14 @@ public class GameService extends AbstractGameService {
         // Create Player 2
         if (mode == GameMode.BOT_VS_BOT) {
             List<Card> p2Deck = cardRepository.getRandomDeck(p2Faction);
-            this.p2 = PlayerFactory.createPlayer(
-                    "Bot 2",
-                    bot2Difficulty,
-                    p2Faction,
-                    p2Deck
-            );
+            this.p2 = PlayerFactory.createPlayer("Bot 2", bot2Difficulty, p2Faction, p2Deck);
         } else {
             // For PvP, PvB, and LAN, Player 2 is created based on mode
             List<Card> p2Deck = cardRepository.getSavedDeck(p2Faction);
             if (p2Deck.isEmpty()) {
                 p2Deck = cardRepository.getRandomDeck(p2Faction);
             }
-            this.p2 = PlayerFactory.createPlayer2(
-                    mode,
-                    bot1Difficulty,
-                    p2Faction,
-                    p2Deck
-            );
+            this.p2 = PlayerFactory.createPlayer2(mode, bot1Difficulty, p2Faction, p2Deck);
         }
 
         if (p1.getDeck().isEmpty() || p2.getDeck().isEmpty()) {
@@ -131,11 +97,7 @@ public class GameService extends AbstractGameService {
         postGameState();
 
         // Handle bot turn logic only for local games
-        if (
-                !isLanGame() &&
-                        (currentPlayer instanceof TacticalBot ||
-                                currentPlayer instanceof AdvancedBot)
-        ) {
+        if (!isLanGame() && (currentPlayer instanceof TacticalBot || currentPlayer instanceof AdvancedBot)) {
             handleBotTurn();
         }
     }
@@ -143,18 +105,18 @@ public class GameService extends AbstractGameService {
     private void handleBotTurn() {
         new Thread(() -> {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1000); // sleep
                 if (!isGameActive) return;
 
                 Card cardToPlay = null;
                 if (currentPlayer instanceof AdvancedBot bot) {
                     Player opponent = (currentPlayer == p1) ? p2 : p1;
                     cardToPlay = bot.chooseCardToPlay(opponent, board, round);
-                    System.out.println("Advanced Bot plays: " +cardToPlay);
+                    System.out.println("Advanced Bot plays: " + cardToPlay);
                 } else if (currentPlayer instanceof TacticalBot bot) {
                     Player opponent = (currentPlayer == p1) ? p2 : p1;
                     cardToPlay = bot.chooseCardToPlay(opponent, board, round);
-                    System.out.println("Tactical Bot plays: " +cardToPlay);
+                    System.out.println("Tactical Bot plays: " + cardToPlay);
                 }
 
                 final Card finalCardToPlay = cardToPlay;
@@ -220,23 +182,12 @@ public class GameService extends AbstractGameService {
     protected void postGameState() {
         if (!isGameActive) return;
         updateScores();
-        GameStateUpdateEve eve = new GameStateUpdateEve(
-                p1,
-                p2,
-                currentPlayer,
-                round,
-                board,
-                gameMode,
-                botDifficulty
-        );
+        GameStateUpdateEve eve = new GameStateUpdateEve(p1, p2, currentPlayer, round, board, gameMode, bot1Difficulty, bot2Difficulty);
 
         // (HOST) send the new game state to the client
         if (isHost && server != null) {
             String json = NetworkGson.getInstance().toJson(eve);
-            NetworkMessage msg = new NetworkMessage(
-                    eve.getClass().getSimpleName(),
-                    json
-            );
+            NetworkMessage msg = new NetworkMessage(eve.getClass().getSimpleName(), json);
             server.sendMessage(NetworkGson.getInstance().toJson(msg));
         }
 
@@ -253,6 +204,7 @@ public class GameService extends AbstractGameService {
         this.isHost = true;
         this.server = server;
         this.server.setOnMessageReceived(this::handleClientMessage);
+        this.server.setOnConnectionFailed(this::handleDisconnection);
     }
 
     // configures the game service to act as a client
@@ -260,10 +212,36 @@ public class GameService extends AbstractGameService {
         this.isHost = false;
         this.client = client;
         this.client.setOnMessageReceived(this::handleServerMessage);
+        this.client.setOnConnectionFailed(this::handleDisconnection);
+    }
+
+    // sends a disconnect notice to the other player in a LAN game.
+    public void notifyDisconnection() {
+        if (!isLanGame()) return;
+
+        final String disconnectMessage = "DISCONNECT_NOTICE";
+        if (isHost) {
+            if (server != null) server.sendMessage(disconnectMessage);
+        } else {
+            if (client != null) client.sendMessage(disconnectMessage);
+        }
+
+        // short pause to make sure the msg is send
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     // (HOST) processes incoming messages from the client
     private void handleClientMessage(String jsonMessage) {
+
+        if ("DISCONNECT_NOTICE".equals(jsonMessage)) {
+            handleDisconnection();
+            return;
+        }
+
         try {
             NetworkMessage msg = NetworkGson
                     .getInstance()
@@ -292,6 +270,10 @@ public class GameService extends AbstractGameService {
 
     // (CLIENT) processes incoming messages from the server
     private void handleServerMessage(String jsonMessage) {
+        if ("DISCONNECT_NOTICE".equals(jsonMessage)) {
+            handleDisconnection();
+            return;
+        }
         try {
             NetworkMessage msg = NetworkGson
                     .getInstance()
@@ -313,6 +295,18 @@ public class GameService extends AbstractGameService {
                     "Error deserializing server message: " + jsonMessage
             );
         }
+    }
+
+    // inform about disconnect to the other player
+    private void handleDisconnection() {
+        if (!isGameActive) return;
+        isGameActive = false;
+
+        String message = isHost ? "The client has disconnected." : "Connection to the host was lost.";
+
+        eventBus.post(new PlayerDisconnectedEvent(message));
+
+        shutdownNetwork();
     }
 
     // shuts down the network components
