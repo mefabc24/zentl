@@ -28,7 +28,7 @@ import java.util.Random;
 import static org.example.demo3.model.constants.Config.*;
 
 public class CardRepository {
-    // Singleton-Pattern Implementierung
+    // Singleton
     private static CardRepository instance;
     private static final Logger logger = LoggerFactory.getLogger(CardRepository.class);
 
@@ -52,7 +52,7 @@ public class CardRepository {
         }
     }
 
-    // Öffentliche statische Methode, um die einzige Instanz zu erhalten
+    // singleton getter
     public static synchronized CardRepository getInstance() {
         if (instance == null) {
             instance = new CardRepository();
@@ -77,7 +77,7 @@ public class CardRepository {
                 .orElse(-1);
     }
 
-    // CardInstances für Deckbuilder
+    // CardInstances for Deckbuilder
     public List<CardInstance> getDisplayableCardInstances(Faction faction) {
         if (allCards == null) {
             return Collections.emptyList();
@@ -89,7 +89,7 @@ public class CardRepository {
                 .toList();
     }
 
-    // Deck-Lade-Methoden
+    // deck loading methods
     public List<Card> getSavedDeck(Faction faction) {
         if (allCards == null || allCards.isEmpty()) {
             return Collections.emptyList();

@@ -51,6 +51,7 @@ public class GameModeSelectionController {
         bot2DifficultyToggleGroup.selectedToggleProperty().addListener((obs, ov, nv) -> updateUiState());
 
         this.selectedMode = null;
+        // updateUiState() hide alle optional sections e.g. (Bot-selection).
         updateUiState();
     }
 
@@ -64,7 +65,8 @@ public class GameModeSelectionController {
         selectedMode = GameMode.LAN;
         updateUiState();
     }
-
+    
+    // save the botMode and updateUI to display difficulty
     @FXML private void handlePvbButton() {
         selectedMode = GameMode.PLAYER_VS_BOT;
         updateUiState();
@@ -143,7 +145,8 @@ public class GameModeSelectionController {
         // Final navigation logic
         final BotDifficulty finalB1Diff = bot1Difficulty;
         final BotDifficulty finalB2Diff = bot2Difficulty;
-
+        
+        // navigationService ensures a reference to the new controller and sends the data over to GmaeSetupController
         navigationService.navigateTo(FXML_GAME_SETUP_PATH, "Gwent - Game Setup", (GameSetupController controller) -> {
             controller.setNavigationService(navigationService);
             controller.initData(selectedMode, finalB1Diff, finalB2Diff);

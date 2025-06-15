@@ -156,26 +156,37 @@ public abstract class AbstractGameService {
         p1.setScore(board.calculateTotalPower(p1));
         p2.setScore(board.calculateTotalPower(p2));
     }
-
+    
+    // Central method that handles all card effects in the backend
+    // runs everytime a card gets played regardless of valid effect field
     protected void handleCardEffect(Card card, Player player) {
-
+        
+        // return when the card doesn't have an effect assigned,
         if (card.getEffectType() == null) return;
         String effectMessage = "";
-
+        
+        // apply card effects dependant on types
         switch (card.getEffectType()) {
             case COMMANDERS_HORN:
+                // .max(Comparator.comparingInt(...)) gets the row of the active player with the highest amount of active units
+                // .filter(...) makes sure the row isn't empty
                 Optional<RowType> targetRow = Stream.of(RowType.MELEE, RowType.RANGED, RowType.SIEGE)
                         .max(Comparator.comparingInt(r -> board.getPlayerRows(player).getOrDefault(r, List.of()).size()))
                         .filter(r -> !board.getPlayerRows(player).getOrDefault(r, List.of()).isEmpty());
+                
+                // valid targetRow?
                 if (targetRow.isPresent()) {
                     board.applyHornEffect(player, targetRow.get());
                     effectMessage = player.getName() + "'s " + targetRow.get().name() + " row is now doubled!";
                 } else effectMessage = card.getName() + " had no units to affect.";
                 break;
             case MEDIC:
+                // searches discardPile of the player and filters for cards of CardType.Unit which aren't rarity Legendary or Mythic
+                // .max(...) gets the card with the highest default power
                 Optional<Card> cardToRevive = player.getDiscardPile().stream()
                         .filter(c -> c.getCardType() == CardType.UNIT && c.getRarity() != Rarity.LEGENDARY && c.getRarity() != Rarity.MYTHIC)
                         .max(Comparator.comparingInt(Card::getPower));
+                
                 if (cardToRevive.isPresent()) {
                     Card revivedCard = cardToRevive.get();
                     player.removeFromDiscardPile(revivedCard);
@@ -186,19 +197,27 @@ public abstract class AbstractGameService {
                 }
                 break;
             case SCORCH:
+                // fetch ALL present Units of the board
                 List<Card> allUnitsOnBoard = new ArrayList<>();
                 board.getPlayerRows(p1).values().forEach(allUnitsOnBoard::addAll);
                 board.getPlayerRows(p2).values().forEach(allUnitsOnBoard::addAll);
+                
+                // figures out the highest power in the whole field from cards which aren't heroes
                 int maxPower = allUnitsOnBoard.stream()
                         .filter(c -> c.getRarity() != Rarity.LEGENDARY && c.getRarity() != Rarity.MYTHIC)
                         .mapToInt(Card::getPower).max().orElse(0);
+                
                 if (maxPower > 0) {
+                    // fetch all Cards that match the highest powers and aren't heroes
                     List<Card> cardsToScorch = allUnitsOnBoard.stream()
                             .filter(c -> c.getPower() == maxPower && c.getRarity() != Rarity.LEGENDARY && c.getRarity() != Rarity.MYTHIC)
                             .collect(Collectors.toList());
+                    
+                    // goes through all fetched cards to nuke them
                     StringBuilder scorchedNames = new StringBuilder();
                     cardsToScorch.forEach(scorchedCard -> {
                         scorchedNames.append(scorchedCard.getName()).append(", ");
+                        // Checks who owns the card, and removes them from the Board into the DiscarededPile
                         if (board.getPlayerRows(p1).values().stream().anyMatch(list -> list.contains(scorchedCard))) {
                             board.removeCard(scorchedCard, p1);
                             p1.addToDiscardPile(scorchedCard);
@@ -211,29 +230,34 @@ public abstract class AbstractGameService {
                 } else effectMessage = "Scorch found no non-hero units to destroy.";
                 break;
             case WEATHER_FROST:
+                // activates the Forst-Effect in the Melee row on the board
                 board.setWeatherEffect(RowType.MELEE, ((WeatherCard) card).getWeatherType());
                 effectMessage = "Biting Frost settles on the Melee rows!";
                 System.out.println("[DEBUG] Board state updated: MELEE weather is now active for ALL players.");
                 break;
             case WEATHER_FOG:
+                // activates the Fog-Effect in the Melee row on the board
                 board.setWeatherEffect(RowType.RANGED, ((WeatherCard) card).getWeatherType());
                 effectMessage = "Impenetrable Fog descends on the Ranged rows!";
                 System.out.println("[DEBUG] Board state updated: RANGED weather is now active for ALL players.");
                 break;
             case WEATHER_RAIN:
+                // activates the Rain-Effect in the Melee row on the board
                 board.setWeatherEffect(RowType.SIEGE, ((WeatherCard) card).getWeatherType());
                 effectMessage = "Torrential Rain pours on the Siege rows!";
                 System.out.println("[DEBUG] Board state updated: SIEGE weather is now active for ALL players.");
                 break;
-            case CLEAR_WEATHER:
+            case CLEAR_WEATHER: // CLEAR WEATHER == RALLY
             case RALLY:
                 board.clearWeatherEffects();
+                // Weathercards get removed from the board and put into the DiscardedPile of the card Owner
                 board.getActiveWeatherCards().forEach(player::addToDiscardPile);
                 board.clearWeatherCards();
                 effectMessage = "The skies have cleared!";
                 System.out.println("[DEBUG] Board state updated: ALL weather effects cleared.");
                 break;
             case DIMERITIUM_BOMB:
+                // Resets all effects on the board including BUFFS and Weathercards
                 board.clearAllHornEffects();
                 board.clearWeatherEffects();
                 board.getActiveWeatherCards().forEach(player::addToDiscardPile);
@@ -242,6 +266,7 @@ public abstract class AbstractGameService {
                 System.out.println("[DEBUG] Board state updated: ALL weather and horn effects cleared.");
                 break;
         }
+        // fire UI feedback AbstractGameService -> EventBus(EffectLogEvent) -> GameController(showEffectLog) -> Alert Dialog mit msg
         if (!effectMessage.isEmpty()) eventBus.post(new EffectLogEvent(effectMessage));
     }
 }

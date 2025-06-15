@@ -18,7 +18,7 @@ public class WeatherCard extends BaseCard {
         this.weatherType = weatherType;
     }
 
-    // Private statische Hilfsmethode, um den super()-Konstruktor sauber zu halten
+    // helper method to keep super Constructor clean
     public static EffectType determineEffectType(WeatherType weatherType) {
         if (weatherType == null) {
             return EffectType.NONE;
@@ -27,12 +27,15 @@ public class WeatherCard extends BaseCard {
             case FROST -> EffectType.WEATHER_FROST;
             case FOG -> EffectType.WEATHER_FOG;
             case RAIN -> EffectType.WEATHER_RAIN;
-            // Falls es in Zukunft einen WeatherType ohne Effekt gäbe
-            // default -> EffectType.NONE;
         };
     }
 
     // Get-Set
-    public WeatherType getWeatherType() { return weatherType; }
-    public void setWeatherType(WeatherType weatherType) { this.weatherType = weatherType; }
+    public WeatherType getWeatherType() {
+        return weatherType;
+    }
+
+    public void setWeatherType(WeatherType weatherType) {
+        this.weatherType = weatherType;
+    }
 }

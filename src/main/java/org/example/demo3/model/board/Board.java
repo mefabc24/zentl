@@ -16,7 +16,7 @@ public interface Board {
     void clearBoard();
     Map<RowType, List<Card>> getPlayerRows(Player player);
 
-    // Methoden für Wettereffekte
+    // weather effects
     void setWeatherEffect(RowType rowType, WeatherType weatherType);
     void clearWeatherEffects();
     void addWeatherCard(Card card);
@@ -24,7 +24,7 @@ public interface Board {
     void clearWeatherCards();
 
 
-    // Methoden für Horn-Effekte
+    // horn effects
     void applyHornEffect(Player player, RowType rowType);
     void clearHornEffects(Player player);
     void clearAllHornEffects();

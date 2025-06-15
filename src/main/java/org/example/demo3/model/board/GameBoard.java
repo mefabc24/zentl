@@ -11,9 +11,9 @@ import java.util.*;
 
 public class GameBoard implements Board {
     private final Map<String, Map<RowType, List<Card>>> board;
-    private final Map<RowType, WeatherType> activeWeather;
-    private final Map<String, Set<RowType>> activeHorns;
-    private final List<Card> activeWeatherCards;
+    private final Map<RowType, WeatherType> activeWeather; // saves global effect per row {MELEE -> FROST, RANGED -> FOG}
+    private final Map<String, Set<RowType>> activeHorns; // saves a set of rows where horns are active {"Player 1" -> {MELEE}
+    private final List<Card> activeWeatherCards; 
 
     public GameBoard() {
         this.board = new HashMap<>();
@@ -40,24 +40,28 @@ public class GameBoard implements Board {
             }
         }
     }
-
+    
+    // centerpiece of the whole game,
     @Override
     public int calculateRowPower(RowType row, Player player) {
+        // fetch cards from row as always .getOrDefault(...) ensures we always get something back
         List<Card> cardsInRow = board.getOrDefault(player.getName(), Collections.emptyMap())
                 .getOrDefault(row, Collections.emptyList());
-
+        
         int basePower = 0;
-        WeatherType weather = activeWeather.get(row);
+        WeatherType weather = activeWeather.get(row); // search row for active weather effects
 
         for (Card card : cardsInRow) {
             boolean isHero = card.getRarity() == Rarity.LEGENDARY || card.getRarity() == Rarity.MYTHIC;
-            if (weather != null && !isHero) {
+            if (weather != null && !isHero) { // found weather type and not a hero? debuff that mofo to 1 power.
                 basePower += 1;
             } else {
                 basePower += card.getPower();
             }
         }
-
+        
+        // activeHorns.getOrDefault(player.getName(), Collections.emptySet()) also ensures theres always a entry returned
+        // also check if returned set has the row and buff power
         if (activeHorns.getOrDefault(player.getName(), Collections.emptySet()).contains(row)) {
             return basePower * 2;
         }
@@ -108,12 +112,17 @@ public class GameBoard implements Board {
     public void clearWeatherCards() {
         this.activeWeatherCards.clear();
     }
-
+    
+    // saves a horn effect that is active on a players row
     @Override
     public void applyHornEffect(Player player, RowType rowType) {
+        // use computeIfAbsent to make sure a Set for the player exists, if none exists use lambda p -> new HashSet<>()
+        // this will ensure there is always a set available to add to the map
+        // .add(rowType) adds the row into the activeHorn set
         activeHorns.computeIfAbsent(player.getName(), p -> new HashSet<>()).add(rowType);
     }
-
+    
+    // never used lol but removes horns from specific player
     @Override
     public void clearHornEffects(Player player) {
         activeHorns.getOrDefault(player.getName(), Collections.emptySet()).clear();
@@ -121,6 +130,8 @@ public class GameBoard implements Board {
 
     @Override
     public void clearAllHornEffects() {
+        // get collection of all values with ActiveHorns.values()
+        // clear each set with an active horn
         activeHorns.values().forEach(Set::clear);
     }
 
@@ -135,7 +146,7 @@ public class GameBoard implements Board {
             newBoard.board.put(playerName, newRows);
         });
 
-        // create a new hashset for each players active horns
+        // create a new hashset for each player's active horns
         this.activeHorns.forEach((playerName, hornSet) -> {
             newBoard.activeHorns.put(playerName, new HashSet<>(hornSet));
         });

@@ -313,6 +313,8 @@ public class GameSetupController {
         }
 
         SoundService.getInstance().stopMenuMusic();
+
+        // Navigate to game sends ALL collected info t GameService to init
         navigationService.navigateTo(
                 FXML_GAME_PATH,
                 "Gwent",
