@@ -29,7 +29,7 @@ public abstract class BaseCard implements Card {
 
     protected Faction faction;
     protected RowType rowType;
-    protected transient CardType cardType;
+    protected CardType cardType;
     protected Rarity rarity;
     protected EffectType effectType;
 
