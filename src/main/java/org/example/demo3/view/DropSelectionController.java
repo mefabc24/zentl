@@ -22,17 +22,9 @@ public class DropSelectionController {
 
     @FXML
     private void initialize() {
-        basicDropButton.setOnAction(event -> {
-            System.out.println("basicDropButton");
-        });
-
-        premiumDropButton.setOnAction(event -> {
-            System.out.println("premiumDropButton");
-        });
-
-        eliteDropButton.setOnAction(event -> {
-            System.out.println("eliteDropButton");
-        });
+        basicDropButton.setOnAction(event -> System.out.println("basicDropButton"));
+        premiumDropButton.setOnAction(event -> System.out.println("premiumDropButton"));
+        eliteDropButton.setOnAction(event -> System.out.println("eliteDropButton"));
 
         cancelDropButton.setOnAction(event -> {
             System.out.println("Cancel Button clicked");

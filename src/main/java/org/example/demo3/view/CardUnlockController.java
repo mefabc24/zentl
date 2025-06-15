@@ -1,6 +1,7 @@
 package org.example.demo3.view;
 
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -25,31 +26,23 @@ import org.example.demo3.model.enums.Rarity;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
 import org.example.demo3.model.service.RarityDropService;
-import javafx.application.Platform;
 
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static org.example.demo3.model.constants.Config.CAROUSEL_ELEMENT_SIZE;
-import static org.example.demo3.model.constants.Config.CAROUSEL_SELECTED_INDEX;
-import static org.example.demo3.model.constants.Config.IMAGE_PATH;
+import static org.example.demo3.model.constants.Config.*;
 
 public class CardUnlockController {
 
-    @FXML private StackPane rootPane;
+    @FXML private StackPane contentPane;
 
     private NavigationService navigationService;
     private final CardRepository cardRepository = CardRepository.getInstance();
     private final RarityDropService dropService = RarityDropService.getInstance();
-    private final List<Card> cards = cardRepository.getUnlockableCards();
 
     private static final double BASE_WIDTH = 1920.0;
     private static final double BASE_HEIGHT = 1080.0;
-    private static final double BASE_DROP_BUTTON_SIZE = 300.0;
-    private static final double BASE_DROP_SPACING = 50.0;
-    private static final double BASE_PRICE_FONT_SIZE = 20.0;
-    private static final double BASE_COIN_ICON_SIZE = 24.0;
     private static final double BASE_NEW_CARD_FONT_SIZE = 48.0;
     private static final double BASE_RARITY_NODE_SIZE = 400.0;
     private static final double BASE_RARITY_SPACING = 30.0;
@@ -74,54 +67,83 @@ public class CardUnlockController {
 
     @FXML
     private void initialize() {
-        rootPane.widthProperty().addListener((obs, oldVal, newVal) -> updateScale());
-        rootPane.heightProperty().addListener((obs, oldVal, newVal) -> updateScale());
+        // Wir holen uns den stabilen, äußeren Container.
+        StackPane rootContainer = (StackPane) contentPane.getParent();
+
+        // Platform.runLater stellt sicher, dass dieser Code ausgeführt wird,
+        // NACHDEM das erste Layout abgeschlossen ist und die Szene ihre volle Größe hat.
+        Platform.runLater(() -> {
+            // Wir berechnen die Skalierung EIN EINZIGES MAL und ändern sie dann NIE WIEDER.
+            // Dadurch wird sie immun gegen Größenänderungen des Inhalts.
+            if (rootContainer.getWidth() > 0 && rootContainer.getHeight() > 0) {
+                double widthScale = rootContainer.getWidth() / BASE_WIDTH;
+                double heightScale = rootContainer.getHeight() / BASE_HEIGHT;
+                scale.set(Math.min(widthScale, heightScale));
+            }
+        });
+
+        // Starte den UI-Flow.
         showDropSelection();
     }
 
-    private void updateScale() {
-        if (rootPane.getWidth() == 0 || rootPane.getHeight() == 0) return;
-        double widthScale = rootPane.getWidth() / BASE_WIDTH;
-        double heightScale = rootPane.getHeight() / BASE_HEIGHT;
-        scale.set(Math.min(widthScale, heightScale));
+    private void showDropSelection() {
+        contentPane.getChildren().clear();
+
+        VBox mainContainer = new VBox(80);
+        mainContainer.setAlignment(Pos.CENTER);
+
+        Label titleLabel = new Label("Select Drop");
+        titleLabel.setStyle("-fx-font-size: 120; -fx-font-family: 'Copperplate Gothic Bold'; -fx-text-fill: white;");
+
+        VBox buttonBox = new VBox(10);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        Button basicButton = createStyledButton("Basic Drop", DropType.BASIC);
+        Button premiumButton = createStyledButton("Premium Drop", DropType.PREMIUM);
+        Button eliteButton = createStyledButton("Elite Drop", DropType.ELITE);
+
+        buttonBox.getChildren().addAll(basicButton, premiumButton, eliteButton);
+
+        Button backButton = new Button("Cancel");
+        backButton.setPrefWidth(400);
+        backButton.getStyleClass().add("deckbuilder-button");
+        backButton.setOnAction(e -> {
+            if (navigationService != null) {
+                navigationService.navigateTo(FXML_DECKBUILDER_PATH, "GWENT", (DeckbuilderController c) -> c.setNavigationService(navigationService));
+            }
+        });
+
+        mainContainer.getChildren().addAll(titleLabel, buttonBox, backButton);
+        contentPane.getChildren().add(mainContainer);
     }
 
-    private void showDropSelection() {
-        HBox dropSelectionView = new HBox();
-        dropSelectionView.spacingProperty().bind(scale.multiply(BASE_DROP_SPACING));
-        dropSelectionView.setAlignment(Pos.CENTER);
-        dropSelectionView.getChildren().addAll(
-                createDropButton(DropType.BASIC, "100"),
-                createDropButton(DropType.PREMIUM, "500"),
-                createDropButton(DropType.ELITE, "1000")
-        );
-        rootPane.getChildren().clear();
-        rootPane.getChildren().add(dropSelectionView);
+    private Button createStyledButton(String text, DropType type) {
+        Button button = new Button(text);
+        button.setPrefWidth(400);
+        button.getStyleClass().add("deckbuilder-button");
+        button.setOnAction(e -> handleDropSelection(type));
+        return button;
     }
 
     private void handleDropSelection(DropType dropType) {
-        Card wonCard = drawActualCard(dropType);
-        if (wonCard == null) {
-            System.err.println("Fehler beim Ziehen der Karte. Breche ab.");
-            return;
-        }
-        System.out.println(dropType.name() + " Drop ausgewählt. Gewonnene Karte: " + wonCard.getName() + " (" + wonCard.getRarity() + ")");
+        Node selectionView = contentPane.getChildren().get(0);
 
-        Node dropSelectionView = rootPane.getChildren().get(0);
-        FadeTransition ftOut = new FadeTransition(Duration.millis(300), dropSelectionView);
+        FadeTransition ftOut = new FadeTransition(Duration.millis(300), selectionView);
         ftOut.setToValue(0);
         ftOut.setOnFinished(e -> {
-            rootPane.getChildren().clear();
-            startCarouselAnimation(wonCard, dropType); // Übergibt die GEWONNENE Karte
+            Card wonCard = drawActualCard(dropType);
+            if (wonCard == null) {
+                System.err.println("Fehler beim Ziehen der Karte. Breche ab und gehe zurück zur Auswahl.");
+                showDropSelection();
+                return;
+            }
+            startCarouselAnimation(wonCard, dropType);
         });
         ftOut.play();
     }
 
-
     private Card drawActualCard(DropType dropType) {
-        List<Card> unlockableCards = cards.stream()
-                .filter(c -> c.getAmount() < c.getRarity().getMaxAmount())
-                .toList();
+        List<Card> unlockableCards = cardRepository.getUnlockableCards();
         if (unlockableCards.isEmpty()) {
             System.err.println("Keine freischaltbaren Karten mehr vorhanden!");
             return null;
@@ -141,6 +163,7 @@ public class CardUnlockController {
     }
 
     private void startCarouselAnimation(Card wonCard, DropType dropType) {
+        contentPane.getChildren().clear();
         StackPane carouselPane = new StackPane();
         carouselPane.maxHeightProperty().bind(scale.multiply(BASE_CAROUSEL_HEIGHT));
 
@@ -161,7 +184,7 @@ public class CardUnlockController {
         indicator.setMouseTransparent(true);
 
         carouselPane.getChildren().addAll(rarityContainer, indicator);
-        rootPane.getChildren().add(carouselPane);
+        contentPane.getChildren().add(carouselPane);
 
         Rarity displayRarity = wonCard.getRarity();
         List<Integer> carouselList = createVisualRarityList(displayRarity, dropService.getProbabilityTable(dropType));
@@ -249,13 +272,16 @@ public class CardUnlockController {
         newCardLabel.setOpacity(0);
         StackPane.setAlignment(newCardLabel, Pos.TOP_CENTER);
 
-        rootPane.getChildren().add(cardImage);
+        Node oldView = rarityNode.getParent().getParent();
+        FadeTransition ftOut = new FadeTransition(Duration.millis(400), oldView);
+        ftOut.setToValue(0);
+        ftOut.setOnFinished(e -> contentPane.getChildren().remove(oldView));
+
+        contentPane.getChildren().add(cardImage);
         if (wonCard.getAmount() <= 0) {
-            rootPane.getChildren().add(newCardLabel);
+            contentPane.getChildren().add(newCardLabel);
         }
 
-        FadeTransition ftOut = new FadeTransition(Duration.millis(400), rarityNode.getParent().getParent());
-        ftOut.setToValue(0);
         FadeTransition ftInCard = new FadeTransition(Duration.millis(500), cardImage);
         ftInCard.setToValue(1);
         ScaleTransition stInCard = new ScaleTransition(Duration.millis(500), cardImage);
@@ -272,55 +298,12 @@ public class CardUnlockController {
 
         revealTransition.setOnFinished(e -> {
             wonCard.setAmount(wonCard.getAmount() + 1);
+            cardRepository.save();
+
             cardImage.setCursor(Cursor.HAND);
             cardImage.setOnMouseClicked(event -> showDropSelection());
         });
         revealTransition.play();
-    }
-
-    private VBox createDropButton(DropType type, String price) {
-        VBox container = new VBox();
-        container.spacingProperty().bind(scale.multiply(10.0));
-        container.setAlignment(Pos.CENTER);
-        container.setStyle("-fx-border-color: transparent; -fx-border-width: 0;");
-
-        ImageView dropImageView = new ImageView(new Image(getClass().getResource("/org/example/demo3/assets/drops/" + type.name() + "Drop.png").toExternalForm()));
-        dropImageView.fitWidthProperty().bind(scale.multiply(BASE_DROP_BUTTON_SIZE));
-        dropImageView.fitHeightProperty().bind(scale.multiply(BASE_DROP_BUTTON_SIZE));
-
-        Button button = new Button();
-        button.setGraphic(dropImageView);
-        button.getStyleClass().add("drop-button");
-        button.setOnAction(e -> handleDropSelection(type));
-
-        Label priceLabel = new Label(price);
-        priceLabel.styleProperty().bind(Bindings.concat(
-                "-fx-font-size: ", scale.multiply(BASE_PRICE_FONT_SIZE).asString(), "px; ",
-                "-fx-text-fill: white;"
-        ));
-        ImageView coinIcon = new ImageView(new Image(getClass().getResource("/org/example/demo3/assets/icons/Coin.png").toExternalForm()));
-        coinIcon.fitHeightProperty().bind(scale.multiply(BASE_COIN_ICON_SIZE));
-        coinIcon.fitWidthProperty().bind(scale.multiply(BASE_COIN_ICON_SIZE));
-        HBox priceBox = new HBox(5, priceLabel, coinIcon);
-        priceBox.setAlignment(Pos.CENTER);
-        container.getChildren().addAll(button, priceBox);
-        setupHoverAnimation(container, dropImageView);
-        return container;
-    }
-
-    private void setupHoverAnimation(VBox container, ImageView imageView) {
-        ScaleTransition stIn = new ScaleTransition(Duration.millis(200), imageView);
-        stIn.setToX(1.05);
-        stIn.setToY(1.05);
-        ScaleTransition stOut = new ScaleTransition(Duration.millis(200), imageView);
-        stOut.setToX(1.0);
-        stOut.setToY(1.0);
-        container.setOnMouseEntered(e -> {
-            stIn.play();
-        });
-        container.setOnMouseExited(e -> {
-            stOut.play();
-        });
     }
 
     private Node createRarityNode(int rarityId) {
@@ -353,6 +336,10 @@ public class CardUnlockController {
         while (weightedList.size() < CAROUSEL_ELEMENT_SIZE) {
             weightedList.add(Rarity.COMMON.getSortID());
         }
+        while (weightedList.size() > CAROUSEL_ELEMENT_SIZE) {
+            weightedList.remove(weightedList.size() - 1);
+        }
+
         while (weightedList.size() <= CAROUSEL_SELECTED_INDEX) {
             weightedList.add(Rarity.COMMON.getSortID());
         }

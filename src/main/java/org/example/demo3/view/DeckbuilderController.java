@@ -250,7 +250,7 @@ public class DeckbuilderController {
         unlockButton.setOnAction(e -> {
             System.out.println("Unlock Button clicked");
             if (navigationService != null) {
-                navigationService.navigateTo(FXML_DROPSELECTION_PATH, "Gwent", (DropSelectionController controller) ->
+                navigationService.navigateTo(FXML_UNLOCKER_PATH, "Gwent", (CardUnlockController controller) ->
                         controller.setNavigationService(navigationService));
             } else {
                 System.err.println("NavigationService not initialized in MainMenuController.");
