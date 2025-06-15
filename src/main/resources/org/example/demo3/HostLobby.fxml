@@ -7,14 +7,14 @@
 <VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="40.0" styleClass="game-screen-root"
       xmlns="http://javafx.com/javafx/21" fx:controller="org.example.demo3.view.HostLobbyController">
     <children>
-        <Label styleClass="lan-title-label" text="Host Lobby"/>
+        <Label styleClass="lan-title" text="Host Lobby"/>
         <VBox alignment="CENTER" spacing="15.0">
             <children>
                 <Label fx:id="ipLabel" styleClass="lan-ip-address-label" text="Determining IP..."/>
                 <Label fx:id="statusLabel" styleClass="lan-info-label" text="Waiting for an opponent to connect..."/>
             </children>
         </VBox>
-        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="lan-menu-button"
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="lan-button"
                 text="Cancel"/>
     </children>
     <padding>

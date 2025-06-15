@@ -7,18 +7,18 @@
 <VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="30.0" styleClass="main-menu-root"
       xmlns="http://javafx.com/javafx/21" fx:controller="org.example.demo3.view.LanSelectionController">
     <children>
-        <Label styleClass="lan-title-label" text="Multiplayer" style="-fx-font-family: 'Copperplate Gothic Bold'; -fx-font-size: 100"/>
+        <Label styleClass="lan-title" text="Multiplayer"/>
         <VBox alignment="CENTER" spacing="20.0">
             <children>
                 <!-- Text und neue Style-Klasse hinzugefügt -->
                 <Button fx:id="hostButton" mnemonicParsing="false" onAction="#handleHostAction"
-                        styleClass="deckbuilder-button" text="Host Game" style="-fx-pref-height: 60; -fx-pref-width: 420; -fx-font-size: 27"/>
+                        styleClass="lan-button" text="Host Game"/>
                 <Button fx:id="joinButton" mnemonicParsing="false" onAction="#handleJoinAction"
-                        styleClass="deckbuilder-button" text="Join Game" style="-fx-pref-height: 60; -fx-pref-width: 420; -fx-font-size: 27"/>
+                        styleClass="lan-button" text="Join Game"/>
             </children>
         </VBox>
-        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="deckbuilder-button"
-                text="Back" style="-fx-pref-height: 60; -fx-pref-width: 420; -fx-font-size: 27"/>
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="lan-button"
+                text="Back"/>
     </children>
     <padding>
         <Insets bottom="50.0" left="20.0" right="20.0" top="20.0"/>
