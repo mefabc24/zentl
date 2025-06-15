@@ -115,29 +115,29 @@ public class AdvancedBot extends PlayerImpl {
         // if we are behind in round 2 or if its round 3 we must win the round
         boolean isMustWinRound = (state.round == 2 && botWins == 0 && oppWins == 1) || (state.round == 3);
 
-        // if its round 1 or if we have an advantage in round 2 then a loss is ok (if we get an advantage in cards, for the next round)
-        boolean isStrategicLossAcceptable = (state.round == 1 || state.round == 2 && botWins == 1 && oppWins == 0);
-
         // 3. terminal state check
         // crucial if a round end is reached within the search depth
         if (state.isTerminal()) {
             if (scoreDiff <= 0) { // bot loses or draws the round
                 if (isMustWinRound) {
                     // a draw in a must win scenario is better than losing, but still not good (2:2 draw is slightly better the lose )
-                    return (scoreDiff == 0) ? -9000 : -10000;
-                }
-                if (isStrategicLossAcceptable) {
+                    return (scoreDiff == 0) ? -9000 : -10000 + scoreDiff;
+                } else {
                     // a strategic pass is okay, but not a big win
                     // the value must be lower than a normal win
-                    return 150 + (handDiff * 40);
+                    return 150 + (handDiff * 40) - scoreDiff;
                 }
-            } else { // bot wins the round
+            } else { // bot is winning
+                // points above the min win are overkill
+                int overkill = scoreDiff - 1;
+                int marginPenalty = overkill * 75;
+
                 if (isMustWinRound) {
-                    // game won => perfect, punish card disadvantage to prevent overkill
-                    return 10000 + (handDiff * 100);
+                    // game won => good, but dont overshoot
+                    return 10000 + (handDiff * 100) - marginPenalty;
                 }
-                // a normal win is very good
-                return 1000 + (handDiff * 100);
+                // normal roundwin
+                return 1000 + (handDiff * 100) - marginPenalty;
             }
         }
 
@@ -155,35 +155,25 @@ public class AdvancedBot extends PlayerImpl {
             handAdvantageMultiplier = 25; // hand advantage provides a strategic edge
         }
 
+
+        // get the total power of the remaining cards in the hand
+        int botHandPower = state.bot.getHand().stream().mapToInt(Card::getPower).sum();
+        int oppHandPower = state.opponent.getHand().stream().mapToInt(Card::getPower).sum();
+        int handPowerDiff = botHandPower - oppHandPower;
+        int handPowerMultiplier = 3;
+
         // other bonuses/penalties
-        int cardValuePenalty =  calculateCardValuePenalty(state);
+        int cardValuePenalty = calculateCardValuePenalty(state);
 
         if (isMustWinRound) {
-            cardValuePenalty /= 2; // Halve the penalty, but don't ignore it.
+            cardValuePenalty /= 2;
         }
 
-        int overkillPenalty = 0;
-
-        if (scoreDiff > 5) {
-            overkillPenalty = -(scoreDiff - 5) * 25;
-        }
-
-
+        // evaluation of the non terminal states
         int score = scoreDiff * scoreMultiplier;
         int hand = handDiff * handAdvantageMultiplier;
-        int finalScore = score + hand + cardValuePenalty + overkillPenalty;
-/*
-        System.out.println();
-        System.out.println("--- Evaluation Details ---");
-        System.out.println("[Eval] Score Comp: (scoreDiff " + scoreDiff + " * scoreMultiplier " + scoreMultiplier + ") = " + score);
-        System.out.println("[Eval] Hand Comp:  (handDiff " + handDiff + " * handAdvantageMultiplier " + handAdvantageMultiplier + ") = " + hand);
-        System.out.println("[Eval] Penalties:  cardValuePenalty=" + cardValuePenalty + ", overkillPenalty=" + overkillPenalty);
-        System.out.println("-------------------------------------");
-        System.out.println("[Eval] Final Score: " + finalScore);
-        System.out.println("-------------------------------------");
-        System.out.println();
-        */
-        return (scoreDiff * scoreMultiplier) + (handDiff * handAdvantageMultiplier) + cardValuePenalty + overkillPenalty;
+
+        return score + hand + handPowerDiff * handPowerMultiplier + cardValuePenalty;
     }
 
     // penalizes playing high value cards in early rounds => resource management and avoiding overcommitment, the bot should win rounds efficiently
@@ -201,8 +191,8 @@ public class AdvancedBot extends PlayerImpl {
                     penalty -= 50;
                 }
                 if (card.getEffectType() == EffectType.MEDIC) {
-                    // Heavy penalty for using a valuable revive effect early.
-                    penalty -= 200;
+                    // heavy penalty for using a valuable revive effect early (in later rounds the handdif the medic gives, negates this penalty)
+                    penalty -= 110;
                 }
             }
         }
@@ -302,52 +292,52 @@ public class AdvancedBot extends PlayerImpl {
                 .of(RowType.MELEE, RowType.RANGED, RowType.SIEGE)
                 .max(Comparator.comparingInt(r ->
                         state.board
-                        .getPlayerRows(player)
-                        .getOrDefault(r, List.of())
-                        .size()))
+                                .getPlayerRows(player)
+                                .getOrDefault(r, List.of())
+                                .size()))
                 .filter(r ->
                         !state.board
-                        .getPlayerRows(player)
-                        .getOrDefault(r, List.of())
-                        .isEmpty());
+                                .getPlayerRows(player)
+                                .getOrDefault(r, List.of())
+                                .isEmpty());
         targetRow.ifPresent(row -> state.board.applyHornEffect(player, row));
     }
 
     private void applyScorchEffect(GameState state) {
         List<Card> allUnits = new ArrayList<>();
         allUnits.addAll(state.board
-                        .getPlayerRows(state.bot)
-                        .values()
-                        .stream()
-                        .flatMap(List::stream)
-                        .toList());
+                .getPlayerRows(state.bot)
+                .values()
+                .stream()
+                .flatMap(List::stream)
+                .toList());
         allUnits.addAll(state.board
-                        .getPlayerRows(state.opponent)
-                        .values()
-                        .stream()
-                        .flatMap(List::stream)
-                        .toList());
+                .getPlayerRows(state.opponent)
+                .values()
+                .stream()
+                .flatMap(List::stream)
+                .toList());
 
         int maxPower = allUnits
                 .stream()
                 .filter(c ->
                         c.getRarity() != Rarity.LEGENDARY && c.getRarity() != Rarity.MYTHIC)
-                        .mapToInt(Card::getPower)
-                        .max()
-                        .orElse(0);
+                .mapToInt(Card::getPower)
+                .max()
+                .orElse(0);
 
         if (maxPower > 0) {
             List<Card> toScorch = allUnits.stream().filter(c ->
-                                    c.getPower() == maxPower &&
+                            c.getPower() == maxPower &&
                                     c.getRarity() != Rarity.LEGENDARY &&
                                     c.getRarity() != Rarity.MYTHIC)
-                                    .toList();
+                    .toList();
 
             for (Card scorched : toScorch) {
                 if (state.board.getPlayerRows(state.bot)
-                                .values()
-                                .stream()
-                                .anyMatch(l -> l.contains(scorched))) {
+                        .values()
+                        .stream()
+                        .anyMatch(l -> l.contains(scorched))) {
                     state.board.removeCard(scorched, state.bot);
                 } else {
                     state.board.removeCard(scorched, state.opponent);
@@ -361,7 +351,7 @@ public class AdvancedBot extends PlayerImpl {
                 .getDiscardPile()
                 .stream()
                 .filter(c ->
-                                c.getCardType() == CardType.UNIT &&
+                        c.getCardType() == CardType.UNIT &&
                                 c.getRarity() != Rarity.LEGENDARY &&
                                 c.getRarity() != Rarity.MYTHIC)
                 .max(Comparator.comparingInt(Card::getPower));
@@ -384,14 +374,6 @@ public class AdvancedBot extends PlayerImpl {
         public GameState(Player bot, Player opponent, Board board, int round) {
             this.bot = bot.copy();
             this.opponent = opponent != null ? opponent.copy() : null;
-
-            // playermapping is needed because the board contains references to the original player objects
-            Map<Player, Player> playerMapping = new HashMap<>();
-            playerMapping.put(bot, this.bot);
-            if (opponent != null) {
-                playerMapping.put(opponent, this.opponent);
-            }
-
             this.board = board.copy();
             this.round = round;
         }
@@ -414,7 +396,7 @@ public class AdvancedBot extends PlayerImpl {
         public GameState copy() {
             Player newBot = this.bot.copy();
             Player newOpponent = this.opponent.copy();
-            Board newBoard = this.board.copy(); // <-- Viel einfacher!
+            Board newBoard = this.board.copy();
             return new GameState(newBot, newOpponent, newBoard, this.round, true);
         }
 

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
       fx:controller="org.example.demo3.view.EditorController"
       prefHeight="750.0" prefWidth="600.0"
-      spacing="15" alignment="TOP_CENTER" styleClass="root"> <!-- spacing und alignment, TOP_CENTER für GridPane -->
+      spacing="15" alignment="TOP_CENTER" styleClass="root">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
@@ -19,10 +18,10 @@
         </VBox.margin>
     </Label>
 
-    <GridPane hgap="10" vgap="10" alignment="CENTER" maxWidth="500"> <!-- GridPane für Formularelemente -->
+    <GridPane hgap="10" vgap="10" alignment="CENTER" maxWidth="500">
         <columnConstraints>
-            <ColumnConstraints halignment="RIGHT" prefWidth="120"/> <!-- Für Labels -->
-            <ColumnConstraints hgrow="ALWAYS" prefWidth="280"/> <!-- Für Eingabefelder -->
+            <ColumnConstraints halignment="RIGHT" prefWidth="120"/>
+            <ColumnConstraints hgrow="ALWAYS" prefWidth="280"/>
         </columnConstraints>
 
 
@@ -32,7 +31,8 @@
 
         <!-- Amount -->
         <Label text="Amount:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <TextField fx:id="amountText" promptText="Kartenanzahl (0 == !unlocked)" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <TextField fx:id="amountText" promptText="Kartenanzahl (0 == !unlocked)" GridPane.rowIndex="1"
+                   GridPane.columnIndex="1"/>
 
         <!-- Name -->
         <Label text="Name:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>

@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.RowConstraints?>
-
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.demo3.view.FactionTabController">
     <columnConstraints>
         <ColumnConstraints percentWidth="100"/>
@@ -23,7 +13,6 @@
         <RowConstraints vgrow="ALWAYS"/>
     </rowConstraints>
 
-    <!-- Top Container -->
     <GridPane GridPane.rowIndex="0" GridPane.columnIndex="0">
         <columnConstraints>
             <ColumnConstraints percentWidth="30"/>
@@ -50,12 +39,10 @@
         <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2">
             <Button fx:id="tabToggleVisibilityButton" text="SHOW LOCKED" onAction="#handleTabToggleVisibility"/>
             <Button fx:id="tabUnselectAllButton" text="UNSELECT ALL" onAction="#handleTabUnselectAll"/>
-            <Button fx:id="tabRandomizeButton" text="RANDOMIZE" onAction="#handleTabRandomize" />
+            <Button fx:id="tabRandomizeButton" text="RANDOMIZE" onAction="#handleTabRandomize"/>
         </HBox>
     </GridPane>
-    <!-- Top Container END -->
 
-    <!-- Bereich für ausgewählte Karten -->
     <BorderPane GridPane.rowIndex="1" GridPane.columnIndex="0">
         <top>
             <HBox alignment="CENTER_RIGHT" style="-fx-padding: 0 5 5 0;">
@@ -75,11 +62,10 @@
         </center>
     </BorderPane>
 
-    <!-- Bereich für alle Karten -->
-    <ScrollPane fx:id="tabCardScrollPane" GridPane.rowIndex="2" GridPane.columnIndex="0" fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED">
+    <ScrollPane fx:id="tabCardScrollPane" GridPane.rowIndex="2" GridPane.columnIndex="0" fitToWidth="true"
+                hbarPolicy="AS_NEEDED" vbarPolicy="AS_NEEDED">
         <content>
             <FlowPane fx:id="tabAllCardsFP">
-                <!-- Inhalt wird dynamisch gefüllt -->
             </FlowPane>
         </content>
     </ScrollPane>

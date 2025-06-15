@@ -25,15 +25,14 @@ public abstract class AbstractGameService {
     protected final GameEngine gameEngine = new GameEngine();
     protected final CardRepository cardRepository;
     protected final SoundService soundService;
-
+    private final EventHandler<RestartGameEvent> restartGameHandler = event -> newGame(event.getGameMode(), event.getBotDifficulty(), event.getP1Faction(), event.getP2Faction());
     protected Board board;
     protected Player p1, p2, currentPlayer;
     protected int round;
     protected GameMode gameMode;
-    protected BotDifficulty botDifficulty;
+    protected BotDifficulty bot1Difficulty;
+    protected BotDifficulty bot2Difficulty;
     protected volatile boolean isGameActive = true;
-
-    private final EventHandler<RestartGameEvent> restartGameHandler = event -> newGame(event.getGameMode(), event.getBotDifficulty(), event.getP1Faction(), event.getP2Faction());
     private final EventHandler<PlayCardRequest> playCardHandler = event -> cardPlayed(event.getCard());
     private final EventHandler<PlayerPassed> playerPassedHandler = event -> playerPassed();
 
@@ -44,6 +43,7 @@ public abstract class AbstractGameService {
     }
 
     public abstract void newGame(GameMode mode, BotDifficulty difficulty, Faction p1Faction, Faction p2Faction);
+
     protected abstract void nextTurn();
 
     public void shutdown() {
@@ -149,23 +149,15 @@ public abstract class AbstractGameService {
     protected void postGameState() {
         if (!isGameActive) return;
         updateScores();
-        eventBus.post(new GameStateUpdateEve(p1, p2, currentPlayer, round, board, gameMode, botDifficulty));
+        eventBus.post(new GameStateUpdateEve(p1, p2, currentPlayer, round, board, gameMode, bot1Difficulty, bot2Difficulty));
     }
 
     protected void updateScores() {
         p1.setScore(board.calculateTotalPower(p1));
         p2.setScore(board.calculateTotalPower(p2));
-        /*System.out.println("--------------------------------------------------");
-        System.out.println("[DEBUG] SCORES UPDATED | P1: " + p1.getScore() + " | P2: " + p2.getScore());
-        System.out.println("--------------------------------------------------");*/
     }
 
     protected void handleCardEffect(Card card, Player player) {
-        /*System.out.println("\n============== EFFECT TRIGGER ==============");
-        System.out.println("[DEBUG] Player:      " + player.getName());
-        System.out.println("[DEBUG] Card Played: " + card.getName());
-        System.out.println("[DEBUG] EffectType:  " + card.getEffectType());
-        System.out.println("============================================");*/
 
         if (card.getEffectType() == null) return;
         String effectMessage = "";
@@ -208,9 +200,11 @@ public abstract class AbstractGameService {
                     cardsToScorch.forEach(scorchedCard -> {
                         scorchedNames.append(scorchedCard.getName()).append(", ");
                         if (board.getPlayerRows(p1).values().stream().anyMatch(list -> list.contains(scorchedCard))) {
-                            board.removeCard(scorchedCard, p1); p1.addToDiscardPile(scorchedCard);
+                            board.removeCard(scorchedCard, p1);
+                            p1.addToDiscardPile(scorchedCard);
                         } else {
-                            board.removeCard(scorchedCard, p2); p2.addToDiscardPile(scorchedCard);
+                            board.removeCard(scorchedCard, p2);
+                            p2.addToDiscardPile(scorchedCard);
                         }
                     });
                     effectMessage = "Scorch destroyed the strongest unit(s): " + scorchedNames.substring(0, scorchedNames.length() - 2) + "!";

@@ -3,7 +3,7 @@ package org.example.demo3.model.enums;
 import java.util.List;
 
 public enum Rarity {
-    COMMON (0, 100), // weight entfernt
+    COMMON (0, 100),
     RARE (1, 20),
     EPIC (2, 5),
     LEGENDARY (3, 1),
@@ -19,19 +19,17 @@ public enum Rarity {
         this.maxAmount = maxAmount;
     }
 
-    // Getter
     public int getSortID() { return sortID; }
     public int getMaxAmount() { return maxAmount; }
 
-    // Sucht passende Rarity anhand der SortID
+    // search for matching rarity with sortID
     public static Rarity fromSortID(int id) {
-        for (Rarity rarity : VALUES) { // VALUES ist die Liste, die du schon hast
+        for (Rarity rarity : VALUES) {
             if (rarity.getSortID() == id) {
                 return rarity;
             }
         }
-        // Dieser Fehlerfall ist wichtig, um Probleme im Code schnell zu finden.
-        throw new IllegalArgumentException("Keine Rarity mit der sortID gefunden: " + id);
+        throw new IllegalArgumentException("no rarity found with sortID: " + id);
     }
 
 }

@@ -843,6 +843,80 @@
 .game-card-image { -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 3, 3); }
 .game-card-image:hover { -fx-effect: dropshadow(three-pass-box, cyan, 15, 0.8, 0, 0); }
 
+/* LAN SCREENS*/
+.lan-title-label {
+    -fx-font-size: 48px;
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, black, 5, 0.8, 0, 2);
+}
+
+.lan-info-label {
+    -fx-font-size: 22px;
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-text-fill: #E0E0E0;
+    -fx-effect: dropshadow(gaussian, black, 3, 0.7, 0, 1);
+}
+
+.lan-ip-address-label {
+    -fx-font-size: 32px;
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-text-fill: #FFD700; /* Gold */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.9), 5, 0.6, 0, 1);
+}
+
+.lan-text-field {
+    -fx-background-color: #3C3F41;
+    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 20px;
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #4E5254;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 10px;
+    -fx-prompt-text-fill: #888888;
+    -fx-alignment: center-left;
+    -fx-pref-width: 300px;
+}
+
+.lan-text-field:focused {
+    -fx-border-color: #007ACC;
+    -fx-background-color: #424549;
+}
+
+.lan-menu-button {
+    -fx-min-width: 384px;
+    -fx-min-height: 65px;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #252525, #1a1a1a);
+
+    -fx-border-width: 2px;
+    -fx-border-color: #555555;
+
+    -fx-font-family: "Arial Black", sans-serif;
+    -fx-font-size: 24px;
+    -fx-text-fill: #A0A0A0;
+    -fx-font-weight: bold;
+
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 2, 2);
+    -fx-cursor: hand;
+}
+
+.lan-menu-button:hover {
+    -fx-border-color: #007ACC;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, #007ACC, 10, 0.3, 0, 0);
+}
+
+.lan-menu-button:pressed {
+    -fx-background-color: #1a1a1a;
+    -fx-effect: none;
+}
+
 
 
 
