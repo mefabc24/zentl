@@ -10,7 +10,6 @@
         <Label styleClass="lan-title" text="Multiplayer"/>
         <VBox alignment="CENTER" spacing="20.0">
             <children>
-                <!-- Text und neue Style-Klasse hinzugefügt -->
                 <Button fx:id="hostButton" mnemonicParsing="false" onAction="#handleHostAction"
                         styleClass="lan-button" text="Host Game"/>
                 <Button fx:id="joinButton" mnemonicParsing="false" onAction="#handleJoinAction"

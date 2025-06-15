@@ -8,8 +8,7 @@
            fx:controller="org.example.demo3.view.DropSelectionController"
            prefHeight="400.0" prefWidth="600.0" stylesheets="@styles.css" styleClass="deckbuilder-background">
 
-    <!-- Kein GridPane mehr nötig, der StackPane zentriert automatisch -->
-    <VBox alignment="CENTER" spacing="80"> <!-- Etwas Abstand für die Optik hinzugefügt -->
+    <VBox alignment="CENTER" spacing="80">
         <Label text="Select Drop" style="-fx-font-size: 120; -fx-font-family: 'Copperplate Gothic Bold'"/>
         <VBox spacing="10" alignment="CENTER">
             <Button fx:id="basicDropButton" prefWidth="400" text="Basic Drop" styleClass="deckbuilder-button"/>

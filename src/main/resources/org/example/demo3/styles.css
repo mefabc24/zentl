@@ -114,8 +114,6 @@
     -fx-background-color: #5A5E60;
 }
 
-/* --- Other styles from your file... (omitted for brevity, but they stay the same) --- */
-/* (All the styles for text-field, scroll-pane, etc. remain here) */
 /* --- TEXTFIELD --- */
 .text-field {
     -fx-background-color: #3C3F41;
@@ -172,7 +170,7 @@
     -fx-padding: 0;
 }
 
-/* --- FLOWPANE (für Karten) --- */
+/* --- FLOWPANE --- */
 .flow-pane {
     -fx-padding: 15px;
     -fx-hgap: 15px;
@@ -180,7 +178,7 @@
     -fx-background-color: transparent;
 }
 
-/* --- KARTEN-BUTTONS (in allCardsFP) --- */
+/* --- KARTEN-BUTTONS  --- */
 .card-button {
     -fx-background-color: #404040;
     -fx-padding: 2px;
@@ -201,7 +199,7 @@
     -fx-effect: dropshadow(three-pass-box, -fx-accent, 10, 0.5, 0, 0);
 }
 
-/* --- KARTEN-VORSCHAU-BUTTONS (in selectedCardsFP) --- */
+/* --- KARTEN-VORSCHAU-BUTTONS  --- */
 .selected-card-preview-button {
     -fx-background-color: #404040;
     -fx-padding: 2px;
@@ -328,7 +326,7 @@
     -fx-effect: dropshadow(three-pass-box, -fx-accent, 3, 0.3, 0, 0);
 }
 
-/* Styling für die Popup-Liste der ComboBox */
+/* Popup-Liste - ComboBox */
 .combo-box-popup .list-view {
     -fx-background-color: #3C3F41;
     -fx-border-color: #4E5254;
@@ -420,7 +418,7 @@
 
 /* Card Unlocker */
 .new-card-label {
-    -fx-background-color: #ff4757; /* Ein auffälliges Rot/Pink */
+    -fx-background-color: #ff4757;
     -fx-text-fill: white;
     -fx-font-size: 28px;
     -fx-font-weight: bold;
@@ -431,7 +429,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.7), 10, 0, 0, 5);
 }
 
-/* Styling für den Container, der den Drop-Button und den Preis hält */
+
 .drop-container {
     -fx-border-color: transparent;
     -fx-padding: 20;
@@ -440,7 +438,6 @@
     -fx-transition: -fx-border-color 0.2s;
 }
 
-/* Der Button selbst */
 .drop-button {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -467,7 +464,7 @@
 
 /* Shared styles for all custom image-based menu buttons */
 .play-button, .inventory-button, .editor-button, .quit-button {
-    -fx-background-color: transparent; /* Resets the background for the normal state */
+    -fx-background-color: transparent;
     -fx-padding: 0;
     -fx-border-width: 0;
     -fx-effect: none;
@@ -479,11 +476,6 @@
     -fx-background-size: contain;
 }
 
-/*
- * This block explicitly tells the image buttons to have a transparent background
- * EVEN WHEN HOVERED. This rule is more specific than the generic `.button:hover`
- * rule, so it wins and prevents the gray box from appearing.
- */
 .play-button:hover,
 .inventory-button:hover,
 .editor-button:hover,
@@ -530,7 +522,7 @@
 
 /* Style for the card VBox container in the game screen */
 .game-card {
-    -fx-background-color: #f0f0f0; /* The light gray/white background */
+    -fx-background-color: #f0f0f0;
     -fx-border-color: #333333;
     -fx-border-width: 1px;
     -fx-padding: 5px;
@@ -546,21 +538,10 @@
     -fx-border-width: 2px;
 }
 
-/* 
- * This rule targets the labels ONLY inside our game cards
- * and forces their text color to be black, overriding any global
- * white text style. The !important flag ensures this rule wins.
- */
 .game-card .game-card-label {
     -fx-text-fill: black !important;
 }
 
-/* 
- * This new rule targets any label with the 'game-board-label' class.
- * We apply this class in the Java code to the row labels (MELEE, RANGED, etc.),
- * their power counts, and the info labels on the right panel.
- * This forces their text to be black and readable on light backgrounds.
- */
 .game-board-label {
     -fx-text-fill: black !important;
 }
@@ -649,7 +630,7 @@
 }
 /* Deaktivierter Zustand für den Start-Button */
 .deck-start-button:disabled {
-    -fx-opacity: 0.5; /* Macht den Button halbtransparent, wenn er deaktiviert ist */
+    -fx-opacity: 0.5;
 }
 
 /* "Back" / "Zurück" Button */
@@ -720,7 +701,7 @@
 /* Der "Punkt"-Teil des RadioButtons */
 .radio-button .radio {
     -fx-border-width: 2px;
-    -fx-border-color: #00AEEF; /* Leuchtende Zyan-Farbe für den Rand */
+    -fx-border-color: #00AEEF; /* Leuchtende Cyan-Farbe für den Rand */
     -fx-background-color: transparent; /* Kein innerer Hintergrund */
     -fx-border-radius: 15px; /* Macht es perfekt rund */
     -fx-padding: 4px; /* Abstand zwischen Rand und innerem Punkt */
@@ -948,21 +929,19 @@
 }
 
 .icon-button {
-    -fx-background-color: transparent; /* Entfernt den Hintergrund */
-    -fx-background-radius: 0;         /* Entfernt abgerundete Ecken */
-    -fx-border-color: transparent;    /* Entfernt den Rahmen */
-    -fx-padding: 2px;                 /* Kleiner Abstand, damit das Icon nicht gequetscht wird */
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 2px;
     -fx-opacity: 0.5;
-    -fx-cursor: hand;                 /* Zeigt eine Hand, wenn man darüberfährt */
+    -fx-cursor: hand;
 }
 
-/* Visuelles Feedback, wenn die Maus über dem Button ist */
 .icon-button:hover {
     -fx-opacity: 1.0;
     -fx-background-color: transparent;
 }
 
-/* Optional: Visuelles Feedback, wenn der Button gedrückt wird */
 .icon-button:pressed {
     -fx-background-color: transparent;
     -fx-opacity: 0.7;
@@ -1011,9 +990,9 @@
 }
 
 .card-scroll-pane-inner {
-    -fx-background-color: transparent; /* Macht den Hintergrund des ScrollPane unsichtbar */
+    -fx-background-color: transparent;
     -fx-background: transparent;
-    -fx-border-color: transparent; /* Entfernt jegliche eigene Border */
+    -fx-border-color: transparent;
     -fx-border-width: 0;
 
     -fx-vbar-policy: as-needed;
@@ -1029,20 +1008,19 @@
 }
 
 .card-scroll-pane-inner .viewport {
-    -fx-background-color: transparent; /* Stellt sicher, dass auch der "Viewport" transparent ist */
+    -fx-background-color: transparent;
 }
 
-/* Der FlowPane-Inhalt kann einen leichten Hintergrund haben, wenn gewünscht */
 .card-frame-content {
-    /* Dein alter Stil hier, z.B. -fx-padding: 10px; */
     -fx-padding: 10px;
 }
 
-/* Dein alter Rahmen-Stil. Der funktioniert hier perfekt. */
+
 .card-frame-border {
     -fx-background-color: rgba(0, 0, 0, 0.8);
     -fx-border-width: 6px;
     -fx-border-color: linear-gradient(from 0% 50% to 100% 50%, #4F4F4F 0%, #DBDBDB 50%, #4F4F4F 100%);
-    -fx-padding: 6px; /* Dieses Padding ist jetzt der Raum ZWISCHEN der Border und dem ScrollPane */
+    -fx-padding: 6px;
 }
+
 

@@ -56,17 +56,6 @@ public class MainMenuController implements Initializable {
     }
 
     @FXML
-    private void handleEditorButtonAction() {
-        System.out.println("Editor button clicked.");
-        if (navigationService != null) {
-            navigationService.navigateTo(FXML_EDITOR_PATH, "Editor", (EditorController controller) ->
-                    controller.setNavigationService(navigationService));
-        } else {
-            System.err.println("NavigationService not initialized in MainMenuController.");
-        }
-    }
-
-    @FXML
     private void handleQuitButtonAction() {
         System.out.println("Quit button clicked");
         Platform.exit();

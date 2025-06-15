@@ -37,12 +37,6 @@
                 <String fx:value="inventory-button"/>
             </styleClass>
         </Button>
-        <Button fx:id="editorButton" onAction="#handleEditorButtonAction">
-            <styleClass>
-                <String fx:value="main-menu-button"/>
-                <String fx:value="editor-button"/>
-            </styleClass>
-        </Button>
         <Button fx:id="quitButton" onAction="#handleQuitButtonAction">
             <styleClass>
                 <String fx:value="main-menu-button"/>

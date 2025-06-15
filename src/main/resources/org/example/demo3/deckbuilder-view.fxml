@@ -7,7 +7,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.demo3.view.DeckbuilderController"
-            stylesheets="@styles.css" styleClass="deckbuilder-background"> <!--styleClass="deckbuilder-background"-->
+            stylesheets="@styles.css" styleClass="deckbuilder-background">
 
     <GridPane AnchorPane.topAnchor="0.0"
               AnchorPane.bottomAnchor="0.0"
@@ -36,7 +36,6 @@
 
             <HBox GridPane.columnIndex="0" alignment="BOTTOM_RIGHT" spacing="50" styleClass="icon-button">
                 <Label fx:id="prevFactionLabel" text="Previousfaction" styleClass="deckbuilder-other-faction-label"/>
-                <!-- NEU: Button statt ImageView -->
                 <Button fx:id="prevFactionButton" styleClass="deckbuilder-nav-button">
                     <graphic>
                         <ImageView fitHeight="24" preserveRatio="true">
@@ -50,7 +49,6 @@
                    maxHeight="Infinity" styleClass="deckbuilder-label" style="-fx-font-size: 28"/>
 
             <HBox GridPane.columnIndex="2" alignment="BOTTOM_LEFT" spacing="50" styleClass="icon-button">
-                <!-- NEU: Button statt ImageView -->
                 <Button fx:id="nextFactionButton" styleClass="deckbuilder-nav-button">
                     <graphic>
                         <ImageView fitHeight="24" preserveRatio="true">
@@ -94,7 +92,6 @@
                         <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
                     </columnConstraints>
 
-                    <!-- NEU: Alle Filter-Icons sind jetzt Buttons -->
                     <Button fx:id="leftFilterAllButton" styleClass="icon-button" GridPane.columnIndex="0" style="-fx-opacity: 1.0">
                         <graphic>
                             <ImageView><Image url="@assets/icons/cards.png"/></ImageView>
@@ -226,9 +223,7 @@
                 </GridPane>
 
                 <StackPane VBox.vgrow="ALWAYS" styleClass="card-frame-border" prefHeight="700">
-                    <!-- 2. Innerer ScrollPane für den Inhalt -->
                     <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
-                        <!-- 3. FlowPane enthält die Karten -->
                         <FlowPane fx:id="cardSelectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10"/>
                     </ScrollPane>
                 </StackPane>
