@@ -5,6 +5,7 @@ public enum Faction {
     STARWARS,
     KNIGHTS,
     MONSTERS,
+    VIDEOGAMES,
     TEST,
     ITALY,
 }
