@@ -50,7 +50,6 @@ public class HelloApplication extends Application {
             controller.setStage(stage);
         });
 
-        // ================== TRIGGER THE PRE-LOAD ==================
         System.out.println("Kicking off preload for Inventory...");
         navigationService.preLoadView(FXML_INVENTORY_PATH);
 

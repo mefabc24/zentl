@@ -40,7 +40,7 @@ public class Toast {
 
     @SuppressWarnings("unused")
     public static void makeText(Stage ownerStage, String message) {
-        makeText(ownerStage, message, TOAST_DURATION_SECONDS * 1000); // Umwandlung in ms
+        makeText(ownerStage, message, TOAST_DURATION_SECONDS * 1000);
     }
 
 }

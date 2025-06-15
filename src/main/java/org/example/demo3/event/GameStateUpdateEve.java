@@ -55,7 +55,5 @@ public class GameStateUpdateEve extends Event {
         return bot1Difficulty;
     }
 
-    public BotDifficulty getBot2Difficulty() {
-        return bot2Difficulty;
-    }
+    public BotDifficulty getBot2Difficulty() {return bot2Difficulty;}
 }

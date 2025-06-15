@@ -112,7 +112,7 @@ public class CardUnlockController {
         ftOut.setToValue(0);
         ftOut.setOnFinished(e -> {
             rootPane.getChildren().clear();
-            startCarouselAnimation(wonCard, dropType); // Übergibt die GEWONNENE Karte
+            startCarouselAnimation(wonCard, dropType);
         });
         ftOut.play();
     }
