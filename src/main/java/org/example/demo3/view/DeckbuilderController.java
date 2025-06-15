@@ -25,7 +25,6 @@ import org.example.demo3.model.enums.*;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
 
-import java.io.InputStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -93,10 +92,8 @@ public class DeckbuilderController {
     private Button activeLeftFilterButton;
     private Button activeRightFilterButton;
 
-    // NEU: Listen zur expliziten Gruppierung der Buttons
     private List<Button> leftFilterButtons;
     private List<Button> rightFilterButtons;
-
 
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
@@ -107,14 +104,10 @@ public class DeckbuilderController {
         this.cardRepository = CardRepository.getInstance();
         this.selectedInstances = FXCollections.observableArrayList();
 
-
-
         loadInitialDeckState();
         setupFactionSlider();
 
-        // NEU: Buttons explizit gruppieren
         groupFilterButtons();
-
         setupFilterButtons();
         setupActionButtons();
         setupSelectionListener();
@@ -129,9 +122,12 @@ public class DeckbuilderController {
             return;
         }
 
+        // KORREKTUR 1: Erzeuge separate CardInstance-Objekte für jede Kopie einer Karte.
+        // Die alte Implementierung mit Collections.nCopies() hat nur Referenzen auf dasselbe Objekt erstellt.
         this.allOwnedCardInstances = allCards.stream()
                 .filter(card -> card.getAmount() > 0)
-                .flatMap(card -> Collections.nCopies(card.getAmount(), new CardInstance(card)).stream())
+                .flatMap(card -> java.util.stream.IntStream.range(0, card.getAmount())
+                        .mapToObj(i -> new CardInstance(card)))
                 .collect(Collectors.toList());
 
         List<CardInstance> initialSelection = new ArrayList<>();
@@ -139,7 +135,7 @@ public class DeckbuilderController {
             if (card.getSelectedAmount() > 0) {
                 allOwnedCardInstances.stream()
                         .filter(inst -> inst.getCardDefinition().getId() == card.getId())
-                        .filter(inst -> !initialSelection.contains(inst)) // Sicherstellen, dass wir nicht dieselbe Instanz mehrmals hinzufügen
+                        .filter(inst -> !initialSelection.contains(inst))
                         .limit(card.getSelectedAmount())
                         .forEach(initialSelection::add);
             }
@@ -155,7 +151,6 @@ public class DeckbuilderController {
         nextFactionButton.setOnAction(e -> navigateFaction(1));
     }
 
-    // NEU: Hilfsmethode zur Gruppierung der Buttons
     private void groupFilterButtons() {
         leftFilterButtons = Arrays.asList(
                 leftFilterAllButton, leftFilterMeleeButton, leftFilterRangedButton,
@@ -167,12 +162,7 @@ public class DeckbuilderController {
         );
     }
 
-    /**
-     * Konfiguriert alle Filter-Buttons für beide Seiten.
-     * KORRIGIERTE VERSION
-     */
     private void setupFilterButtons() {
-        // Filter-Definitionen (bleibt gleich)
         addFilter(leftFilterAllButton, rightFilterAllButton, "ALL CARDS", i -> true);
         addFilter(leftFilterMeleeButton, rightFilterMeleeButton, "MELEE CARDS", i -> i.getCardDefinition().getRowType() == RowType.MELEE);
         addFilter(leftFilterRangedButton, rightFilterRangedButton, "RANGED CARDS", i -> i.getCardDefinition().getRowType() == RowType.RANGED);
@@ -181,7 +171,6 @@ public class DeckbuilderController {
         addFilter(leftFilterWeatherButton, rightFilterWeatherButton, "WEATHER CARDS", i -> i.getCardDefinition().getCardType() == CardType.WEATHER);
         addFilter(leftFilterSpecialButton, rightFilterSpecialButton, "SPECIAL CARDS", i -> i.getCardDefinition().getCardType() == CardType.SPECIAL);
 
-        // Event Handler für die linke Seite, jetzt mit der expliziten Liste
         for (Button button : leftFilterButtons) {
             button.setOnAction(e -> {
                 leftFilter = filterPredicates.get(button);
@@ -191,7 +180,6 @@ public class DeckbuilderController {
             });
         }
 
-        // Event Handler für die rechte Seite, jetzt mit der expliziten Liste
         for (Button button : rightFilterButtons) {
             button.setOnAction(e -> {
                 rightFilter = filterPredicates.get(button);
@@ -201,7 +189,6 @@ public class DeckbuilderController {
             });
         }
 
-        // Initialen aktiven Button setzen (bleibt gleich)
         setActiveFilterButton(leftFilterAllButton, true);
         setActiveFilterButton(rightFilterAllButton, false);
     }
@@ -224,7 +211,6 @@ public class DeckbuilderController {
             if (activeRightFilterButton != null) activeRightFilterButton.setStyle("-fx-opacity: 1.0");
         }
     }
-
 
     private void setupActionButtons() {
         saveButton.setOnAction(e -> {
@@ -260,7 +246,7 @@ public class DeckbuilderController {
 
     private void setupSelectionListener() {
         selectedInstances.addListener((ListChangeListener<CardInstance>) change -> {
-            populateCollectionPane(); // Wichtig: Auch linke Seite neu zeichnen, um die Anzahl anzuzeigen
+            populateCollectionPane();
             populateSelectionPane();
             updateStats();
         });
@@ -287,7 +273,6 @@ public class DeckbuilderController {
         setActiveFilterButton(leftFilterAllButton, true);
         setActiveFilterButton(rightFilterAllButton, false);
 
-
         populateCollectionPane();
         populateSelectionPane();
         updateStats();
@@ -297,6 +282,7 @@ public class DeckbuilderController {
         cardCollectionFlowPane.getChildren().clear();
         Faction currentFaction = factions.get(currentFactionIndex);
 
+        // Zeige nur einzigartige Karten an, basierend auf ihrer ID.
         Map<Integer, Card> uniqueCards = allOwnedCardInstances.stream()
                 .map(CardInstance::getCardDefinition)
                 .filter(card -> card.getFaction() == currentFaction)
@@ -332,6 +318,7 @@ public class DeckbuilderController {
                 .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
                 .count();
 
+        // Zähle die einzigartigen Karten, die der Spieler besitzt, um die Gesamtzahl zu ermitteln
         long totalOwnedForFaction = allOwnedCardInstances.stream()
                 .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
                 .count();
@@ -354,7 +341,6 @@ public class DeckbuilderController {
         totalUnitStrengthLabel.setText(String.valueOf(totalStrength));
     }
 
-
     private void addCardToDeck(Card card) {
         Faction currentFaction = factions.get(currentFactionIndex);
 
@@ -371,11 +357,14 @@ public class DeckbuilderController {
                 .filter(i -> i.getCardDefinition().getId() == card.getId())
                 .count();
 
-        if (countOfThisCardInDeck >= card.getMaxAmount()) {
-            Toast.makeText(getStage(), "Maximum amount of " + card.getName() + " reached.", 2000);
+        // KORREKTUR 2: Prüfe gegen die Anzahl der Karten, die der Spieler besitzt (getAmount),
+        // und nicht gegen das theoretische Maximum (getMaxAmount).
+        if (countOfThisCardInDeck >= card.getAmount()) {
+            Toast.makeText(getStage(), "You don't own any more copies of " + card.getName() + ".", 2000);
             return;
         }
 
+        // Finde die erste Instanz dieser Karte, die noch nicht in der Auswahl ist, und füge sie hinzu.
         allOwnedCardInstances.stream()
                 .filter(inst -> inst.getCardDefinition().getId() == card.getId())
                 .filter(inst -> !selectedInstances.contains(inst))
@@ -384,6 +373,8 @@ public class DeckbuilderController {
     }
 
     private void removeCardFromDeck(Card card) {
+        // Finde die letzte hinzugefügte Instanz dieser Karte in der Auswahl und entferne sie.
+        // Das .reduce() stellt sicher, dass wir die zuletzt hinzugefügte entfernen, falls mehrere vorhanden sind.
         selectedInstances.stream()
                 .filter(i -> i.getCardDefinition().getId() == card.getId())
                 .reduce((first, second) -> second)
@@ -392,7 +383,6 @@ public class DeckbuilderController {
 
     private Node createCardVisual(Card card, java.util.function.Consumer<Card> action, boolean showCount) {
         StackPane visualRoot = new StackPane();
-
         visualRoot.setPrefSize(145, 220);
         visualRoot.setMinSize(145, 220);
         visualRoot.setMaxSize(145, 220);
@@ -414,15 +404,15 @@ public class DeckbuilderController {
 
         if (showCount) {
             long countInDeck = selectedInstances.stream().filter(i -> i.getCardDefinition().getId() == card.getId()).count();
-            long maxAmount = card.getAmount();
+            // Zeige die Anzahl der besessenen Karten (nicht das theoretische Maximum)
+            long ownedAmount = card.getAmount();
 
-            Label countLabel = new Label(countInDeck + "/" + maxAmount);
+            Label countLabel = new Label(countInDeck + "/" + ownedAmount);
             countLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 2 5; -fx-background-radius: 10;");
             StackPane.setAlignment(countLabel, Pos.BOTTOM_RIGHT);
             StackPane.setMargin(countLabel, new Insets(0, 5, 5, 0));
             visualRoot.getChildren().add(countLabel);
         }
-
 
         Button cardButton = new Button();
         cardButton.setGraphic(visualRoot);
@@ -431,10 +421,8 @@ public class DeckbuilderController {
         cardButton.setOnAction(e -> action.accept(card));
 
         Tooltip.install(cardButton, createCardTooltip(card));
-
         return cardButton;
     }
-
 
     private Tooltip createCardTooltip(Card cardDef) {
         String tooltipText = String.format(

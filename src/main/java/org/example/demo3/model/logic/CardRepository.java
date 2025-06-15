@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import org.example.demo3.model.cards.*;
 import org.example.demo3.model.enums.EffectType;
 import org.example.demo3.model.enums.Faction;
+import org.example.demo3.model.typeadapter.CardTypeAdapter;
 import org.example.demo3.model.typeadapter.RuntimeTypeAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +37,10 @@ public class CardRepository {
     private final Gson gson;
     
     private CardRepository() {
-        RuntimeTypeAdapterFactory<Card> adapterFactory = RuntimeTypeAdapterFactory
-                .of(Card.class, "cardType")
-                .registerSubtype(UnitCard.class, "UNIT")
-                .registerSubtype(SpecialCard.class, "SPECIAL")
-                .registerSubtype(WeatherCard.class, "WEATHER");
+
 
         this.gson = new GsonBuilder()
-                .registerTypeAdapterFactory(adapterFactory)
+                .registerTypeAdapter(Card.class, new CardTypeAdapter())
                 .setPrettyPrinting()
                 .create();
 
