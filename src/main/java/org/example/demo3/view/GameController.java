@@ -39,8 +39,8 @@ public class GameController implements Initializable, Cleanable {
     private static final String CARDS_ASSETS_PATH = "/org/example/demo3/assets/";
     private static final String DEFAULT_CARD_IMAGE_NAME = "default.png";
     private static final String HIDDEN_CARD_IMAGE_NAME = "hidden.png";
-    private static final double CARD_WIDTH = 80;
-    private static final double CARD_HEIGHT = 110;
+    private static final double CARD_WIDTH = 180;
+    private static final double CARD_HEIGHT = 225;
     private final EventBus eventBus = EventBus.getInstanz();
     //</editor-fold>
     private final Map<String, Image> imageCache = new HashMap<>();
