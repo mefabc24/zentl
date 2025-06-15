@@ -13,6 +13,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -22,6 +24,7 @@ import org.example.demo3.model.cards.CardInstance;
 import org.example.demo3.model.cards.UnitCard;
 import org.example.demo3.model.effect.Toast;
 import org.example.demo3.model.enums.*;
+import org.example.demo3.model.logic.CardComparators;
 import org.example.demo3.model.logic.CardRepository;
 import org.example.demo3.model.service.NavigationService;
 
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 import static org.example.demo3.model.constants.Config.*;
 
 public class DeckbuilderController {
+    @FXML private AnchorPane rootPane;
 
     // Faction Navigation
     @FXML private Button prevFactionButton;
@@ -93,6 +97,16 @@ public class DeckbuilderController {
     private List<Button> leftFilterButtons;
     private List<Button> rightFilterButtons;
 
+    private final Comparator<Card> cardSorter = CardComparators.BY_RARITY_DESC
+            .thenComparing(CardComparators.BY_ROWTYPE_DESC)
+            .thenComparing(CardComparators.BY_POWER_DESC.reversed())
+            .thenComparing(Card::getName);
+
+    private final Comparator<CardInstance> instanceSorter = CardComparators.BY_RARITY_DESC_INSTANCE
+            .thenComparing(CardComparators.BY_ROWTYPE_DESC_INSTANCE)
+            .thenComparing(CardComparators.BY_POWER_DESC_INSTANCE)
+            .thenComparing(ci -> ci.getCardDefinition().getName());
+
     public void setNavigationService(NavigationService navigationService) {
         this.navigationService = navigationService;
     }
@@ -110,8 +124,28 @@ public class DeckbuilderController {
         setupActionButtons();
         setupSelectionListener();
 
+        setupKeyboardNavigation();
+
         updateFactionView();
     }
+
+    private void setupKeyboardNavigation() {
+        rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.LEFT) {
+                        navigateFaction(-1);
+                        event.consume();
+                    } else if (event.getCode() == KeyCode.RIGHT) {
+                        navigateFaction(1);
+                        event.consume();
+                    }
+                });
+            }
+        });
+    }
+
+
 
     private void loadInitialDeckState() {
         List<Card> allCards = cardRepository.getAllCards();
@@ -285,7 +319,7 @@ public class DeckbuilderController {
 
         uniqueCards.values().stream()
                 .filter(card -> leftFilter.test(new CardInstance(card)))
-                .sorted(Comparator.comparing(Card::getName))
+                .sorted(cardSorter)
                 .forEach(card -> {
                     Node cardNode = createCardVisual(card, this::addCardToDeck, true);
                     cardCollectionFlowPane.getChildren().add(cardNode);
@@ -299,7 +333,7 @@ public class DeckbuilderController {
         selectedInstances.stream()
                 .filter(instance -> instance.getCardDefinition().getFaction() == currentFaction)
                 .filter(rightFilter)
-                .sorted(Comparator.comparing(i -> i.getCardDefinition().getName()))
+                .sorted(instanceSorter)
                 .forEach(instance -> {
                     Node cardNode = createCardVisual(instance.getCardDefinition(), this::removeCardFromDeck, false);
                     cardSelectionFlowPane.getChildren().add(cardNode);

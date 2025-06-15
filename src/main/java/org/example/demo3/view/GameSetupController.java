@@ -56,7 +56,7 @@ public class GameSetupController {
         cardRepository = CardRepository.getInstance();
 
         List<Faction> playableFactions = Stream.of(Faction.values())
-                .filter(f -> f != Faction.TEST)
+                .filter(f -> f != Faction.KNIGHTS)
                 .collect(Collectors.toList());
 
         p1FactionComboBox.setItems(
@@ -103,8 +103,8 @@ public class GameSetupController {
         this.bot1Difficulty = b1Diff;
         this.bot2Difficulty = b2Diff;
 
-        p1FactionComboBox.setValue(Faction.KNIGHTS);
-        p2FactionComboBox.setValue(Faction.MONSTERS);
+        p1FactionComboBox.setValue(Faction.CARTOONS);
+        p2FactionComboBox.setValue(Faction.STARWARS);
 
         // Configure UI based on the game mode
         switch (mode) {
