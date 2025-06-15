@@ -14,11 +14,12 @@ public class CardTypeAdapter implements JsonSerializer<Card>, JsonDeserializer<C
 
     @Override
     public JsonElement serialize(Card src, Type typeOfSrc, JsonSerializationContext context) {
-        // 1. Serialisiere das Objekt zu einem JsonObject
-        JsonObject jsonObject = context.serialize(src).getAsJsonObject();
+        // 1. Lass Gson das Objekt als generisches JsonObject serialisieren,
+        //    ohne unseren speziellen Adapter erneut auszulösen.
+        //    Dazu verwenden wir den Standard-Adapter für die konkrete Klasse.
+        JsonObject jsonObject = context.serialize(src, src.getClass()).getAsJsonObject();
 
-        // 2. Füge das Typfeld manuell hinzu, basierend auf der Klasse.
-        //    Dies funktioniert auch dann, wenn das Feld in der Java-Klasse 'transient' ist!
+        // 2. Füge das Typfeld EXPLIZIT hinzu. Dies ist der Kern der Lösung.
         String typeName;
         if (src instanceof UnitCard) {
             typeName = "UNIT";
@@ -29,6 +30,8 @@ public class CardTypeAdapter implements JsonSerializer<Card>, JsonDeserializer<C
         } else {
             throw new IllegalArgumentException("Unbekannter Kartentyp: " + src.getClass().getName());
         }
+
+        // Füge das Feld hinzu, falls es durch die Standard-Serialisierung (wegen transient) fehlt.
         jsonObject.addProperty(TYPE_FIELD, typeName);
 
         return jsonObject;
@@ -38,14 +41,12 @@ public class CardTypeAdapter implements JsonSerializer<Card>, JsonDeserializer<C
     public Card deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
-        // 1. Hole das Typfeld aus dem JSON
         JsonElement typeElement = jsonObject.get(TYPE_FIELD);
         if (typeElement == null || typeElement.isJsonNull()) {
             throw new JsonParseException("Das JSON-Objekt für 'Card' enthält kein '" + TYPE_FIELD + "'-Feld.");
         }
         String typeName = typeElement.getAsString();
 
-        // 2. Bestimme die konkrete Klasse basierend auf dem Typfeld
         Type concreteType;
         switch (typeName) {
             case "UNIT":
@@ -61,7 +62,6 @@ public class CardTypeAdapter implements JsonSerializer<Card>, JsonDeserializer<C
                 throw new JsonParseException("Unbekannter Kartentyp im JSON: " + typeName);
         }
 
-        // 3. Deserialisiere das JsonObject in die konkrete Klasse
         return context.deserialize(jsonObject, concreteType);
     }
 }

@@ -1,5 +1,6 @@
 package org.example.demo3.model.cards;
 
+import com.google.gson.annotations.Expose;
 import javafx.scene.image.Image;
 import org.example.demo3.model.enums.*;
 import org.slf4j.Logger;
@@ -17,21 +18,21 @@ public abstract class BaseCard implements Card {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseCard.class);
 
-    protected int id;
-    protected int power;
-    protected int amount;
-    protected int selectedAmount;
-    protected int maxAmount;
+    @Expose protected int id;
+    @Expose protected int power;
+    @Expose protected int amount;
+    @Expose protected int selectedAmount;
+    @Expose protected int maxAmount;
 
-    protected String name;
-    protected String description;
-    protected String imagePath;
+    @Expose protected String name;
+    @Expose protected String description;
+    @Expose protected String imagePath;
 
-    protected Faction faction;
-    protected RowType rowType;
-    protected transient CardType cardType;
-    protected Rarity rarity;
-    protected EffectType effectType;
+    @Expose protected Faction faction;
+    @Expose protected RowType rowType;
+    protected CardType cardType;
+    @Expose protected Rarity rarity;
+    @Expose protected EffectType effectType;
 
     protected transient Image cardImage;
 

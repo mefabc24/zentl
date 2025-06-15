@@ -67,22 +67,15 @@ public class CardUnlockController {
 
     @FXML
     private void initialize() {
-        // Wir holen uns den stabilen, äußeren Container.
         StackPane rootContainer = (StackPane) contentPane.getParent();
 
-        // Platform.runLater stellt sicher, dass dieser Code ausgeführt wird,
-        // NACHDEM das erste Layout abgeschlossen ist und die Szene ihre volle Größe hat.
         Platform.runLater(() -> {
-            // Wir berechnen die Skalierung EIN EINZIGES MAL und ändern sie dann NIE WIEDER.
-            // Dadurch wird sie immun gegen Größenänderungen des Inhalts.
             if (rootContainer.getWidth() > 0 && rootContainer.getHeight() > 0) {
                 double widthScale = rootContainer.getWidth() / BASE_WIDTH;
                 double heightScale = rootContainer.getHeight() / BASE_HEIGHT;
                 scale.set(Math.min(widthScale, heightScale));
             }
         });
-
-        // Starte den UI-Flow.
         showDropSelection();
     }
 

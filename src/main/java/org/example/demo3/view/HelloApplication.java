@@ -50,7 +50,7 @@ public class HelloApplication extends Application {
 
         navigationService = new NavigationService(mainViewController.getMainContentPane(), stage);
 
-        // Perform the initial navigation to the main menu
+        // initial navigation to main menu
         navigationService.navigateTo(FXML_MAINMENU_PATH, "GWENT", (MainMenuController controller) -> {
             controller.setNavigationService(navigationService);
             controller.setStage(stage);

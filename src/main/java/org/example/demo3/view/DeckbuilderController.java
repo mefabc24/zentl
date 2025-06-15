@@ -33,7 +33,6 @@ import static org.example.demo3.model.constants.Config.*;
 
 public class DeckbuilderController {
 
-    //<editor-fold desc="FXML Fields">
     // Faction Navigation
     @FXML private Button prevFactionButton;
     @FXML private Label prevFactionLabel;
@@ -73,7 +72,6 @@ public class DeckbuilderController {
     @FXML private Button rightFilterSpecialButton;
     @FXML private ScrollPane rightScrollPane;
     @FXML private FlowPane cardSelectionFlowPane;
-    //</editor-fold>
 
     private NavigationService navigationService;
     private CardRepository cardRepository;
@@ -122,8 +120,6 @@ public class DeckbuilderController {
             return;
         }
 
-        // KORREKTUR 1: Erzeuge separate CardInstance-Objekte für jede Kopie einer Karte.
-        // Die alte Implementierung mit Collections.nCopies() hat nur Referenzen auf dasselbe Objekt erstellt.
         this.allOwnedCardInstances = allCards.stream()
                 .filter(card -> card.getAmount() > 0)
                 .flatMap(card -> java.util.stream.IntStream.range(0, card.getAmount())
@@ -282,7 +278,6 @@ public class DeckbuilderController {
         cardCollectionFlowPane.getChildren().clear();
         Faction currentFaction = factions.get(currentFactionIndex);
 
-        // Zeige nur einzigartige Karten an, basierend auf ihrer ID.
         Map<Integer, Card> uniqueCards = allOwnedCardInstances.stream()
                 .map(CardInstance::getCardDefinition)
                 .filter(card -> card.getFaction() == currentFaction)
@@ -318,7 +313,6 @@ public class DeckbuilderController {
                 .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
                 .count();
 
-        // Zähle die einzigartigen Karten, die der Spieler besitzt, um die Gesamtzahl zu ermitteln
         long totalOwnedForFaction = allOwnedCardInstances.stream()
                 .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
                 .count();
@@ -357,14 +351,11 @@ public class DeckbuilderController {
                 .filter(i -> i.getCardDefinition().getId() == card.getId())
                 .count();
 
-        // KORREKTUR 2: Prüfe gegen die Anzahl der Karten, die der Spieler besitzt (getAmount),
-        // und nicht gegen das theoretische Maximum (getMaxAmount).
         if (countOfThisCardInDeck >= card.getAmount()) {
             Toast.makeText(getStage(), "You don't own any more copies of " + card.getName() + ".", 2000);
             return;
         }
 
-        // Finde die erste Instanz dieser Karte, die noch nicht in der Auswahl ist, und füge sie hinzu.
         allOwnedCardInstances.stream()
                 .filter(inst -> inst.getCardDefinition().getId() == card.getId())
                 .filter(inst -> !selectedInstances.contains(inst))
@@ -373,8 +364,6 @@ public class DeckbuilderController {
     }
 
     private void removeCardFromDeck(Card card) {
-        // Finde die letzte hinzugefügte Instanz dieser Karte in der Auswahl und entferne sie.
-        // Das .reduce() stellt sicher, dass wir die zuletzt hinzugefügte entfernen, falls mehrere vorhanden sind.
         selectedInstances.stream()
                 .filter(i -> i.getCardDefinition().getId() == card.getId())
                 .reduce((first, second) -> second)
@@ -404,7 +393,6 @@ public class DeckbuilderController {
 
         if (showCount) {
             long countInDeck = selectedInstances.stream().filter(i -> i.getCardDefinition().getId() == card.getId()).count();
-            // Zeige die Anzahl der besessenen Karten (nicht das theoretische Maximum)
             long ownedAmount = card.getAmount();
 
             Label countLabel = new Label(countInDeck + "/" + ownedAmount);

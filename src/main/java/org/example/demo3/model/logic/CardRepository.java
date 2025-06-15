@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import org.example.demo3.model.cards.*;
 import org.example.demo3.model.enums.EffectType;
 import org.example.demo3.model.enums.Faction;
-import org.example.demo3.model.typeadapter.CardTypeAdapter;
 import org.example.demo3.model.typeadapter.RuntimeTypeAdapterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +34,16 @@ public class CardRepository {
     private List<Card> allCards;
     private static final String resourcePath = JSON_PATH;
     private final Gson gson;
-    
-    private CardRepository() {
 
+    private CardRepository() {
+        RuntimeTypeAdapterFactory<Card> adapterFactory = RuntimeTypeAdapterFactory
+                .of(Card.class, "cardType")
+                .registerSubtype(UnitCard.class, "UNIT")
+                .registerSubtype(SpecialCard.class, "SPECIAL")
+                .registerSubtype(WeatherCard.class, "WEATHER");
 
         this.gson = new GsonBuilder()
-                .registerTypeAdapter(Card.class, new CardTypeAdapter())
+                .registerTypeAdapterFactory(adapterFactory)
                 .setPrettyPrinting()
                 .create();
 
@@ -176,7 +179,7 @@ public class CardRepository {
                     if (card instanceof BaseCard bc) {
                         bc.initMaxAmount();
                     }
-                    
+
                     if (card instanceof WeatherCard wc) {
                         EffectType derivedEffect = WeatherCard.determineEffectType(wc.getWeatherType());
                         if (wc instanceof BaseCard bc) {
