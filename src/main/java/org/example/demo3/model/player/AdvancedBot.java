@@ -166,7 +166,7 @@ public class AdvancedBot extends PlayerImpl {
         int cardValuePenalty = calculateCardValuePenalty(state);
 
         if (isMustWinRound) {
-            cardValuePenalty /= 2; // Halve the penalty, but dont ignore it.
+            cardValuePenalty /= 2;
         }
 
         // evaluation of the non terminal states
@@ -191,8 +191,8 @@ public class AdvancedBot extends PlayerImpl {
                     penalty -= 50;
                 }
                 if (card.getEffectType() == EffectType.MEDIC) {
-                    // Heavy penalty for using a valuable revive effect early.
-                    penalty -= 200;
+                    // heavy penalty for using a valuable revive effect early (in later rounds the handdif the medic gives, negates this penalty)
+                    penalty -= 110;
                 }
             }
         }
