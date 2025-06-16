@@ -272,6 +272,7 @@ public class AdvancedBot extends PlayerImpl {
     private void applySpecialEffect(GameState state, Card card, Player activePlayer) {
         switch (card.getEffectType()) {
             case CLEAR_WEATHER:
+            case RALLY:
                 state.board.clearWeatherEffects();
                 state.board.clearWeatherCards();
                 break;
@@ -283,6 +284,11 @@ public class AdvancedBot extends PlayerImpl {
                 break;
             case MEDIC:
                 applyMedicEffect(activePlayer);
+                break;
+            case DIMERITIUM_BOMB:
+                state.board.clearAllHornEffects();
+                state.board.clearWeatherEffects();
+                state.board.clearWeatherCards();
                 break;
         }
     }
