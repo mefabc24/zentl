@@ -302,15 +302,6 @@ public class GameSetupController {
             return;
         }
 
-        // local games (Hotseat, PvB, BvB)
-        if (gameMode == GameMode.PLAYER_VS_PLAYER && p1Faction == p2Faction) {
-            showAlert(
-                    "Invalid Selection",
-                    "Players cannot choose the same faction in a local match."
-            );
-            return;
-        }
-
         SoundService.getInstance().stopMenuMusic();
 
         // Navigate to game sends ALL collected info t GameService to init
