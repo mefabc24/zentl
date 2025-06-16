@@ -548,6 +548,49 @@
     "rarity": "COMMON",
     "effectType": "RALLY"
   },
+  {
+    "id": 40,
+    "power": 10,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Fire Priest",
+    "description": "A devoted zealot who channels sacred flames to purify allies and scorch foes.",
+    "imagePath": "/org/example/demo3/assets/cards/Fire Priest.png",
+    "rowType": "RANGED",
+    "cardType": "UNIT",
+    "faction": "KNIGHTS",
+    "rarity": "EPIC",
+    "effectType": "NONE"
+  },
+  {
+    "id": 41,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Sunshine",
+    "description": "Removes all Weather effects from the battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Sunshine.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "KNIGHTS",
+    "rarity": "COMMON",
+    "effectType": "CLEAR_WEATHER"
+  },
+  {
+    "id": 42,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Dimeritium Bomb",
+    "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Dimeritium Bomb.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "KNIGHTS",
+    "rarity": "COMMON",
+    "effectType": "DIMERITIUM_BOMB"
+  },
+
 
 
 
@@ -1938,6 +1981,34 @@
     "rarity": "COMMON",
     "effectType": "RALLY"
   },
+  {
+    "id": 199,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Sunshine",
+    "description": "Removes all Weather effects from the battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Sunshine.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "CARTOONS",
+    "rarity": "COMMON",
+    "effectType": "CLEAR_WEATHER"
+  },
+  {
+    "id": 200,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Dimeritium Bomb",
+    "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Dimeritium Bomb.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "CARTOONS",
+    "rarity": "COMMON",
+    "effectType": "DIMERITIUM_BOMB"
+  },
 
 
 
@@ -2872,6 +2943,57 @@
     "effectType": "RALLY"
   },
   {
+    "id": 266,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Sunshine",
+    "description": "Removes all Weather effects from the battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Sunshine.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "STARWARS",
+    "rarity": "COMMON",
+    "effectType": "CLEAR_WEATHER"
+  },
+  {
+    "id": 267,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Dimeritium Bomb",
+    "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Dimeritium Bomb.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "STARWARS",
+    "rarity": "COMMON",
+    "effectType": "DIMERITIUM_BOMB"
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  {
     "id": 301,
     "power": 20,
     "amount": 1,
@@ -3783,5 +3905,33 @@
     "faction": "VIDEOGAMES",
     "rarity": "COMMON",
     "effectType": "RALLY"
+  },
+  {
+    "id": 266,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Sunshine",
+    "description": "Removes all Weather effects from the battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Sunshine.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "VIDEOGAMES",
+    "rarity": "COMMON",
+    "effectType": "CLEAR_WEATHER"
+  },
+  {
+    "id": 267,
+    "power": 0,
+    "amount": 1,
+    "selectedAmount": 0,
+    "name": "Dimeritium Bomb",
+    "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
+    "imagePath": "/org/example/demo3/assets/cards/Dimeritium Bomb.png",
+    "rowType": "ANY",
+    "cardType": "SPECIAL",
+    "faction": "VIDEOGAMES",
+    "rarity": "COMMON",
+    "effectType": "DIMERITIUM_BOMB"
   }
 ]
