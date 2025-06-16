@@ -2,7 +2,7 @@
   {
     "id": 1,
     "power": 20,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "King Foltest",
     "description": "A charismatic and shrewd king, a master strategist on and off the battlefield.",
@@ -16,7 +16,7 @@
   {
     "id": 2,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Champion of the Realm",
     "description": "The kingdom's most celebrated warrior, undefeated in countless tournaments and wars.",
@@ -30,7 +30,7 @@
   {
     "id": 3,
     "power": 15,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Royal Guard",
     "description": "An elite cadre of bodyguards sworn to protect the throne with their lives.",
@@ -44,7 +44,7 @@
   {
     "id": 4,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "The Griffin King",
     "description": "A legendary lord who commands respect from both men and beasts, soaring over the battlefield.",
@@ -58,7 +58,7 @@
   {
     "id": 5,
     "power": 16,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Divine Blacksmith",
     "description": "A master craftsman whose blessed forge creates weapons and armor of unparalleled quality.",
@@ -72,7 +72,7 @@
   {
     "id": 6,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Barons Elite Guard",
     "description": "The personal retinue of a powerful baron, disciplined and heavily armed.",
@@ -86,7 +86,7 @@
   {
     "id": 7,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Paladin",
     "description": "A holy warrior clad in blessed plate, wielding divine power against his foes.",
@@ -100,7 +100,7 @@
   {
     "id": 8,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Veteran Warrior",
     "description": "A hardened soldier who has survived countless battles, his skill sharpened by experience.",
@@ -114,7 +114,7 @@
   {
     "id": 9,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Archer Captain",
     "description": "A veteran archer who commands the kingdom's longbowmen with deadly precision.",
@@ -128,7 +128,7 @@
   {
     "id": 10,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Fire Launcher",
     "description": "A dangerous siege weapon that spews volatile, burning liquid upon enemy ranks.",
@@ -142,7 +142,7 @@
   {
     "id": 11,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Trebuchet",
     "description": "A massive siege engine capable of hurling immense stones to shatter castle walls.",
@@ -156,7 +156,7 @@
   {
     "id": 12,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Heavy Cavalry",
     "description": "An armored knight on a barded warhorse, crashing into enemy lines with immense force.",
@@ -170,7 +170,7 @@
   {
     "id": 13,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Knight Errant",
     "description": "A young, wandering knight seeking adventure and honor to prove his worth.",
@@ -184,7 +184,7 @@
   {
     "id": 14,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Footman",
     "description": "A reliable and disciplined infantryman, the backbone of the kingdom's army.",
@@ -198,7 +198,7 @@
   {
     "id": 15,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Pikeman",
     "description": "A soldier armed with a long spear, trained to repel cavalry charges.",
@@ -212,7 +212,7 @@
   {
     "id": 16,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Crossbowman",
     "description": "A well-equipped archer whose powerful crossbow can pierce heavy armor.",
@@ -226,7 +226,7 @@
   {
     "id": 17,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Fire Archer",
     "description": "An archer specialized in shooting flaming arrows to terrorize and ignite the enemy.",
@@ -240,7 +240,7 @@
   {
     "id": 18,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Strategist",
     "description": "A brilliant tactician who directs troops from the rear, turning the tide of battle.",
@@ -254,7 +254,7 @@
   {
     "id": 19,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Scorpion Launcher",
     "description": "A large, stationary crossbow that fires massive bolts, deadly to large targets.",
@@ -268,7 +268,7 @@
   {
     "id": 20,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Arbalest",
     "description": "A heavy-duty crossbow requiring a winch to draw, sacrificing speed for power.",
@@ -282,7 +282,7 @@
   {
     "id": 21,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Siege Ram",
     "description": "A heavy, reinforced log used by siege crews to batter down gates and doors.",
@@ -296,7 +296,7 @@
   {
     "id": 22,
     "power": 3,
-    "amount": 5,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Recruit",
     "description": "An inexperienced but eager new soldier, fresh from the training grounds.",
@@ -310,7 +310,7 @@
   {
     "id": 23,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Squire",
     "description": "A young attendant to a knight, learning the ways of chivalry and combat.",
@@ -338,7 +338,7 @@
   {
     "id": 25,
     "power": 3,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Milita",
     "description": "A poorly equipped but numerous citizen-soldier, defending their homeland.",
@@ -352,7 +352,7 @@
   {
     "id": 26,
     "power": 2,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Scout",
     "description": "A swift and nimble soldier, used for reconnaissance and harassing enemy flanks.",
@@ -366,7 +366,7 @@
   {
     "id": 27,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Slingshot Novice",
     "description": "A young peasant with a sling, more of a nuisance than a real threat.",
@@ -380,7 +380,7 @@
   {
     "id": 28,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Oil Cauldron Crew",
     "description": "A defensive crew pouring boiling oil from the battlements onto enemies below.",
@@ -394,7 +394,7 @@
   {
     "id": 29,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Siege Tower",
     "description": "A tall wooden tower on wheels, allowing attackers to scale fortress walls.",
@@ -422,7 +422,7 @@
   {
     "id": 31,
     "power": 3,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Engineer",
     "description": "A skilled worker responsible for building and maintaining siege equipment.",
@@ -436,7 +436,7 @@
   {
     "id": 32,
     "power": 3,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Siege Ladder",
     "description": "A simple but effective tool for scaling enemy walls during an assault.",
@@ -495,7 +495,7 @@
   {
     "id": 36,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Commanders Horn",
     "description": "Doubles the strength of all units in a chosen row.",
@@ -509,7 +509,7 @@
   {
     "id": 37,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Field Surgeon",
     "description": "Revive the strongest non-hero unit from your discard pile to your hand.",
@@ -523,7 +523,7 @@
   {
     "id": 38,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Incinerate",
     "description": "Destroy the strongest non-hero unit(s) on the entire battlefield.",
@@ -537,7 +537,7 @@
   {
     "id": 39,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Banner Raised",
     "description": "Removes all negative effects (Weather, enemy Horns) from your rows.",
@@ -551,7 +551,7 @@
   {
     "id": 40,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Fire Priest",
     "description": "A devoted zealot who channels sacred flames to purify allies and scorch foes.",
@@ -579,7 +579,7 @@
   {
     "id": 42,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Dimeritium Bomb",
     "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
@@ -590,10 +590,26 @@
     "rarity": "EPIC",
     "effectType": "DIMERITIUM_BOMB"
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   {
     "id": 101,
     "power": 20,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Doodlebob",
     "description": "A chaotic drawing of SpongeBob brought to life by a magic pencil.",
@@ -607,7 +623,7 @@
   {
     "id": 102,
     "power": 20,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Rick Prime",
     "description": "The original, most ruthless Rick who killed C-137's family.",
@@ -621,7 +637,7 @@
   {
     "id": 103,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Death",
     "description": "The Grim Reaper himself, a recurring and surprisingly mundane character.",
@@ -635,7 +651,7 @@
   {
     "id": 104,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Homer Simpson",
     "description": "The lazy, doughnut-loving patriarch of the Simpson family.",
@@ -649,7 +665,7 @@
   {
     "id": 105,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Kang & Kodos",
     "description": "A duo of Rigellian aliens who frequently plot to conquer Earth.",
@@ -663,7 +679,7 @@
   {
     "id": 106,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Rick Sanchez",
     "description": "A cynical, alcoholic super-genius on endless adventures.",
@@ -677,7 +693,7 @@
   {
     "id": 107,
     "power": 16,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Evil Morty",
     "description": "A cunning and ruthless Morty who became President of the Citadel.",
@@ -691,7 +707,7 @@
   {
     "id": 108,
     "power": 16,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "SpongeBob",
     "description": "An optimistic sea sponge who works as a fry cook at the Krusty Krab.",
@@ -705,7 +721,7 @@
   {
     "id": 109,
     "power": 15,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bart Simpson",
     "description": "Homer and Marge's mischievous and rebellious ten-year-old son.",
@@ -719,7 +735,7 @@
   {
     "id": 110,
     "power": 15,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Stewie Griffin",
     "description": "The family's diabolical baby, bent on world domination.",
@@ -733,7 +749,7 @@
   {
     "id": 111,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Peter Griffin",
     "description": "The bumbling, childish, and impulsive patriarch of the Griffin family.",
@@ -747,7 +763,7 @@
   {
     "id": 112,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Pickle Rick",
     "description": "Rick's pickle form, a testament to his genius and stubbornness.",
@@ -761,7 +777,7 @@
   {
     "id": 113,
     "power": 13,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Brian Griffin",
     "description": "The family's talking dog, an aspiring writer with a drinking problem.",
@@ -775,7 +791,7 @@
   {
     "id": 114,
     "power": 13,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Patrick Star",
     "description": "SpongeBob's best friend, a dim-witted but loyal pink starfish.",
@@ -789,7 +805,7 @@
   {
     "id": 115,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ernie the Giant Chicken",
     "description": "Peter's archenemy, leading to long, epic, destructive fights.",
@@ -803,7 +819,7 @@
   {
     "id": 116,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Morty Smith",
     "description": "Rick's anxious and good-hearted grandson and frequent sidekick.",
@@ -817,7 +833,7 @@
   {
     "id": 117,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Plankton",
     "description": "A tiny, evil genius trying to steal the Krabby Patty secret formula.",
@@ -831,7 +847,7 @@
   {
     "id": 118,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mr Krabs",
     "description": "The greedy, money-obsessed owner of the Krusty Krab.",
@@ -845,7 +861,7 @@
   {
     "id": 119,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ned Flanders",
     "description": "The Simpsons' relentlessly cheerful and devoutly Christian neighbor.",
@@ -859,7 +875,7 @@
   {
     "id": 120,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Birdperson",
     "description": "Rick's stoic, avian best friend and a freedom fighter.",
@@ -873,7 +889,7 @@
   {
     "id": 121,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Lisa Simpson",
     "description": "The highly intelligent, saxophone-playing, and moral middle child.",
@@ -887,7 +903,7 @@
   {
     "id": 122,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Sandy Cheeks",
     "description": "A brilliant Texan squirrel and scientist living in an underwater treedome.",
@@ -901,7 +917,7 @@
   {
     "id": 123,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Glenn Quagmire",
     "description": "The Griffins' hypersexual neighbor, known for his catchphrase 'Giggity'.",
@@ -915,7 +931,7 @@
   {
     "id": 124,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Marge Simpson",
     "description": "The patient, blue-haired matriarch and moral center of the family.",
@@ -929,7 +945,7 @@
   {
     "id": 125,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Lois Griffin",
     "description": "Peter's long-suffering wife and the voice of reason in the household.",
@@ -943,7 +959,7 @@
   {
     "id": 126,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Summer Smith",
     "description": "Rick's granddaughter, a cynical teen often dragged on adventures.",
@@ -957,7 +973,7 @@
   {
     "id": 127,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mr Meeseeks",
     "description": "A helpful being who exists only to fulfill a single request.",
@@ -971,7 +987,7 @@
   {
     "id": 128,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mr Burns",
     "description": "The ancient, greedy owner of the Springfield Nuclear Power Plant.",
@@ -985,7 +1001,7 @@
   {
     "id": 129,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Meg Griffin",
     "description": "The family's unpopular and frequently abused teenage daughter.",
@@ -999,7 +1015,7 @@
   {
     "id": 130,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Squidward Tentacles",
     "description": "SpongeBob's cynical neighbor, a perpetually annoyed octopus.",
@@ -1013,7 +1029,7 @@
   {
     "id": 131,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Joe Swanson",
     "description": "A paraplegic police officer and one of Peter's best friends.",
@@ -1027,7 +1043,7 @@
   {
     "id": 132,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Chris Griffin",
     "description": "The Griffins' dim-witted, overweight, and awkward teenage son.",
@@ -1041,7 +1057,7 @@
   {
     "id": 133,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Larry the Lobster",
     "description": "A muscular lobster who works as a lifeguard at Goo Lagoon.",
@@ -1055,7 +1071,7 @@
   {
     "id": 134,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Dr Hartman",
     "description": "The Griffins' incompetent but well-meaning family doctor.",
@@ -1069,7 +1085,7 @@
   {
     "id": 135,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Moe",
     "description": "The grumpy and lonely bartender and owner of Moe's Tavern.",
@@ -1083,7 +1099,7 @@
   {
     "id": 136,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Squanchy",
     "description": "A cat-like friend of Rick with a penchant for 'squanching'.",
@@ -1097,7 +1113,7 @@
   {
     "id": 137,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Jerry Smith",
     "description": "Beth's insecure and simple-minded husband, often the butt of jokes.",
@@ -1111,7 +1127,7 @@
   {
     "id": 138,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Beth Smith",
     "description": "Rick's daughter, a skilled horse surgeon with abandonment issues.",
@@ -1125,7 +1141,7 @@
   {
     "id": 139,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Milhouse Van Houten",
     "description": "Bart's nerdy and perpetually unlucky best friend.",
@@ -1139,7 +1155,7 @@
   {
     "id": 140,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Pearl Krabs",
     "description": "Mr Krabs' teenage sperm whale daughter who loves fashion.",
@@ -1153,7 +1169,7 @@
   {
     "id": 141,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Apu",
     "description": "The hard-working and friendly proprietor of the Kwik-E-Mart.",
@@ -1167,7 +1183,7 @@
   {
     "id": 142,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Cleveland Brown",
     "description": "Peter's mild-mannered friend with a calm demeanor.",
@@ -1181,7 +1197,7 @@
   {
     "id": 143,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Barnacle Boy",
     "description": "Mermaid Man's cynical and long-suffering sidekick.",
@@ -1195,7 +1211,7 @@
   {
     "id": 144,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Tammy",
     "description": "Summer's high school friend and a secret Galactic Federation agent.",
@@ -1209,7 +1225,7 @@
   {
     "id": 145,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mermaid Man",
     "description": "A semi-retired, elderly superhero idolized by SpongeBob.",
@@ -1223,7 +1239,7 @@
   {
     "id": 146,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Sideshow Bob",
     "description": "A self-proclaimed genius with a vendetta against Bart Simpson.",
@@ -1237,7 +1253,7 @@
   {
     "id": 147,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Herbert",
     "description": "An elderly, perverted neighbor with an unrequited love for Chris.",
@@ -1251,7 +1267,7 @@
   {
     "id": 148,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Chief Wiggum",
     "description": "The lazy and incompetent Chief of the Springfield Police.",
@@ -1265,7 +1281,7 @@
   {
     "id": 149,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Karen",
     "description": "Plankton's sarcastic computer wife and sidekick (W.I.F.E.).",
@@ -1279,7 +1295,7 @@
   {
     "id": 150,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Noob-Noob",
     "description": "The Vindicators' intern and janitor, highly respected by Rick.",
@@ -1293,7 +1309,7 @@
   {
     "id": 151,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Tom Tucker",
     "description": "The pompous and self-centered anchor for Quahog 5 News.",
@@ -1307,7 +1323,7 @@
   {
     "id": 152,
     "power": 4,
-    "amount": 4,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Fred",
     "description": "A brown fish famous for screaming 'My leg!' during moments of chaos.",
@@ -1321,7 +1337,7 @@
   {
     "id": 153,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Groundskeeper Willie",
     "description": "The hot-tempered, Scottish groundskeeper at Springfield Elementary.",
@@ -1335,7 +1351,7 @@
   {
     "id": 154,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Lenny",
     "description": "Homer's co-worker and friend, often seen with Carl at Moe's Tavern.",
@@ -1349,7 +1365,7 @@
   {
     "id": 155,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Abradolf Lincler",
     "description": "A morally neutral genetic hybrid of Lincoln and Hitler.",
@@ -1363,7 +1379,7 @@
   {
     "id": 156,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bubble Bass",
     "description": "An obese, picky, and arrogant bass who was SpongeBob's rival.",
@@ -1377,7 +1393,7 @@
   {
     "id": 157,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Carl Carlson",
     "description": "Homer's other co-worker and friend, often seen with Lenny at Moe's Tavern.",
@@ -1391,7 +1407,7 @@
   {
     "id": 158,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Flats the Flounder",
     "description": "A tough flounder who was SpongeBob's bully at boating school.",
@@ -1405,7 +1421,7 @@
   {
     "id": 159,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Seamus",
     "description": "A crusty old fisherman with wooden arms and legs.",
@@ -1419,7 +1435,7 @@
   {
     "id": 160,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Snake Jailbird",
     "description": "Springfield's resident career criminal and rebel. 'Bye-oh!'",
@@ -1433,7 +1449,7 @@
   {
     "id": 161,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Consuela",
     "description": "A stubborn cleaning lady with the catchphrase 'No... no...'",
@@ -1447,7 +1463,7 @@
   {
     "id": 162,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Harold",
     "description": "A blue fish with a shark-like fin, often seen around Bikini Bottom.",
@@ -1461,7 +1477,7 @@
   {
     "id": 163,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ralph Wiggum",
     "description": "Chief Wiggum's simple-minded son, known for his non-sequiturs.",
@@ -1475,7 +1491,7 @@
   {
     "id": 164,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ants-in-my-eyes Johnson",
     "description": "A hapless store owner who can't see because of ants in his eyes.",
@@ -1489,7 +1505,7 @@
   {
     "id": 165,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Old Man Walker",
     "description": "An elderly fish who is a recurring background character.",
@@ -1503,7 +1519,7 @@
   {
     "id": 166,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Opie",
     "description": "Peter's mentally-challenged co-worker at the Pawtucket Brewery.",
@@ -1517,7 +1533,7 @@
   {
     "id": 167,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Principal Vagina",
     "description": "The aptly named principal of Harry Herpson High School.",
@@ -1531,7 +1547,7 @@
   {
     "id": 168,
     "power": 4,
-    "amount": 4,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Krombopulos Michael",
     "description": "A cheerful Gromflomite assassin who just loves killing.",
@@ -1545,7 +1561,7 @@
   {
     "id": 169,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bruce",
     "description": "A folksy, mustachioed man who works various jobs around Quahog.",
@@ -1559,7 +1575,7 @@
   {
     "id": 170,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Martin Prince",
     "description": "A highly intelligent and effete student, often a target for bullies.",
@@ -1573,7 +1589,7 @@
   {
     "id": 171,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mr Poopybutthole",
     "description": "A cheerful, long-time family friend of the Smiths. Ooo-wee!",
@@ -1587,7 +1603,7 @@
   {
     "id": 172,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Nancy",
     "description": "A small, gray fish with a yellow dress, often seen in crowds.",
@@ -1601,7 +1617,7 @@
   {
     "id": 173,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Tricia Takanawa",
     "description": "Quahog 5 News's deadpan and persistent Asian correspondent.",
@@ -1615,7 +1631,7 @@
   {
     "id": 174,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bonnie Swanson",
     "description": "Joe's soft-spoken wife, who was pregnant for many seasons.",
@@ -1629,7 +1645,7 @@
   {
     "id": 175,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Jessica",
     "description": "Morty's long-time crush, a popular and kind-hearted student.",
@@ -1643,7 +1659,7 @@
   {
     "id": 176,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mort Goldman",
     "description": "A neurotic and nerdy pharmacist in Quahog.",
@@ -1657,7 +1673,7 @@
   {
     "id": 177,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mr Goldenfold",
     "description": "Morty's volatile and repressed math teacher.",
@@ -1671,7 +1687,7 @@
   {
     "id": 178,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Patty",
     "description": "Marge's cynical, chain-smoking twin sister who despises Homer.",
@@ -1685,7 +1701,7 @@
   {
     "id": 179,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Perch Perkins",
     "description": "The resident news reporter for Bikini Bottom News.",
@@ -1699,7 +1715,7 @@
   {
     "id": 180,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Scooter",
     "description": "A laid-back, purple fish often seen surfing at Goo Lagoon. 'Dude!'",
@@ -1713,7 +1729,7 @@
   {
     "id": 181,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Selma",
     "description": "Marge's other cynical, chain-smoking twin sister who also despises Homer.",
@@ -1727,7 +1743,7 @@
   {
     "id": 182,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Adam West",
     "description": "The eccentric and delusional mayor of Quahog.",
@@ -1741,7 +1757,7 @@
   {
     "id": 183,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Comic Book Guy",
     "description": "The sarcastic owner of The Android's Dungeon. 'Worst. Card. Ever.'",
@@ -1755,7 +1771,7 @@
   {
     "id": 184,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Gearhead",
     "description": "A gear-headed alien and friend of Rick, also known as Revolio Clockberg, Jr.",
@@ -1769,7 +1785,7 @@
   {
     "id": 185,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Tom",
     "description": "A green fish known for his intense love of chocolate.",
@@ -1783,7 +1799,7 @@
   {
     "id": 186,
     "power": 3,
-    "amount": 4,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Unity",
     "description": "A powerful hive-mind entity and one of Rick's former lovers.",
@@ -1797,7 +1813,7 @@
   {
     "id": 187,
     "power": 2,
-    "amount": 4,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Angela",
     "description": "Peter's perpetually unimpressed and stern boss at the Pawtucket Brewery.",
@@ -1811,7 +1827,7 @@
   {
     "id": 188,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Carl",
     "description": "The convenience store clerk, obsessed with movies.",
@@ -1825,7 +1841,7 @@
   {
     "id": 189,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Nat Peterson",
     "description": "A yellow fish who is one of the most loyal customers of the Krusty Krab.",
@@ -1839,7 +1855,7 @@
   {
     "id": 190,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Zeep Xanflorp",
     "description": "A scientist from the microverse inside Rick's car battery.",
@@ -1853,7 +1869,7 @@
   {
     "id": 191,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Agnes Skinner",
     "description": "Principal Skinner's domineering and cantankerous elderly mother.",
@@ -1912,7 +1928,7 @@
   {
     "id": 195,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Commanders Horn",
     "description": "Doubles the strength of all units in a chosen row.",
@@ -1926,7 +1942,7 @@
   {
     "id": 196,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Field Surgeon",
     "description": "Revive the strongest non-hero unit from your discard pile to your hand.",
@@ -1940,7 +1956,7 @@
   {
     "id": 197,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Incinerate",
     "description": "Destroy the strongest non-hero unit(s) on the entire battlefield.",
@@ -1954,7 +1970,7 @@
   {
     "id": 198,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Banner Raised",
     "description": "Removes all negative effects (Weather, enemy Horns) from your rows.",
@@ -1982,7 +1998,7 @@
   {
     "id": 200,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Dimeritium Bomb",
     "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
@@ -1993,10 +2009,30 @@
     "rarity": "EPIC",
     "effectType": "DIMERITIUM_BOMB"
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   {
     "id": 201,
     "power": 20,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Darth Sidious",
     "description": "Darth Sidious, ein dunkler Lord der Sith und Imperator des Galaktischen Imperiums.",
@@ -2010,7 +2046,7 @@
   {
     "id": 202,
     "power": 16,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Anakin Skywalker",
     "description": "Der Auserwählte, dessen Fall zur dunklen Seite das Schicksal der Galaxis besiegelte.",
@@ -2024,7 +2060,7 @@
   {
     "id": 203,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Death Star",
     "description": "Eine mondgroße Kampfstation des Imperiums mit der Fähigkeit, ganze Planeten zu zerstören.",
@@ -2038,7 +2074,7 @@
   {
     "id": 204,
     "power": 12,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Super Star Destroyer",
     "description": "Eines der größten Kriegsschiffe der imperialen Flotte, das als Flaggschiff dient.",
@@ -2052,7 +2088,7 @@
   {
     "id": 205,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Darth Vader",
     "description": "Einst ein heldenhafter Jedi, fiel er der dunklen Seite anheim und wurde zum gefürchteten Sith-Lord.",
@@ -2066,7 +2102,7 @@
   {
     "id": 206,
     "power": 15,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Master Yoda",
     "description": "Ein weiser und mächtiger Großmeister des Jedi-Ordens mit unübertroffener Verbindung zur Macht.",
@@ -2080,7 +2116,7 @@
   {
     "id": 207,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Luke Skywalker",
     "description": "Ein Bauernjunge, der zum größten Helden der Rebellion und einem mächtigen Jedi-Meister wurde.",
@@ -2094,7 +2130,7 @@
   {
     "id": 208,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mace Windu",
     "description": "Ein ranghohes Mitglied des Jedi-Rates mit einem einzigartigen violetten Lichtschwert.",
@@ -2108,7 +2144,7 @@
   {
     "id": 209,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Obi-Wan Kenobi",
     "description": "Ein legendärer Jedi-Meister und Mentor von Anakin und Luke Skywalker.",
@@ -2122,7 +2158,7 @@
   {
     "id": 210,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ahsoka Tano",
     "description": "Ehemalige Jedi-Padawan, die zu einer eigenständigen und weisen Machtnutzerin heranwuchs.",
@@ -2136,7 +2172,7 @@
   {
     "id": 211,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "General Grievous",
     "description": "Ein brillanter Stratege und gefürchteter Jedi-Jäger der Separatistenallianz.",
@@ -2150,7 +2186,7 @@
   {
     "id": 212,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Kylo Ren",
     "description": "Der Meister der Ritter von Ren, zerrissen zwischen der hellen und dunklen Seite der Macht.",
@@ -2164,7 +2200,7 @@
   {
     "id": 213,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Boba Fett",
     "description": "Einer der berüchtigtsten Kopfgeldjäger der Galaxis in mandalorianischer Rüstung.",
@@ -2178,7 +2214,7 @@
   {
     "id": 214,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Leia Organa",
     "description": "Eine furchtlose Anführerin der Rebellenallianz und Prinzessin von Alderaan.",
@@ -2192,7 +2228,7 @@
   {
     "id": 215,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Star Destroyer",
     "description": "Das Rückgrat der imperialen Flotte, ein Symbol für die Macht des Imperiums.",
@@ -2206,7 +2242,7 @@
   {
     "id": 216,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "X-Wing Squadron",
     "description": "Eine Staffel vielseitiger Sternenjäger, das Symbol der Rebellenallianz.",
@@ -2220,7 +2256,7 @@
   {
     "id": 217,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Millennium Falcon",
     "description": "Ein modifizierter corellianischer Frachter, bekannt als das schnellste Schrottstück der Galaxis.",
@@ -2234,7 +2270,7 @@
   {
     "id": 218,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Slave 1",
     "description": "Das berüchtigte Raumschiff der Kopfgeldjäger Jango und Boba Fett.",
@@ -2248,7 +2284,7 @@
   {
     "id": 219,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Tantive IV",
     "description": "Eine corellianische Korvette, die eine Schlüsselrolle in der Rebellion spielte.",
@@ -2262,7 +2298,7 @@
   {
     "id": 220,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "TIE Bomber",
     "description": "Ein imperialer Sternenjäger für Bombenangriffe auf Hauptschiffe und planetare Ziele.",
@@ -2276,7 +2312,7 @@
   {
     "id": 221,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Rey Skywalker",
     "description": "Eine Schrottsammlerin, die ihr machtvolles Erbe entdeckt und zur Hoffnung der Jedi wird.",
@@ -2290,7 +2326,7 @@
   {
     "id": 222,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Chewbacca",
     "description": "Ein treuer Wookiee-Krieger und Kopilot des Millennium Falken.",
@@ -2304,7 +2340,7 @@
   {
     "id": 223,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Count Dooku",
     "description": "Ein ehemaliger Jedi-Meister, der zum Sith-Lord Darth Tyranus wurde.",
@@ -2318,7 +2354,7 @@
   {
     "id": 224,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Captain Phasma",
     "description": "Kommandantin der Sturmtruppen der Ersten Ordnung in chromfarbener Rüstung.",
@@ -2332,7 +2368,7 @@
   {
     "id": 225,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Moff Tarkin",
     "description": "Ein hochrangiger imperialer Offizier, der den ersten Todesstern beaufsichtigte.",
@@ -2346,7 +2382,7 @@
   {
     "id": 226,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Qui-Gon Jinn",
     "description": "Ein unkonventioneller Jedi-Meister, der Anakin Skywalker entdeckte.",
@@ -2360,7 +2396,7 @@
   {
     "id": 227,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Captain Rex",
     "description": "Ein erfahrener Klon-Captain, der in der 501. Legion diente.",
@@ -2374,7 +2410,7 @@
   {
     "id": 228,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Commander Cody",
     "description": "Ein loyaler Klon-Kommandant, der unter Obi-Wan Kenobi diente.",
@@ -2388,7 +2424,7 @@
   {
     "id": 229,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Han Solo",
     "description": "Ein zynischer Schmuggler, der zum Helden der Rebellion wurde.",
@@ -2402,7 +2438,7 @@
   {
     "id": 230,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Jango Fett",
     "description": "Ein mandalorianischer Kopfgeldjäger und Genvorlage für die Klonarmee.",
@@ -2416,7 +2452,7 @@
   {
     "id": 231,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Cassian Andor",
     "description": "Ein engagierter Geheimdienstoffizier der Rebellenallianz.",
@@ -2430,7 +2466,7 @@
   {
     "id": 232,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Finn",
     "description": "Ein desertierter Sturmtruppler, der sich dem Widerstand anschloss.",
@@ -2444,7 +2480,7 @@
   {
     "id": 233,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Lando Calrissian",
     "description": "Ein charmanter Gauner und Baron-Administrator von Wolkenstadt.",
@@ -2458,7 +2494,7 @@
   {
     "id": 234,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Padme Amidala",
     "description": "Die mutige Königin und spätere Senatorin von Naboo.",
@@ -2472,7 +2508,7 @@
   {
     "id": 235,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Poe Dameron",
     "description": "Ein wagemutiger und talentierter Sternenjägerpilot des Widerstands.",
@@ -2486,7 +2522,7 @@
   {
     "id": 236,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "AT-AT",
     "description": "Ein vierbeiniger Kampfläufer des Imperiums, der Furcht und Zerstörung verbreitet.",
@@ -2500,7 +2536,7 @@
   {
     "id": 237,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "TIE Fighter",
     "description": "Der Standard-Sternenjäger des Galaktischen Imperiums, schnell und wendig.",
@@ -2514,7 +2550,7 @@
   {
     "id": 238,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Jedi Starfighter",
     "description": "Ein schneller Abfangjäger, der von Jedi-Rittern während der Klonkriege pilotiert wurde.",
@@ -2528,7 +2564,7 @@
   {
     "id": 239,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Y-Wing Bomber",
     "description": "Ein robuster und zuverlässiger Bomber der Rebellenallianz.",
@@ -2542,7 +2578,7 @@
   {
     "id": 240,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Imperial Shuttle",
     "description": "Ein elegantes Transportschiff für hochrangige imperiale Offizielle.",
@@ -2556,7 +2592,7 @@
   {
     "id": 241,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "LAAT Gunship",
     "description": "Ein schwer bewaffnetes Truppentransportschiff der Republik.",
@@ -2570,7 +2606,7 @@
   {
     "id": 242,
     "power": 4,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Jar Jar Binks",
     "description": "Ein tollpatschiger Gungan von Naboo, der zum Senator aufstieg.",
@@ -2584,7 +2620,7 @@
   {
     "id": 243,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "BB-8",
     "description": "Poe Damerons treuer und kugelförmiger Astromechdroide.",
@@ -2598,7 +2634,7 @@
   {
     "id": 244,
     "power": 2,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "R2-D2",
     "description": "Ein einfallsreicher und mutiger Astromechdroide und Held der Rebellion.",
@@ -2612,7 +2648,7 @@
   {
     "id": 245,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bib Fortuna",
     "description": "Der unterwürfige Majordomus des Verbrecherlords Jabba the Hutt.",
@@ -2626,7 +2662,7 @@
   {
     "id": 246,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Admiral Ackbar",
     "description": "Ein mon-calamarianischer Kommandant der Rebellenflotte, berühmt für 'It's a trap!'.",
@@ -2640,7 +2676,7 @@
   {
     "id": 247,
     "power": 4,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Greedo",
     "description": "Ein rodianischer Kopfgeldjäger mit einer fatalen Begegnung mit Han Solo.",
@@ -2654,7 +2690,7 @@
   {
     "id": 248,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Nien Nunb",
     "description": "Ein sullustanischer Pilot, der in der Schlacht von Endor kämpfte.",
@@ -2668,7 +2704,7 @@
   {
     "id": 249,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Rose Tico",
     "description": "Eine engagierte Mechanikerin des Widerstands, die an die gute Sache glaubt.",
@@ -2682,7 +2718,7 @@
   {
     "id": 250,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Wedge Antilles",
     "description": "Ein legendärer X-Wing-Pilot, der an beiden Angriffen auf die Todessterne teilnahm.",
@@ -2696,7 +2732,7 @@
   {
     "id": 251,
     "power": 2,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mon Mothma",
     "description": "Eine der Gründerinnen und Anführerinnen der Rebellenallianz.",
@@ -2710,7 +2746,7 @@
   {
     "id": 252,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Watto",
     "description": "Ein habgieriger toydarianischer Schrotthändler auf Tatooine.",
@@ -2724,7 +2760,7 @@
   {
     "id": 253,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Shmi Skywalker",
     "description": "Anakin Skywalkers Mutter, eine Sklavin auf Tatooine.",
@@ -2738,7 +2774,7 @@
   {
     "id": 254,
     "power": 4,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Droid Gunship",
     "description": "Ein schwer bewaffneter, schwebender Droide der Separatisten für Luftunterstützung.",
@@ -2752,7 +2788,7 @@
   {
     "id": 255,
     "power": 3,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "AT-ST",
     "description": "Ein zweibeiniger Kampfläufer, der für Aufklärungs- und Patrouillenmissionen eingesetzt wird.",
@@ -2766,7 +2802,7 @@
   {
     "id": 256,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Z-95 Headhunter",
     "description": "Ein vielseitiger Sternenjäger, der als Vorläufer des X-Wings gilt.",
@@ -2780,7 +2816,7 @@
   {
     "id": 257,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Naboo Starfighter",
     "description": "Ein eleganter und schneller Sternenjäger der königlichen Sicherheitsmacht von Naboo.",
@@ -2794,7 +2830,7 @@
   {
     "id": 258,
     "power": 2,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Vulture Droid",
     "description": "Ein Droiden-Sternenjäger der Separatisten, der sich transformieren kann.",
@@ -2853,7 +2889,7 @@
   {
     "id": 262,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Commanders Horn",
     "description": "Doubles the strength of all units in a chosen row.",
@@ -2867,7 +2903,7 @@
   {
     "id": 263,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Field Surgeon",
     "description": "Revive the strongest non-hero unit from your discard pile to your hand.",
@@ -2881,7 +2917,7 @@
   {
     "id": 264,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Incinerate",
     "description": "Destroy the strongest non-hero unit(s) on the entire battlefield.",
@@ -2895,7 +2931,7 @@
   {
     "id": 265,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Banner Raised",
     "description": "Removes all negative effects (Weather, enemy Horns) from your rows.",
@@ -2923,7 +2959,7 @@
   {
     "id": 267,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Dimeritium Bomb",
     "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
@@ -2934,10 +2970,33 @@
     "rarity": "EPIC",
     "effectType": "DIMERITIUM_BOMB"
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   {
     "id": 301,
     "power": 20,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Impostor",
     "description": "A parasitic shapeshifter, sowing paranoia and chaos among the crew.",
@@ -2951,7 +3010,7 @@
   {
     "id": 302,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Geralt von Riva",
     "description": "A legendary Witcher, a master swordsman and monster slayer for hire.",
@@ -2965,7 +3024,7 @@
   {
     "id": 303,
     "power": 16,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Steve",
     "description": "The iconic, blocky hero of a world of endless possibilities and crafting.",
@@ -2979,7 +3038,7 @@
   {
     "id": 304,
     "power": 15,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bowser",
     "description": "The powerful, fire-breathing King of the Koopas and Mario's eternal nemesis.",
@@ -2993,7 +3052,7 @@
   {
     "id": 305,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Mario",
     "description": "The cheerful, mustachioed plumber and hero of the Mushroom Kingdom.",
@@ -3007,7 +3066,7 @@
   {
     "id": 306,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Trevor Philips",
     "description": "A volatile, unpredictable, and dangerously loyal career criminal.",
@@ -3021,7 +3080,7 @@
   {
     "id": 307,
     "power": 17,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Orbital Cannon",
     "description": "A satellite-based superweapon capable of precise and devastating strikes.",
@@ -3035,7 +3094,7 @@
   {
     "id": 308,
     "power": 15,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Death Train",
     "description": "A relentless, ghostly locomotive that stops for no one.",
@@ -3049,7 +3108,7 @@
   {
     "id": 309,
     "power": 14,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ender Dragon",
     "description": "The powerful, winged boss of the End dimension, guardian of the exit portal.",
@@ -3063,7 +3122,7 @@
   {
     "id": 310,
     "power": 12,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Blue Shell",
     "description": "A winged, spiny shell that mercilessly seeks out and explodes on the race leader.",
@@ -3077,7 +3136,7 @@
   {
     "id": 311,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Ciri",
     "description": "The Lady of Space and Time, a skilled swordswoman with Elder Blood.",
@@ -3091,7 +3150,7 @@
   {
     "id": 312,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Iron Golem",
     "description": "A hulking, powerful protector of villagers, crafted from iron blocks.",
@@ -3105,7 +3164,7 @@
   {
     "id": 313,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Alex",
     "description": "A resourceful adventurer and Steve's counterpart in a world of blocks.",
@@ -3119,7 +3178,7 @@
   {
     "id": 314,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Franklin Clinton",
     "description": "A young, ambitious hustler seeking bigger opportunities in Los Santos.",
@@ -3133,7 +3192,7 @@
   {
     "id": 315,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Michael De Santa",
     "description": "A retired bank robber in witness protection, drawn back to the criminal life.",
@@ -3147,7 +3206,7 @@
   {
     "id": 316,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Luigi",
     "description": "Mario's taller, timid brother, a reluctant hero with a heart of gold.",
@@ -3161,7 +3220,7 @@
   {
     "id": 317,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Princess Peach",
     "description": "The gracious ruler of the Mushroom Kingdom, often in need of rescuing.",
@@ -3175,7 +3234,7 @@
   {
     "id": 318,
     "power": 11,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Wither",
     "description": "A three-headed, undead boss monster that shoots explosive skulls.",
@@ -3189,7 +3248,7 @@
   {
     "id": 319,
     "power": 10,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "TM-02 Khanjali",
     "description": "A futuristic tank equipped with a powerful railgun cannon.",
@@ -3203,7 +3262,7 @@
   {
     "id": 320,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "FH1-Hunter",
     "description": "A powerful attack helicopter armed with homing missiles and a cannon.",
@@ -3217,7 +3276,7 @@
   {
     "id": 321,
     "power": 9,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Witcher Trebuchet",
     "description": "A powerful siege engine capable of launching heavy projectiles over long distances.",
@@ -3231,7 +3290,7 @@
   {
     "id": 322,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Red Shell",
     "description": "A heat-seeking shell that homes in on the racer directly ahead.",
@@ -3245,7 +3304,7 @@
   {
     "id": 323,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Donkey Kong",
     "description": "A powerful but carefree gorilla, protector of his banana hoard.",
@@ -3259,7 +3318,7 @@
   {
     "id": 324,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Enderman",
     "description": "A tall, mysterious being that can teleport and becomes hostile when looked at.",
@@ -3273,7 +3332,7 @@
   {
     "id": 325,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Creeper",
     "description": "An infamous, silent, green monster that explodes when near a player.",
@@ -3287,7 +3346,7 @@
   {
     "id": 326,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Boo",
     "description": "A shy, spherical ghost that covers its face when looked at.",
@@ -3301,7 +3360,7 @@
   {
     "id": 327,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Roach",
     "description": "Geralt's loyal and surprisingly resilient horse, always there when called.",
@@ -3315,7 +3374,7 @@
   {
     "id": 328,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Toad",
     "description": "A loyal, mushroom-headed attendant to Princess Peach.",
@@ -3329,7 +3388,7 @@
   {
     "id": 329,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Yennefer",
     "description": "A formidable and ambitious sorceress, Geralt's true love.",
@@ -3343,7 +3402,7 @@
   {
     "id": 330,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Lamar Davis",
     "description": "Franklin's best friend, a gangster with big ambitions and a bigger mouth.",
@@ -3357,7 +3416,7 @@
   {
     "id": 331,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Triss",
     "description": "A powerful sorceress and skilled alchemist, known for her fiery red hair.",
@@ -3371,7 +3430,7 @@
   {
     "id": 332,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Captain Toad",
     "description": "An adventurous explorer and leader of the Toad Brigade, always seeking treasure.",
@@ -3385,7 +3444,7 @@
   {
     "id": 333,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Pauline",
     "description": "The stylish mayor of New Donk City and a talented jazz singer.",
@@ -3399,7 +3458,7 @@
   {
     "id": 334,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Lester Crest",
     "description": "A socially awkward but brilliant criminal mastermind and heist planner.",
@@ -3413,7 +3472,7 @@
   {
     "id": 335,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "B-11 Strikeforce",
     "description": "A heavily armored close air support jet with explosive cannons.",
@@ -3427,7 +3486,7 @@
   {
     "id": 336,
     "power": 8,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "P-996 Lazer",
     "description": "A versatile and extremely fast military fighter jet.",
@@ -3441,7 +3500,7 @@
   {
     "id": 337,
     "power": 7,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "APC",
     "description": "An armored personnel carrier that can travel on both land and water.",
@@ -3455,7 +3514,7 @@
   {
     "id": 338,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Triple Green Shells",
     "description": "A set of three green shells that orbit the user for protection or offense.",
@@ -3469,7 +3528,7 @@
   {
     "id": 339,
     "power": 6,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Witcher Onager",
     "description": "A reliable siege catapult used by armies for its range and power.",
@@ -3483,7 +3542,7 @@
   {
     "id": 340,
     "power": 5,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "TNT Cannon",
     "description": "A player-built redstone contraption that launches activated TNT blocks.",
@@ -3497,7 +3556,7 @@
   {
     "id": 341,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Blooper",
     "description": "An ink-squirting squid that obstructs the vision of other racers.",
@@ -3511,7 +3570,7 @@
   {
     "id": 342,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bob-omb",
     "description": "A walking, wind-up bomb that explodes after a short time.",
@@ -3525,7 +3584,7 @@
   {
     "id": 343,
     "power": 3,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Chop",
     "description": "Franklin's loyal and sometimes helpful Rottweiler.",
@@ -3539,7 +3598,7 @@
   {
     "id": 344,
     "power": 3,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Goomba",
     "description": "A mushroom-like creature, one of the most common enemies in the Mushroom Kingdom.",
@@ -3553,7 +3612,7 @@
   {
     "id": 345,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Nekker",
     "description": "A small, aggressive creature that often attacks in swarms.",
@@ -3567,7 +3626,7 @@
   {
     "id": 346,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Zombie",
     "description": "A common undead hostile mob that attacks players and villagers.",
@@ -3581,7 +3640,7 @@
   {
     "id": 347,
     "power": 1,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Pig",
     "description": "A common passive mob, useful for its meat and can be ridden with a saddle.",
@@ -3595,7 +3654,7 @@
   {
     "id": 348,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Bullet Bill",
     "description": "A black, bullet-like projectile, often shot from a cannon.",
@@ -3609,7 +3668,7 @@
   {
     "id": 349,
     "power": 3,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Paratroopa",
     "description": "A Koopa Troopa with wings, allowing it to fly or hover.",
@@ -3623,7 +3682,7 @@
   {
     "id": 350,
     "power": 3,
-    "amount": 2,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Snow Golem",
     "description": "A friendly, player-created mob that throws snowballs at enemies.",
@@ -3637,7 +3696,7 @@
   {
     "id": 351,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Koopa Troopa",
     "description": "A turtle-like creature that can retreat into its shell when stomped.",
@@ -3651,7 +3710,7 @@
   {
     "id": 352,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Magikoopa",
     "description": "A spectacled Koopa sorcerer that attacks with magical spells.",
@@ -3665,7 +3724,7 @@
   {
     "id": 353,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Shy Guy",
     "description": "A mysterious creature that always wears a mask and a robe.",
@@ -3679,7 +3738,7 @@
   {
     "id": 354,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Insurgent Pickup",
     "description": "A heavily armored, weaponized pickup truck with a mounted machine gun.",
@@ -3693,7 +3752,7 @@
   {
     "id": 355,
     "power": 4,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Witcher Ballista",
     "description": "A large crossbow-like siege weapon that fires heavy bolts.",
@@ -3707,7 +3766,7 @@
   {
     "id": 356,
     "power": 3,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "TNT Minecart",
     "description": "A minecart combined with a TNT block, exploding on impact or activation.",
@@ -3721,7 +3780,7 @@
   {
     "id": 357,
     "power": 2,
-    "amount": 3,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Goomba Tower",
     "description": "A stack of multiple Goombas, working together as a single enemy.",
@@ -3735,7 +3794,7 @@
   {
     "id": 358,
     "power": 2,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Green Shell",
     "description": "A common projectile that travels in a straight line, ricocheting off walls.",
@@ -3794,7 +3853,7 @@
   {
     "id": 362,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Commanders Horn",
     "description": "Doubles the strength of all units in a chosen row.",
@@ -3808,7 +3867,7 @@
   {
     "id": 363,
     "power": 3,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Field Surgeon",
     "description": "Revive the strongest non-hero unit from your discard pile to your hand.",
@@ -3822,7 +3881,7 @@
   {
     "id": 364,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Incinerate",
     "description": "Destroy the strongest non-hero unit(s) on the entire battlefield.",
@@ -3836,7 +3895,7 @@
   {
     "id": 365,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Banner Raised",
     "description": "Removes all negative effects (Weather, enemy Horns) from your rows.",
@@ -3864,7 +3923,7 @@
   {
     "id": 367,
     "power": 0,
-    "amount": 0,
+    "amount": 1,
     "selectedAmount": 0,
     "name": "Dimeritium Bomb",
     "description": "Removes all row effects (Weather and Commander's Horns) from the entire battlefield.",
