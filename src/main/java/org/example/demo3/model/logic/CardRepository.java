@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.example.demo3.model.constants.Config.*;
 
@@ -100,7 +101,10 @@ public class CardRepository {
 
         List<Card> savedDeck = allCards.stream()
                 .filter(card -> card.getFaction() == faction && card.getSelectedAmount() > 0 && card.getAmount() > 0)
-                .flatMap(card -> Collections.nCopies(card.getSelectedAmount(), card).stream())
+                .flatMap(card -> {
+                    int copies = Math.min(card.getSelectedAmount(), card.getAmount());
+                    return Collections.nCopies(copies, card).stream();
+                })
                 .toList();
 
         if (savedDeck.size() >= MIN_SELECTION) {
@@ -114,33 +118,25 @@ public class CardRepository {
 
     public List<Card> getRandomDeck(Faction faction) {
         if (allCards == null || allCards.isEmpty()) {
+            logger.warn("Keine Karten im Repository vorhanden.");
             return Collections.emptyList();
         }
 
-        List<Card> potentialCards = allCards.stream()
+        List<Card> availableCardsPool = allCards.stream()
                 .filter(card -> card.getFaction() == faction && card.getAmount() > 0)
-                .toList();
+                .flatMap(card -> Collections.nCopies(card.getAmount(), card).stream())
+                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-        if (potentialCards.isEmpty()) {
+        if (availableCardsPool.isEmpty()) {
             logger.warn("Keine freigeschalteten Karten für Fraktion {} verfügbar, um ein Zufallsdeck zu erstellen.", faction);
             return Collections.emptyList();
         }
 
-        List<Card> randomDeck = new ArrayList<>();
-        Random random = new Random();
+        Collections.shuffle(availableCardsPool);
 
-        List<Card> candidates = new ArrayList<>(potentialCards);
+        int deckSize = Math.min(RANDOMIZER_CARD_AMOUNT, availableCardsPool.size());
 
-        while (randomDeck.size() < RANDOMIZER_CARD_AMOUNT && !candidates.isEmpty()) {
-            Card candidate = candidates.get(random.nextInt(candidates.size()));
-            long countInDeck = randomDeck.stream().filter(c -> c.getId() == candidate.getId()).count();
-
-            if (countInDeck < candidate.getMaxAmount()) {
-                randomDeck.add(candidate);
-            } else {
-                candidates.removeIf(c -> c.getId() == candidate.getId());
-            }
-        }
+        List<Card> randomDeck = new ArrayList<>(availableCardsPool.subList(0, deckSize));
 
         logger.info("Zufälliges Deck für Fraktion {} erstellt. Größe: {}", faction, randomDeck.size());
         return randomDeck;
