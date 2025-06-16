@@ -57,6 +57,7 @@ public class DeckbuilderController {
     @FXML private Label selectedCardsLabel;
     @FXML private Label totalUnitStrengthLabel;
     @FXML private Label selectedUnitStrengthLabel;
+    @FXML private Label totalEffectCardsInDeck;
     @FXML private Button unlockButton;
     @FXML private Button menuButton;
     @FXML private Button saveButton;
@@ -95,7 +96,7 @@ public class DeckbuilderController {
     // --- Comparators for Sorting ---
     private final Comparator<Card> cardSorter = CardComparators.BY_RARITY_DESC
             .thenComparing(CardComparators.BY_ROWTYPE_DESC)
-            .thenComparing(CardComparators.BY_POWER_DESC.reversed())
+            .thenComparing(CardComparators.BY_POWER_ASC)
             .thenComparing(Card::getName);
     private final Comparator<CardInstance> instanceSorter = CardComparators.BY_RARITY_DESC_INSTANCE
             .thenComparing(CardComparators.BY_ROWTYPE_DESC_INSTANCE)
@@ -387,10 +388,12 @@ public class DeckbuilderController {
         long totalOwnedForFaction = allOwnedCardInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).count();
         int totalStrength = allOwnedCardInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).filter(i -> i.getCardDefinition() instanceof UnitCard).mapToInt(i -> i.getCardDefinition().getPower()).sum();
         int selectedStrength = selectedInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).filter(i -> i.getCardDefinition() instanceof UnitCard).mapToInt(i -> i.getCardDefinition().getPower()).sum();
+        long selectedEffectCards = selectedInstances.stream().filter(i -> i.getCardDefinition().getCardType() == CardType.SPECIAL || i.getCardDefinition().getCardType() == CardType.WEATHER || i.getCardDefinition().getEffectType() == EffectType.MEDIC).count();
         totalCardsInDeckLabel.setText(String.valueOf(totalOwnedForFaction));
         selectedCardsLabel.setText(String.valueOf(currentFactionSelectedCount));
         selectedUnitStrengthLabel.setText(String.valueOf(selectedStrength));
         totalUnitStrengthLabel.setText(String.valueOf(totalStrength));
+        totalEffectCardsInDeck.setText(String.valueOf(selectedEffectCards));
     }
 
     private void addCardToDeck(Card card) {

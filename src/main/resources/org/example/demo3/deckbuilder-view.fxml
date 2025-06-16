@@ -65,10 +65,13 @@
 
         <!-- Content -->
         <GridPane GridPane.rowIndex="1" GridPane.columnIndex="0">
+            <!-- NEU: Angepasste Spaltendefinition mit 5 Spalten -->
             <columnConstraints>
-                <ColumnConstraints percentWidth="40" halignment="RIGHT"/>
+                <ColumnConstraints percentWidth="5"/>
+                <ColumnConstraints percentWidth="35" halignment="RIGHT"/>
                 <ColumnConstraints percentWidth="20" halignment="CENTER"/>
-                <ColumnConstraints percentWidth="40" halignment="LEFT"/>
+                <ColumnConstraints percentWidth="35" halignment="LEFT"/>
+                <ColumnConstraints percentWidth="5"/>
             </columnConstraints>
 
             <rowConstraints>
@@ -77,8 +80,10 @@
             </rowConstraints>
 
             <!-- Left Container -->
-            <VBox fx:id="leftVBox" GridPane.columnIndex="0" GridPane.rowIndex="0"
+            <!-- NEU: Index von 0 auf 1 geändert -->
+            <VBox fx:id="leftVBox" GridPane.columnIndex="1" GridPane.rowIndex="0"
                   spacing="5" style="-fx-padding:10;">
+
                 <VBox spacing="5">
                     <Label text="Card Collection" styleClass="deckbuilder-label" style="-fx-font-size: 24"/>
                     <Label fx:id="leftFilterLabel" text="ALL CARDS" styleClass="deckbuilder-sort-label"/>
@@ -147,7 +152,8 @@
             <!-- END Left -->
 
             <!-- Middle Container -->
-            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+            <!-- NEU: Index von 1 auf 2 geändert -->
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0">
                 <VBox spacing="20" alignment="CENTER" style="-fx-padding: 130 0 0 0;">
                     <Label text="Total Cards in Deck" styleClass="deckbuilder-label"/>
                     <Label fx:id="totalCardsInDeckLabel" text="25" styleClass="deckbuilder-label"/>
@@ -157,8 +163,8 @@
                     <Label fx:id="totalUnitStrengthLabel" text="194" styleClass="deckbuilder-label"/>
                     <Label text="Selected Unit Strength" styleClass="deckbuilder-label"/>
                     <Label fx:id="selectedUnitStrengthLabel" text="123" styleClass="deckbuilder-label"/>
-                    <Label text="Placeholder" styleClass="deckbuilder-label"/>
-                    <Label text="666" styleClass="deckbuilder-label"/>
+                    <Label text="Selected Effect Cards" styleClass="deckbuilder-label"/>
+                    <Label fx:id="totalEffectCardsInDeck" text="666" styleClass="deckbuilder-label"/>
                 </VBox>
                 <Region VBox.vgrow="ALWAYS"/>
                 <VBox alignment="BOTTOM_CENTER" style="-fx-padding: 10" spacing="10">
@@ -173,7 +179,8 @@
             <!-- END Middle -->
 
             <!-- Right Container -->
-            <VBox fx:id="rightVBox" GridPane.columnIndex="2" GridPane.rowIndex="0"
+            <!-- NEU: Index von 2 auf 3 geändert -->
+            <VBox fx:id="rightVBox" GridPane.columnIndex="3" GridPane.rowIndex="0"
                   spacing="5" style="-fx-padding: 10;">
                 <VBox spacing="5" alignment="TOP_RIGHT">
                     <Label text="Card Collection" styleClass="deckbuilder-label" style="-fx-font-size: 24"/>
