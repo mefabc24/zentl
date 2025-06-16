@@ -4,6 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <AnchorPane fx:id="rootPane"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -71,12 +72,13 @@
             </columnConstraints>
 
             <rowConstraints>
-                <RowConstraints percentHeight="100" valignment="TOP"/>
+                <RowConstraints percentHeight="90" valignment="TOP"/>
+                <RowConstraints percentHeight="10"/>
             </rowConstraints>
 
             <!-- Left Container -->
-            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0"
-                  spacing="5" style="-fx-padding:10;" maxWidth="710">
+            <VBox fx:id="leftVBox" GridPane.columnIndex="0" GridPane.rowIndex="0"
+                  spacing="5" style="-fx-padding:10;">
                 <VBox spacing="5">
                     <Label text="Card Collection" styleClass="deckbuilder-label" style="-fx-font-size: 24"/>
                     <Label fx:id="leftFilterLabel" text="ALL CARDS" styleClass="deckbuilder-sort-label"/>
@@ -132,9 +134,13 @@
 
                 <StackPane VBox.vgrow="ALWAYS" styleClass="card-frame-border" prefHeight="700">
                     <!-- 2. Innerer ScrollPane für den Inhalt -->
-                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
+                    <ScrollPane fx:id="leftScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
                         <!-- 3. FlowPane enthält die Karten -->
-                        <FlowPane fx:id="cardCollectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10"/>
+                        <FlowPane fx:id="cardCollectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10" >
+                            <padding>
+                                <Insets right="10"/>
+                            </padding>
+                        </FlowPane>
                     </ScrollPane>
                 </StackPane>
             </VBox>
@@ -166,9 +172,9 @@
             </VBox>
             <!-- END Middle -->
 
-            <!-- Left Container -->
-            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0"
-                  spacing="5" style="-fx-padding: 10;" maxWidth="710">
+            <!-- Right Container -->
+            <VBox fx:id="rightVBox" GridPane.columnIndex="2" GridPane.rowIndex="0"
+                  spacing="5" style="-fx-padding: 10;">
                 <VBox spacing="5" alignment="TOP_RIGHT">
                     <Label text="Card Collection" styleClass="deckbuilder-label" style="-fx-font-size: 24"/>
                     <Label fx:id="rightFilterLabel" text="ALL CARDS" styleClass="deckbuilder-sort-label"/>
@@ -224,12 +230,16 @@
                 </GridPane>
 
                 <StackPane VBox.vgrow="ALWAYS" styleClass="card-frame-border" prefHeight="700">
-                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
-                        <FlowPane fx:id="cardSelectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10"/>
+                    <ScrollPane fx:id="rightScrollPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
+                        <FlowPane fx:id="cardSelectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10" >
+                            <padding>
+                                <Insets right="10"/>
+                            </padding>
+                        </FlowPane>
                     </ScrollPane>
                 </StackPane>
             </VBox>
-            <!-- END Left -->
+            <!-- END Right -->
         </GridPane>
         <!-- END Content -->
     </GridPane>

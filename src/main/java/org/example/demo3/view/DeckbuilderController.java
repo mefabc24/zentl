@@ -1,5 +1,6 @@
 package org.example.demo3.view;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,9 +15,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.example.demo3.model.cards.Card;
@@ -35,16 +34,16 @@ import java.util.stream.Collectors;
 import static org.example.demo3.model.constants.Config.*;
 
 public class DeckbuilderController {
-    @FXML private AnchorPane rootPane;
 
-    // Faction Navigation
+    // --- FXML Injections ---
+    @FXML private AnchorPane rootPane;
+    @FXML private VBox leftVBox;
+    @FXML private VBox rightVBox;
     @FXML private Button prevFactionButton;
     @FXML private Label prevFactionLabel;
     @FXML private Label activeFactionLabel;
     @FXML private Button nextFactionButton;
     @FXML private Label nextFactionLabel;
-
-    // Left Pane (Card Collection)
     @FXML private Label leftFilterLabel;
     @FXML private Button leftFilterAllButton;
     @FXML private Button leftFilterMeleeButton;
@@ -53,10 +52,7 @@ public class DeckbuilderController {
     @FXML private Button leftFilterAnyButton;
     @FXML private Button leftFilterWeatherButton;
     @FXML private Button leftFilterSpecialButton;
-    @FXML private ScrollPane leftScrollPane;
     @FXML private FlowPane cardCollectionFlowPane;
-
-    // Middle Pane (Stats & Actions)
     @FXML private Label totalCardsInDeckLabel;
     @FXML private Label selectedCardsLabel;
     @FXML private Label totalUnitStrengthLabel;
@@ -64,8 +60,6 @@ public class DeckbuilderController {
     @FXML private Button unlockButton;
     @FXML private Button menuButton;
     @FXML private Button saveButton;
-
-    // Right Pane (Selected Cards)
     @FXML private Label rightFilterLabel;
     @FXML private Button rightFilterAllButton;
     @FXML private Button rightFilterMeleeButton;
@@ -74,34 +68,35 @@ public class DeckbuilderController {
     @FXML private Button rightFilterAnyButton;
     @FXML private Button rightFilterWeatherButton;
     @FXML private Button rightFilterSpecialButton;
-    @FXML private ScrollPane rightScrollPane;
     @FXML private FlowPane cardSelectionFlowPane;
+    @FXML private ScrollPane leftScrollPane;
+    @FXML private ScrollPane rightScrollPane;
 
+    // --- Services and Repositories ---
     private NavigationService navigationService;
     private CardRepository cardRepository;
 
+    // --- State Variables ---
     private List<Faction> factions;
     private int currentFactionIndex;
-
     private List<CardInstance> allOwnedCardInstances;
     private ObservableList<CardInstance> selectedInstances;
 
-    // Filter-Management
+    // --- Filter Management ---
     private Predicate<CardInstance> leftFilter = instance -> true;
     private Predicate<CardInstance> rightFilter = instance -> true;
     private final Map<Button, Predicate<CardInstance>> filterPredicates = new HashMap<>();
     private final Map<Button, String> filterLabels = new HashMap<>();
     private Button activeLeftFilterButton;
     private Button activeRightFilterButton;
-
     private List<Button> leftFilterButtons;
     private List<Button> rightFilterButtons;
 
+    // --- Comparators for Sorting ---
     private final Comparator<Card> cardSorter = CardComparators.BY_RARITY_DESC
             .thenComparing(CardComparators.BY_ROWTYPE_DESC)
             .thenComparing(CardComparators.BY_POWER_DESC.reversed())
             .thenComparing(Card::getName);
-
     private final Comparator<CardInstance> instanceSorter = CardComparators.BY_RARITY_DESC_INSTANCE
             .thenComparing(CardComparators.BY_ROWTYPE_DESC_INSTANCE)
             .thenComparing(CardComparators.BY_POWER_DESC_INSTANCE)
@@ -118,21 +113,125 @@ public class DeckbuilderController {
 
         loadInitialDeckState();
         setupFactionSlider();
-
         groupFilterButtons();
         setupFilterButtons();
         setupActionButtons();
         setupSelectionListener();
-
         setupKeyboardNavigation();
+        setupResponsiveListeners();
 
         updateFactionView();
+    }
+
+    private void setupResponsiveListeners() {
+        cardCollectionFlowPane.widthProperty().addListener((obs, oldVal, newVal) -> resizeCardsInPane(cardCollectionFlowPane));
+        cardSelectionFlowPane.widthProperty().addListener((obs, oldVal, newVal) -> resizeCardsInPane(cardSelectionFlowPane));
+    }
+
+    private void resizeCardsInPane(FlowPane pane) {
+        final int columns = 4;
+        final double aspectRatio = 1.52;
+        double paneWidth = pane.getWidth();
+
+        if (paneWidth <= 0) return;
+
+        double hgap = pane.getHgap();
+        double horizontalPadding = pane.getPadding().getLeft() + pane.getPadding().getRight();
+
+        double cardWidth = ((paneWidth - horizontalPadding - (hgap * (columns - 1))) / columns) - 1.0;
+        double cardHeight = cardWidth * aspectRatio;
+
+        for (Node child : pane.getChildren()) {
+            if (child instanceof Region) {
+                ((Region) child).setPrefSize(cardWidth, cardHeight);
+            }
+        }
+    }
+
+    private Node createCardVisual(Card card, java.util.function.Consumer<Card> action, boolean showCount) {
+        StackPane visualRoot = new StackPane();
+        visualRoot.getStyleClass().add("card-visual");
+
+        ImageView cardImageView = new ImageView();
+        Image image = card.getImage();
+
+        if (image != null && !image.isError()) {
+            cardImageView.setImage(image);
+        } else {
+            Rectangle placeholder = new Rectangle();
+            placeholder.setFill(Color.DARKSLATEGRAY);
+            placeholder.widthProperty().bind(visualRoot.prefWidthProperty());
+            placeholder.heightProperty().bind(visualRoot.prefHeightProperty());
+
+            Label nameLabel = new Label(card.getName());
+            nameLabel.setWrapText(true);
+            nameLabel.setTextFill(Color.WHITE);
+            visualRoot.getChildren().addAll(placeholder, nameLabel);
+        }
+
+        cardImageView.setPreserveRatio(true);
+        cardImageView.fitWidthProperty().bind(visualRoot.prefWidthProperty());
+
+        if (image != null && !image.isError()) {
+            visualRoot.getChildren().add(cardImageView);
+        }
+
+        if (showCount) {
+            long countInDeck = selectedInstances.stream().filter(i -> i.getCardDefinition().getId() == card.getId()).count();
+            long ownedAmount = card.getAmount();
+            Label countLabel = new Label(countInDeck + "/" + ownedAmount);
+            countLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 2 5; -fx-background-radius: 10;");
+            StackPane.setAlignment(countLabel, Pos.BOTTOM_RIGHT);
+            StackPane.setMargin(countLabel, new Insets(0, 5, 5, 0));
+            visualRoot.getChildren().add(countLabel);
+        }
+
+        visualRoot.setOnMouseClicked(event -> action.accept(card));
+        Tooltip.install(visualRoot, createCardTooltip(card));
+
+        return visualRoot;
+    }
+
+    private void populateCollectionPane() {
+        cardCollectionFlowPane.getChildren().clear();
+        Faction currentFaction = factions.get(currentFactionIndex);
+
+        Map<Integer, Card> uniqueCards = allOwnedCardInstances.stream()
+                .map(CardInstance::getCardDefinition)
+                .filter(card -> card.getFaction() == currentFaction)
+                .collect(Collectors.toMap(Card::getId, card -> card, (existing, replacement) -> existing));
+
+        uniqueCards.values().stream()
+                .filter(card -> leftFilter.test(new CardInstance(card)))
+                .sorted(cardSorter)
+                .forEach(card -> {
+                    Node cardNode = createCardVisual(card, this::addCardToDeck, true);
+                    cardCollectionFlowPane.getChildren().add(cardNode);
+                });
+
+        Platform.runLater(() -> resizeCardsInPane(cardCollectionFlowPane));
+    }
+
+    private void populateSelectionPane() {
+        cardSelectionFlowPane.getChildren().clear();
+        Faction currentFaction = factions.get(currentFactionIndex);
+
+        selectedInstances.stream()
+                .filter(instance -> instance.getCardDefinition().getFaction() == currentFaction)
+                .filter(rightFilter)
+                .sorted(instanceSorter)
+                .forEach(instance -> {
+                    Node cardNode = createCardVisual(instance.getCardDefinition(), this::removeCardFromDeck, false);
+                    cardSelectionFlowPane.getChildren().add(cardNode);
+                });
+
+        Platform.runLater(() -> resizeCardsInPane(cardSelectionFlowPane));
     }
 
     private void setupKeyboardNavigation() {
         rootPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
             if (newScene != null) {
-                newScene.setOnKeyPressed(event -> {
+                newScene.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, event -> {
                     if (event.getCode() == KeyCode.LEFT) {
                         navigateFaction(-1);
                         event.consume();
@@ -145,21 +244,17 @@ public class DeckbuilderController {
         });
     }
 
-
-
     private void loadInitialDeckState() {
         List<Card> allCards = cardRepository.getAllCards();
         if (allCards == null || allCards.isEmpty()) {
             activeFactionLabel.setText("ERROR: NO CARDS");
             return;
         }
-
         this.allOwnedCardInstances = allCards.stream()
                 .filter(card -> card.getAmount() > 0)
                 .flatMap(card -> java.util.stream.IntStream.range(0, card.getAmount())
                         .mapToObj(i -> new CardInstance(card)))
                 .collect(Collectors.toList());
-
         List<CardInstance> initialSelection = new ArrayList<>();
         for (Card card : allCards) {
             if (card.getSelectedAmount() > 0) {
@@ -176,20 +271,13 @@ public class DeckbuilderController {
     private void setupFactionSlider() {
         this.factions = Arrays.asList(Faction.values());
         this.currentFactionIndex = 0;
-
         prevFactionButton.setOnAction(e -> navigateFaction(-1));
         nextFactionButton.setOnAction(e -> navigateFaction(1));
     }
 
     private void groupFilterButtons() {
-        leftFilterButtons = Arrays.asList(
-                leftFilterAllButton, leftFilterMeleeButton, leftFilterRangedButton,
-                leftFilterSiegeButton, leftFilterAnyButton, leftFilterWeatherButton, leftFilterSpecialButton
-        );
-        rightFilterButtons = Arrays.asList(
-                rightFilterAllButton, rightFilterMeleeButton, rightFilterRangedButton,
-                rightFilterSiegeButton, rightFilterAnyButton, rightFilterWeatherButton, rightFilterSpecialButton
-        );
+        leftFilterButtons = Arrays.asList(leftFilterAllButton, leftFilterMeleeButton, leftFilterRangedButton, leftFilterSiegeButton, leftFilterAnyButton, leftFilterWeatherButton, leftFilterSpecialButton);
+        rightFilterButtons = Arrays.asList(rightFilterAllButton, rightFilterMeleeButton, rightFilterRangedButton, rightFilterSiegeButton, rightFilterAnyButton, rightFilterWeatherButton, rightFilterSpecialButton);
     }
 
     private void setupFilterButtons() {
@@ -200,7 +288,6 @@ public class DeckbuilderController {
         addFilter(leftFilterAnyButton, rightFilterAnyButton, "ANY ROW CARDS", i -> i.getCardDefinition().getRowType() == RowType.ANY);
         addFilter(leftFilterWeatherButton, rightFilterWeatherButton, "WEATHER CARDS", i -> i.getCardDefinition().getCardType() == CardType.WEATHER);
         addFilter(leftFilterSpecialButton, rightFilterSpecialButton, "SPECIAL CARDS", i -> i.getCardDefinition().getCardType() == CardType.SPECIAL);
-
         for (Button button : leftFilterButtons) {
             button.setOnAction(e -> {
                 leftFilter = filterPredicates.get(button);
@@ -209,7 +296,6 @@ public class DeckbuilderController {
                 populateCollectionPane();
             });
         }
-
         for (Button button : rightFilterButtons) {
             button.setOnAction(e -> {
                 rightFilter = filterPredicates.get(button);
@@ -218,7 +304,6 @@ public class DeckbuilderController {
                 populateSelectionPane();
             });
         }
-
         setActiveFilterButton(leftFilterAllButton, true);
         setActiveFilterButton(rightFilterAllButton, false);
     }
@@ -245,29 +330,20 @@ public class DeckbuilderController {
     private void setupActionButtons() {
         saveButton.setOnAction(e -> {
             cardRepository.getAllCards().forEach(card -> card.setSelectedAmount(0));
-            selectedInstances.stream()
-                    .map(CardInstance::getCardDefinition)
-                    .forEach(card -> card.setSelectedAmount(card.getSelectedAmount() + 1));
-
+            selectedInstances.stream().map(CardInstance::getCardDefinition).forEach(card -> card.setSelectedAmount(card.getSelectedAmount() + 1));
             cardRepository.save();
             Toast.makeText((getStage()), "Deck successfully saved!", 2000);
         });
-
         menuButton.setOnAction(e -> {
-            System.out.println("Menu Button clicked");
             if (navigationService != null) {
-                navigationService.navigateTo(FXML_MAINMENU_PATH, "Gwent", (MainMenuController controller) ->
-                        controller.setNavigationService(navigationService));
+                navigationService.navigateTo(FXML_MAINMENU_PATH, "Gwent", (MainMenuController controller) -> controller.setNavigationService(navigationService));
             } else {
                 System.err.println("NavigationService not initialized in MainMenuController.");
             }
         });
-
         unlockButton.setOnAction(e -> {
-            System.out.println("Unlock Button clicked");
             if (navigationService != null) {
-                navigationService.navigateTo(FXML_UNLOCKER_PATH, "Gwent", (CardUnlockController controller) ->
-                        controller.setNavigationService(navigationService));
+                navigationService.navigateTo(FXML_UNLOCKER_PATH, "Gwent", (CardUnlockController controller) -> controller.setNavigationService(navigationService));
             } else {
                 System.err.println("NavigationService not initialized in MainMenuController.");
             }
@@ -291,78 +367,26 @@ public class DeckbuilderController {
         Faction current = factions.get(currentFactionIndex);
         Faction prev = factions.get((currentFactionIndex - 1 + factions.size()) % factions.size());
         Faction next = factions.get((currentFactionIndex + 1) % factions.size());
-
         activeFactionLabel.setText(current.name());
         prevFactionLabel.setText(prev.name());
         nextFactionLabel.setText(next.name());
-
         leftFilter = p -> true;
         rightFilter = p -> true;
         leftFilterLabel.setText("ALL CARDS");
         rightFilterLabel.setText("ALL CARDS");
         setActiveFilterButton(leftFilterAllButton, true);
         setActiveFilterButton(rightFilterAllButton, false);
-
         populateCollectionPane();
         populateSelectionPane();
         updateStats();
     }
 
-    private void populateCollectionPane() {
-        cardCollectionFlowPane.getChildren().clear();
-        Faction currentFaction = factions.get(currentFactionIndex);
-
-        Map<Integer, Card> uniqueCards = allOwnedCardInstances.stream()
-                .map(CardInstance::getCardDefinition)
-                .filter(card -> card.getFaction() == currentFaction)
-                .collect(Collectors.toMap(Card::getId, card -> card, (existing, replacement) -> existing));
-
-        uniqueCards.values().stream()
-                .filter(card -> leftFilter.test(new CardInstance(card)))
-                .sorted(cardSorter)
-                .forEach(card -> {
-                    Node cardNode = createCardVisual(card, this::addCardToDeck, true);
-                    cardCollectionFlowPane.getChildren().add(cardNode);
-                });
-    }
-
-    private void populateSelectionPane() {
-        cardSelectionFlowPane.getChildren().clear();
-        Faction currentFaction = factions.get(currentFactionIndex);
-
-        selectedInstances.stream()
-                .filter(instance -> instance.getCardDefinition().getFaction() == currentFaction)
-                .filter(rightFilter)
-                .sorted(instanceSorter)
-                .forEach(instance -> {
-                    Node cardNode = createCardVisual(instance.getCardDefinition(), this::removeCardFromDeck, false);
-                    cardSelectionFlowPane.getChildren().add(cardNode);
-                });
-    }
-
     private void updateStats() {
         Faction currentFaction = factions.get(currentFactionIndex);
-
-        long currentFactionSelectedCount = selectedInstances.stream()
-                .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
-                .count();
-
-        long totalOwnedForFaction = allOwnedCardInstances.stream()
-                .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
-                .count();
-
-        int totalStrength = allOwnedCardInstances.stream()
-                .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
-                .filter(i -> i.getCardDefinition() instanceof UnitCard)
-                .mapToInt(i -> i.getCardDefinition().getPower())
-                .sum();
-
-        int selectedStrength = selectedInstances.stream()
-                .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
-                .filter(i -> i.getCardDefinition() instanceof UnitCard)
-                .mapToInt(i -> i.getCardDefinition().getPower())
-                .sum();
-
+        long currentFactionSelectedCount = selectedInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).count();
+        long totalOwnedForFaction = allOwnedCardInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).count();
+        int totalStrength = allOwnedCardInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).filter(i -> i.getCardDefinition() instanceof UnitCard).mapToInt(i -> i.getCardDefinition().getPower()).sum();
+        int selectedStrength = selectedInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).filter(i -> i.getCardDefinition() instanceof UnitCard).mapToInt(i -> i.getCardDefinition().getPower()).sum();
         totalCardsInDeckLabel.setText(String.valueOf(totalOwnedForFaction));
         selectedCardsLabel.setText(String.valueOf(currentFactionSelectedCount));
         selectedUnitStrengthLabel.setText(String.valueOf(selectedStrength));
@@ -371,87 +395,25 @@ public class DeckbuilderController {
 
     private void addCardToDeck(Card card) {
         Faction currentFaction = factions.get(currentFactionIndex);
-
-        long totalInDeckForFaction = selectedInstances.stream()
-                .filter(i -> i.getCardDefinition().getFaction() == currentFaction)
-                .count();
-
+        long totalInDeckForFaction = selectedInstances.stream().filter(i -> i.getCardDefinition().getFaction() == currentFaction).count();
         if (totalInDeckForFaction >= MAX_SELECTION) {
             Toast.makeText(getStage(), "Deck for " + currentFaction.name() + " is full.", 2000);
             return;
         }
-
-        long countOfThisCardInDeck = selectedInstances.stream()
-                .filter(i -> i.getCardDefinition().getId() == card.getId())
-                .count();
-
+        long countOfThisCardInDeck = selectedInstances.stream().filter(i -> i.getCardDefinition().getId() == card.getId()).count();
         if (countOfThisCardInDeck >= card.getAmount()) {
             Toast.makeText(getStage(), "You don't own any more copies of " + card.getName() + ".", 2000);
             return;
         }
-
-        allOwnedCardInstances.stream()
-                .filter(inst -> inst.getCardDefinition().getId() == card.getId())
-                .filter(inst -> !selectedInstances.contains(inst))
-                .findFirst()
-                .ifPresent(selectedInstances::add);
+        allOwnedCardInstances.stream().filter(inst -> inst.getCardDefinition().getId() == card.getId()).filter(inst -> !selectedInstances.contains(inst)).findFirst().ifPresent(selectedInstances::add);
     }
 
     private void removeCardFromDeck(Card card) {
-        selectedInstances.stream()
-                .filter(i -> i.getCardDefinition().getId() == card.getId())
-                .reduce((first, second) -> second)
-                .ifPresent(selectedInstances::remove);
-    }
-
-    private Node createCardVisual(Card card, java.util.function.Consumer<Card> action, boolean showCount) {
-        StackPane visualRoot = new StackPane();
-        visualRoot.setPrefSize(145, 220);
-        visualRoot.setMinSize(145, 220);
-        visualRoot.setMaxSize(145, 220);
-
-        ImageView cardImageView = new ImageView();
-        Image image = card.getImage();
-        if (image != null && !image.isError()) {
-            cardImageView.setImage(image);
-        } else {
-            Rectangle placeholder = new Rectangle(145, 220, Color.DARKSLATEGRAY);
-            Label nameLabel = new Label(card.getName());
-            nameLabel.setWrapText(true);
-            nameLabel.setTextFill(Color.WHITE);
-            visualRoot.getChildren().addAll(placeholder, nameLabel);
-        }
-        cardImageView.setFitWidth(145);
-        cardImageView.setFitHeight(220);
-        if(image != null && !image.isError()) visualRoot.getChildren().add(cardImageView);
-
-        if (showCount) {
-            long countInDeck = selectedInstances.stream().filter(i -> i.getCardDefinition().getId() == card.getId()).count();
-            long ownedAmount = card.getAmount();
-
-            Label countLabel = new Label(countInDeck + "/" + ownedAmount);
-            countLabel.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 2 5; -fx-background-radius: 10;");
-            StackPane.setAlignment(countLabel, Pos.BOTTOM_RIGHT);
-            StackPane.setMargin(countLabel, new Insets(0, 5, 5, 0));
-            visualRoot.getChildren().add(countLabel);
-        }
-
-        Button cardButton = new Button();
-        cardButton.setGraphic(visualRoot);
-        cardButton.setPadding(Insets.EMPTY);
-        cardButton.getStyleClass().add("card-button");
-        cardButton.setOnAction(e -> action.accept(card));
-
-        Tooltip.install(cardButton, createCardTooltip(card));
-        return cardButton;
+        selectedInstances.stream().filter(i -> i.getCardDefinition().getId() == card.getId()).reduce((first, second) -> second).ifPresent(selectedInstances::remove);
     }
 
     private Tooltip createCardTooltip(Card cardDef) {
-        String tooltipText = String.format(
-                "Name: %s\nStärke: %d\nReihe: %s\nTyp: %s\nSeltenheit: %s",
-                cardDef.getName(), cardDef.getPower(), cardDef.getRowType(),
-                cardDef.getCardType(), cardDef.getRarity()
-        );
+        String tooltipText = String.format("Name: %s\nStärke: %d\nReihe: %s\nTyp: %s\nSeltenheit: %s", cardDef.getName(), cardDef.getPower(), cardDef.getRowType(), cardDef.getCardType(), cardDef.getRarity());
         Tooltip tooltip = new Tooltip(tooltipText);
         tooltip.setStyle("-fx-font-size: 14px;");
         return tooltip;

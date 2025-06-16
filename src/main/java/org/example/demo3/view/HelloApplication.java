@@ -3,6 +3,7 @@ package org.example.demo3.view;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.example.demo3.model.service.NavigationService;
@@ -38,6 +39,12 @@ public class HelloApplication extends Application {
         MainViewController mainViewController = mainLoader.getController();
 
         Scene scene = new Scene(root, 1920, 1080);
+
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.F11) {
+                stage.setFullScreen(!stage.isFullScreen());
+            }
+        });
 
         try {
             String cssPath = Objects.requireNonNull(getClass().getResource(CSS_PATH)).toExternalForm();
