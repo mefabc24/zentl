@@ -56,7 +56,6 @@ public class GameSetupController {
         cardRepository = CardRepository.getInstance();
 
         List<Faction> playableFactions = Stream.of(Faction.values())
-                .filter(f -> f != Faction.TEST)
                 .collect(Collectors.toList());
 
         p1FactionComboBox.setItems(
@@ -103,8 +102,8 @@ public class GameSetupController {
         this.bot1Difficulty = b1Diff;
         this.bot2Difficulty = b2Diff;
 
-        p1FactionComboBox.setValue(Faction.KNIGHTS);
-        p2FactionComboBox.setValue(Faction.MONSTERS);
+        p1FactionComboBox.setValue(Faction.CARTOONS);
+        p2FactionComboBox.setValue(Faction.STARWARS);
 
         // Configure UI based on the game mode
         switch (mode) {
@@ -300,15 +299,6 @@ public class GameSetupController {
                         }
                 );
             }
-            return;
-        }
-
-        // local games (Hotseat, PvB, BvB)
-        if (gameMode == GameMode.PLAYER_VS_PLAYER && p1Faction == p2Faction) {
-            showAlert(
-                    "Invalid Selection",
-                    "Players cannot choose the same faction in a local match."
-            );
             return;
         }
 

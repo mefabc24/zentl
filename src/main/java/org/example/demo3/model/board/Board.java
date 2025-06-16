@@ -21,6 +21,7 @@ public interface Board {
     void clearWeatherEffects();
     void addWeatherCard(Card card);
     List<Card> getActiveWeatherCards();
+    Map<RowType, WeatherType> getActiveWeather();
     void clearWeatherCards();
 
 
@@ -28,6 +29,7 @@ public interface Board {
     void applyHornEffect(Player player, RowType rowType);
     void clearHornEffects(Player player);
     void clearAllHornEffects();
+    boolean isHornActive(Player player, RowType rowType);
 
     // bots
     Board copy();

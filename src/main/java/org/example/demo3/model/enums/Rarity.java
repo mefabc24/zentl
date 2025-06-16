@@ -22,7 +22,7 @@ public enum Rarity {
     public int getSortID() { return sortID; }
     public int getMaxAmount() { return maxAmount; }
 
-    // search for matching rarity with sortID
+    // Search for matching rarity with sortID
     public static Rarity fromSortID(int id) {
         for (Rarity rarity : VALUES) {
             if (rarity.getSortID() == id) {

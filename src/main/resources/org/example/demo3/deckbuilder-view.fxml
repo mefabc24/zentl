@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="rootPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.demo3.view.DeckbuilderController"
+            stylesheets="@styles.css" styleClass="deckbuilder-background">
+
+    <GridPane AnchorPane.topAnchor="0.0"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0">
+
+        <rowConstraints>
+            <RowConstraints percentHeight="10"/>
+            <RowConstraints percentHeight="90"/>
+        </rowConstraints>
+
+        <columnConstraints>
+            <ColumnConstraints percentWidth="100"/>
+        </columnConstraints>
+
+        <!-- Faction Navigation -->
+        <GridPane GridPane.rowIndex="0" GridPane.columnIndex="0">
+            <rowConstraints>
+                <RowConstraints percentHeight="100"/>
+            </rowConstraints>
+            <columnConstraints>
+                <ColumnConstraints percentWidth="40"/>
+                <ColumnConstraints percentWidth="20"/>
+                <ColumnConstraints percentWidth="40"/>
+            </columnConstraints>
+
+            <HBox GridPane.columnIndex="0" alignment="BOTTOM_RIGHT" spacing="50" styleClass="icon-button">
+                <Label fx:id="prevFactionLabel" text="Previousfaction" styleClass="deckbuilder-other-faction-label"/>
+                <Button fx:id="prevFactionButton" styleClass="deckbuilder-nav-button">
+                    <graphic>
+                        <ImageView fitHeight="24" preserveRatio="true">
+                            <Image url="@assets/icons/arrowleft.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+
+            <Label fx:id="activeFactionLabel" text="Activefaction" GridPane.columnIndex="1" alignment="BOTTOM_CENTER" maxWidth="Infinity"
+                   maxHeight="Infinity" styleClass="deckbuilder-label" style="-fx-font-size: 28"/>
+
+            <HBox GridPane.columnIndex="2" alignment="BOTTOM_LEFT" spacing="50" styleClass="icon-button">
+                <Button fx:id="nextFactionButton" styleClass="deckbuilder-nav-button">
+                    <graphic>
+                        <ImageView fitHeight="24" preserveRatio="true">
+                            <Image url="@assets/icons/arrowright.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label fx:id="nextFactionLabel" text="Nextfaction" styleClass="deckbuilder-other-faction-label"/>
+            </HBox>
+        </GridPane>
+        <!-- END Navigation -->
+
+        <!-- Content -->
+        <GridPane GridPane.rowIndex="1" GridPane.columnIndex="0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="40" halignment="RIGHT"/>
+                <ColumnConstraints percentWidth="20" halignment="CENTER"/>
+                <ColumnConstraints percentWidth="40" halignment="LEFT"/>
+            </columnConstraints>
+
+            <rowConstraints>
+                <RowConstraints percentHeight="100" valignment="TOP"/>
+            </rowConstraints>
+
+            <!-- Left Container -->
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="0"
+                  spacing="5" style="-fx-padding:10;" maxWidth="710">
+                <VBox spacing="5">
+                    <Label text="Card Collection" styleClass="deckbuilder-label" style="-fx-font-size: 24"/>
+                    <Label fx:id="leftFilterLabel" text="ALL CARDS" styleClass="deckbuilder-sort-label"/>
+                </VBox>
+
+                <GridPane style="-fx-padding: 5;">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                    </columnConstraints>
+
+                    <Button fx:id="leftFilterAllButton" styleClass="icon-button" GridPane.columnIndex="0" style="-fx-opacity: 1.0">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/cards.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="leftFilterMeleeButton" styleClass="icon-button" GridPane.columnIndex="1">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/melee.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="leftFilterRangedButton" styleClass="icon-button" GridPane.columnIndex="2">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/ranged.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="leftFilterSiegeButton" styleClass="icon-button" GridPane.columnIndex="3">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/siege.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="leftFilterAnyButton" styleClass="icon-button" GridPane.columnIndex="4">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/any.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="leftFilterWeatherButton" styleClass="icon-button" GridPane.columnIndex="5">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/weather.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="leftFilterSpecialButton" styleClass="icon-button" GridPane.columnIndex="6">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/special.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                </GridPane>
+
+                <StackPane VBox.vgrow="ALWAYS" styleClass="card-frame-border" prefHeight="700">
+                    <!-- 2. Innerer ScrollPane für den Inhalt -->
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
+                        <!-- 3. FlowPane enthält die Karten -->
+                        <FlowPane fx:id="cardCollectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10"/>
+                    </ScrollPane>
+                </StackPane>
+            </VBox>
+            <!-- END Left -->
+
+            <!-- Middle Container -->
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <VBox spacing="20" alignment="CENTER" style="-fx-padding: 130 0 0 0;">
+                    <Label text="Total Cards in Deck" styleClass="deckbuilder-label"/>
+                    <Label fx:id="totalCardsInDeckLabel" text="25" styleClass="deckbuilder-label"/>
+                    <Label text="Selected Cards" styleClass="deckbuilder-label"/>
+                    <Label fx:id="selectedCardsLabel" text="6" styleClass="deckbuilder-label"/>
+                    <Label text="Total Unit Strength" styleClass="deckbuilder-label"/>
+                    <Label fx:id="totalUnitStrengthLabel" text="194" styleClass="deckbuilder-label"/>
+                    <Label text="Selected Unit Strength" styleClass="deckbuilder-label"/>
+                    <Label fx:id="selectedUnitStrengthLabel" text="123" styleClass="deckbuilder-label"/>
+                    <Label text="Placeholder" styleClass="deckbuilder-label"/>
+                    <Label text="666" styleClass="deckbuilder-label"/>
+                </VBox>
+                <Region VBox.vgrow="ALWAYS"/>
+                <VBox alignment="BOTTOM_CENTER" style="-fx-padding: 10" spacing="10">
+                    <Button fx:id="unlockButton" text="Unlock New Cards" alignment="BOTTOM_CENTER"
+                            prefWidth="Infinity" prefHeight="40" styleClass="deckbuilder-button"/>
+                    <Button fx:id="menuButton" text="Back To Menu" alignment="BOTTOM_CENTER"
+                            prefWidth="Infinity" prefHeight="40" styleClass="deckbuilder-button"/>
+                    <Button fx:id="saveButton" text="Save Deck" alignment="BOTTOM_CENTER"
+                            prefWidth="Infinity" prefHeight="40" styleClass="deckbuilder-button"/>
+                </VBox>
+            </VBox>
+            <!-- END Middle -->
+
+            <!-- Left Container -->
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0"
+                  spacing="5" style="-fx-padding: 10;" maxWidth="710">
+                <VBox spacing="5" alignment="TOP_RIGHT">
+                    <Label text="Card Collection" styleClass="deckbuilder-label" style="-fx-font-size: 24"/>
+                    <Label fx:id="rightFilterLabel" text="ALL CARDS" styleClass="deckbuilder-sort-label"/>
+                </VBox>
+
+                <GridPane style="-fx-padding: 5;">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                        <ColumnConstraints percentWidth="14.28" halignment="CENTER"/>
+                    </columnConstraints>
+
+                    <!-- NEU: Alle Filter-Icons sind jetzt Buttons -->
+                    <Button fx:id="rightFilterAllButton" styleClass="icon-button" GridPane.columnIndex="0" style="-fx-opacity: 1.0">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/cards.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="rightFilterMeleeButton" styleClass="icon-button" GridPane.columnIndex="1">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/melee.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="rightFilterRangedButton" styleClass="icon-button" GridPane.columnIndex="2">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/ranged.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="rightFilterSiegeButton" styleClass="icon-button" GridPane.columnIndex="3">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/siege.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="rightFilterAnyButton" styleClass="icon-button" GridPane.columnIndex="4">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/any.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="rightFilterWeatherButton" styleClass="icon-button" GridPane.columnIndex="5">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/weather.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="rightFilterSpecialButton" styleClass="icon-button" GridPane.columnIndex="6">
+                        <graphic>
+                            <ImageView><Image url="@assets/icons/special.png"/></ImageView>
+                        </graphic>
+                    </Button>
+                </GridPane>
+
+                <StackPane VBox.vgrow="ALWAYS" styleClass="card-frame-border" prefHeight="700">
+                    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="NEVER" styleClass="card-scroll-pane-inner">
+                        <FlowPane fx:id="cardSelectionFlowPane" styleClass="card-frame-content" hgap="10" vgap="10"/>
+                    </ScrollPane>
+                </StackPane>
+            </VBox>
+            <!-- END Left -->
+        </GridPane>
+        <!-- END Content -->
+    </GridPane>
+</AnchorPane>

@@ -12,7 +12,11 @@ import java.util.stream.Stream;
 // => determines the optimal move by simulating thousands of future game states and scoring them with a heuristic function (evaluateState)
 public class AdvancedBot extends PlayerImpl {
     // MAX_DEPTH should be uneven
-    private static final int MAX_DEPTH = 9; // controlls foresight, but time complexity: O(b^d) in worst case | d = depth, b = number of possible moves (how many cards can be played) => has huge impact on performance
+    private static final int MAX_DEPTH = 11; // controlls foresight, but time complexity: O(b^d) in worst case | d = depth, b = number of possible moves (how many cards can be played) => has huge impact on performance
+
+    // simulation counter (logging)
+    private long statesEvaluated;
+    private long branchesPruned;
 
     public AdvancedBot(String name, Faction faction, List<Card> deck) {
         super(name, faction, deck);
@@ -22,6 +26,9 @@ public class AdvancedBot extends PlayerImpl {
     public Card chooseCardToPlay(Player opponent, Board board, int round) {
         if (getHand().isEmpty()) return null;
         GameState initialState = new GameState(this, opponent, board, round);
+
+        this.statesEvaluated = 0;
+        this.branchesPruned = 0;
 
         // get possible moves at the top level
         List<Card> possibleMoves = getPossibleMoves(initialState, true);
@@ -43,12 +50,15 @@ public class AdvancedBot extends PlayerImpl {
             alpha = Math.max(alpha, result.score);
         }
         System.out.println("---  advanced bot best move: " + (bestMove.card == null ? "PASS" : bestMove.card.getName()) + " with score " + bestMove.score + " ---");
+        System.out.println("---  Total states evaluated: " + this.statesEvaluated);
+        System.out.println("---  Branches pruned: " + this.branchesPruned);
 
         return bestMove.card;
     }
 
     // minimax with alpha-beta pruning
     private Move minimax(GameState state, int depth, int alpha, int beta, boolean isBotTurn) {
+        this.statesEvaluated++;
 
         // (BASECASE) as the max depth is reached or both players passed/have empty hands, we return from our search evaluating the state the simualation ended in
         if (depth == 0 || state.isTerminal()) {
@@ -91,7 +101,10 @@ public class AdvancedBot extends PlayerImpl {
             // if the maximizer's guaranteed score (alpha) is better than
             // the minimizer's guaranteed score (beta), the minimizer will never let this path happen
             // so we can stop exploring this branch, for better understanding: https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-4-alpha-beta-pruning/
-            if (beta <= alpha) break;
+            if (beta <= alpha) {
+                this.branchesPruned++;
+                break;
+            }
         }
 
         return bestMove;
@@ -192,7 +205,7 @@ public class AdvancedBot extends PlayerImpl {
                 }
                 if (card.getEffectType() == EffectType.MEDIC) {
                     // heavy penalty for using a valuable revive effect early (in later rounds the handdif the medic gives, negates this penalty)
-                    penalty -= 110;
+                    penalty -= 140;
                 }
             }
         }
@@ -272,6 +285,7 @@ public class AdvancedBot extends PlayerImpl {
     private void applySpecialEffect(GameState state, Card card, Player activePlayer) {
         switch (card.getEffectType()) {
             case CLEAR_WEATHER:
+            case RALLY:
                 state.board.clearWeatherEffects();
                 state.board.clearWeatherCards();
                 break;
@@ -283,6 +297,11 @@ public class AdvancedBot extends PlayerImpl {
                 break;
             case MEDIC:
                 applyMedicEffect(activePlayer);
+                break;
+            case DIMERITIUM_BOMB:
+                state.board.clearAllHornEffects();
+                state.board.clearWeatherEffects();
+                state.board.clearWeatherCards();
                 break;
         }
     }

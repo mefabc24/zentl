@@ -40,6 +40,8 @@ public final class Config {
 
     public static final String LOCKED_IMAGE_OVERLAY = IMAGE_PATH + "LockedOverlay.png";
 
+    public static final String FXML_DROPSELECTION_PATH = RESOURCE_PATH + "drop-selection.fxml";
+    public static final String FXML_DECKBUILDER_PATH = FXML_PATH + "deckbuilder-view.fxml";
     public static final String FXML_EDITOR_PATH = FXML_PATH + "Editor.fxml";
     public static final String FXML_FACTION_TAB_PATH = FXML_PATH + "faction-tab-content.fxml";
     public static final String FXML_INVENTORY_PATH = FXML_PATH + "inventory-view.fxml";

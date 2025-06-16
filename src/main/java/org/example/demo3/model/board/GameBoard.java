@@ -109,6 +109,11 @@ public class GameBoard implements Board {
     }
 
     @Override
+    public Map<RowType, WeatherType> getActiveWeather() {
+        return Collections.unmodifiableMap(activeWeather);
+    }
+
+    @Override
     public void clearWeatherCards() {
         this.activeWeatherCards.clear();
     }
@@ -133,6 +138,11 @@ public class GameBoard implements Board {
         // get collection of all values with ActiveHorns.values()
         // clear each set with an active horn
         activeHorns.values().forEach(Set::clear);
+    }
+
+    @Override
+    public boolean isHornActive(Player player, RowType rowType) {
+        return activeHorns.getOrDefault(player.getName(), Collections.emptySet()).contains(rowType);
     }
 
     // needed for minimax, to create deepcopys

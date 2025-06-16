@@ -7,17 +7,16 @@
 <VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" spacing="30.0" styleClass="main-menu-root"
       xmlns="http://javafx.com/javafx/21" fx:controller="org.example.demo3.view.LanSelectionController">
     <children>
-        <Label styleClass="lan-title-label" text="Multiplayer"/>
+        <Label styleClass="lan-title" text="Multiplayer"/>
         <VBox alignment="CENTER" spacing="20.0">
             <children>
-                <!-- Text und neue Style-Klasse hinzugefügt -->
                 <Button fx:id="hostButton" mnemonicParsing="false" onAction="#handleHostAction"
-                        styleClass="lan-menu-button" text="Host Game"/>
+                        styleClass="lan-button" text="Host Game"/>
                 <Button fx:id="joinButton" mnemonicParsing="false" onAction="#handleJoinAction"
-                        styleClass="lan-menu-button" text="Join Game"/>
+                        styleClass="lan-button" text="Join Game"/>
             </children>
         </VBox>
-        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="lan-menu-button"
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#handleBackAction" styleClass="lan-button"
                 text="Back"/>
     </children>
     <padding>

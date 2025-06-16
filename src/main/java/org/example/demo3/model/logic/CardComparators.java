@@ -35,9 +35,18 @@ public class CardComparators {
 
     // Sortierung für Card
     public static final Comparator<Card> BY_RARITY_ASC = Comparator.comparingInt(c -> c.getRarity().getSortID());
+    public static final Comparator<Card> BY_RARITY_DESC = BY_RARITY_ASC.reversed();
+
     public static final Comparator<Card> BY_POWER_ASC = Comparator.comparingInt(Card::getPower);
+    public static final Comparator<Card> BY_POWER_DESC = BY_POWER_ASC.reversed();
+
     public static final Comparator<Card> BY_ROWTYPE_ASC = Comparator.comparing(c -> c.getRowType().getSortID());
+    public static final Comparator<Card> BY_ROWTYPE_DESC = BY_ROWTYPE_ASC.reversed();
+
     public static final Comparator<Card> BY_CARDTYPE_ASC = Comparator.comparing(c -> c.getCardType().getSortID());
+    public static final Comparator<Card> BY_CARDTYPE_DESC = BY_CARDTYPE_ASC.reversed();
+
     public static final Comparator<Card> BY_ID_ASC = Comparator.comparingInt(Card::getId);
+    public static final Comparator<Card> BY_ID_DESC = BY_ID_ASC.reversed();
 
 }

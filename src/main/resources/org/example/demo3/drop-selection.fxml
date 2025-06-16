@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demo3.view.DropSelectionController"
+           prefHeight="400.0" prefWidth="600.0" stylesheets="@styles.css" styleClass="deckbuilder-background">
+
+    <VBox alignment="CENTER" spacing="80">
+        <Label text="Select Drop" style="-fx-font-size: 120; -fx-font-family: 'Copperplate Gothic Bold'"/>
+        <VBox spacing="10" alignment="CENTER">
+            <Button fx:id="basicDropButton" prefWidth="400" text="Basic Drop" styleClass="deckbuilder-button"/>
+            <Button fx:id="premiumDropButton" prefWidth="400" text="Premium Drop" styleClass="deckbuilder-button"/>
+            <Button fx:id="eliteDropButton" prefWidth="400" text="Elite Drop" styleClass="deckbuilder-button"/>
+        </VBox>
+        <Button fx:id="cancelDropButton" prefWidth="400" text="Cancel" styleClass="deckbuilder-button"/>
+    </VBox>
+</StackPane>

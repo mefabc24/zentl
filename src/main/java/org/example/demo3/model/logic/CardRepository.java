@@ -34,7 +34,7 @@ public class CardRepository {
     private List<Card> allCards;
     private static final String resourcePath = JSON_PATH;
     private final Gson gson;
-    
+
     private CardRepository() {
         RuntimeTypeAdapterFactory<Card> adapterFactory = RuntimeTypeAdapterFactory
                 .of(Card.class, "cardType")
@@ -179,7 +179,7 @@ public class CardRepository {
                     if (card instanceof BaseCard bc) {
                         bc.initMaxAmount();
                     }
-                    
+
                     if (card instanceof WeatherCard wc) {
                         EffectType derivedEffect = WeatherCard.determineEffectType(wc.getWeatherType());
                         if (wc instanceof BaseCard bc) {
