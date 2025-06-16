@@ -105,7 +105,7 @@ public class GameService extends AbstractGameService {
     private void handleBotTurn() {
         new Thread(() -> {
             try {
-                Thread.sleep(1000); // sleep
+                Thread.sleep(1500); // sleep
                 if (!isGameActive) return;
 
                 Card cardToPlay = null;

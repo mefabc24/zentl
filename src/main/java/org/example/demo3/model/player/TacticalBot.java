@@ -2,16 +2,13 @@ package org.example.demo3.model.player;
 
 import org.example.demo3.model.board.Board;
 import org.example.demo3.model.cards.Card;
-import org.example.demo3.model.enums.EffectType;
-import org.example.demo3.model.enums.Faction;
-import org.example.demo3.model.enums.Rarity;
-import org.example.demo3.model.enums.RowType;
+import org.example.demo3.model.enums.*;
 
 import java.util.Comparator;
 import java.util.List;
 
 /*
-this bot plays his weakest cards when ahead and his strongest cards when behind
+this bot plays his weakest cards when ahead and his strongest cards when behind, it also evaluates the impact of playing effect/weather cards
  */
 public class TacticalBot extends PlayerImpl {
 
@@ -31,14 +28,7 @@ public class TacticalBot extends PlayerImpl {
             return null;
         }
 
-        // find best card to play
-        Card chosenCard = findBestCardToPlay(opponent, board, round);
-
-        if (chosenCard != null) {
-            return chosenCard;
-        } else {
-            return getHand().getFirst();
-        }
+        return findBestCardToPlay(opponent, board, round);
     }
 
     // evaluate if passing is a good move
@@ -51,7 +41,7 @@ public class TacticalBot extends PlayerImpl {
             return true;
         }
 
-        // if we are not in round 1 or lead in round 2 we cant lose the round, or we lose the game
+        // if we are not in (round 1 or lead in round 2) we cant lose the round, or we lose the game
         if(!(round == 1 || (round == 2 && getWins() > opponent.getWins()))) return false;
 
         // we pass if we are far behind => opponent played his best cards
@@ -74,7 +64,8 @@ public class TacticalBot extends PlayerImpl {
         if (this.getScore() >= opponent.getScore()) {
             Card lowPowerUnit = getHand()
                     .stream()
-                    .filter(c -> c.getPower() > 0)
+                    // ignore effect cards
+                    .filter(c ->  c.getEffectType() == EffectType.NONE)
                     .min(Comparator.comparingInt(Card::getPower))
                     .orElse(null);
 
@@ -85,7 +76,7 @@ public class TacticalBot extends PlayerImpl {
 
         // when behind look for the strongest play
 
-        // 1. look for a good card to play
+        // 1. look for a good weather card to play
         Card weatherMove = findOptimalWeatherCard(opponent, board);
         if (weatherMove != null) {
             return weatherMove;
@@ -97,17 +88,56 @@ public class TacticalBot extends PlayerImpl {
             return scorchMove;
         }
 
-        // 3. find possible horn
+        // 3. find possible good dimeritium bomb
+        Card dimeritiumBombMove = findDimeritiumBombMove(opponent, board);
+        if (dimeritiumBombMove != null) {
+            return dimeritiumBombMove;
+        }
+
+        // 4. find possible clear weather
+        Card clearWeatherMove = findClearWeatherMove(opponent, board);
+        if (clearWeatherMove != null) {
+            return clearWeatherMove;
+        }
+
+        // 5. find possible horn
         Card hornMove = findOptimalHorn(board);
         if (hornMove != null) {
             return hornMove;
         }
 
-        // 4. play strongest unit to catch up, when behind
-        return getHand()
+        // 6. find good medic play
+        Card medicMove = findMedicMove();
+        if (medicMove != null) {
+            return medicMove;
+        }
+
+        // 7. we found no good effect card to play => find the best no effect card to play
+
+        // get list of no effect cards
+        List<Card> simpleUnits = getHand()
                 .stream()
-                .filter(c -> c.getPower() > 0)
+                .filter(c -> c.getEffectType() == EffectType.NONE)
+                .toList();
+
+        if (simpleUnits.isEmpty()) {
+            return null; // no simple units left => pass
+        }
+
+        // find the best move on row not affected by weather
+        Card bestSafeMove = simpleUnits.stream()
+                .filter(c -> !board.getActiveWeather().containsKey(c.getRowType()))
                 .max(Comparator.comparingInt(Card::getPower))
+                .orElse(null);
+
+        if (bestSafeMove != null) {
+            return bestSafeMove;
+        }
+
+        // if no safe move is possible we must play into a nerfed row
+        // => play the weakest available simple unit to get at least 1 point
+        return simpleUnits.stream()
+                .min(Comparator.comparingInt(Card::getPower))
                 .orElse(null);
     }
 
@@ -133,8 +163,8 @@ public class TacticalBot extends PlayerImpl {
 
             if (weatherCard != null) {
                 // evaluate impact
-                int opponentLoss = calculateWeatherImpact(opponent, rowType, board);
-                int myLoss = calculateWeatherImpact(this, rowType, board);
+                int opponentLoss = calculatePotentialWeatherImpact(opponent, rowType, board);
+                int myLoss = calculatePotentialWeatherImpact(this, rowType, board);
 
                 int advantage = opponentLoss - myLoss;
 
@@ -146,7 +176,7 @@ public class TacticalBot extends PlayerImpl {
             }
         }
 
-        // if we achieve a gain bigger then +8 we play the card
+        // if we get high gain => play card
         if (bestWeatherCardToPlay != null && max >= 8) {
             return bestWeatherCardToPlay;
         }
@@ -154,7 +184,7 @@ public class TacticalBot extends PlayerImpl {
         return null;
     }
 
-    private int calculateWeatherImpact(Player player, RowType rowType, Board board) {
+    private int calculatePotentialWeatherImpact(Player player, RowType rowType, Board board) {
         int currentPower = 0;
         int unitsAffected = 0;
 
@@ -170,7 +200,7 @@ public class TacticalBot extends PlayerImpl {
             unitsAffected++;
         }
 
-        // The loss is the difference between their current total power and their final total power.
+        // The loss is the difference between their current total power and their final total power (final power == cards affected, bc weather sets power to 1)
         if (unitsAffected == 0) {
             return 0;
         }
@@ -206,6 +236,96 @@ public class TacticalBot extends PlayerImpl {
                 .orElse(0);
     }
 
+    private Card findDimeritiumBombMove(Player opponent, Board board) {
+        // check if we even have a bomb card to play
+        Card bombCard = getHand().stream()
+                .filter(c -> c.getEffectType() == EffectType.DIMERITIUM_BOMB)
+                .findFirst()
+                .orElse(null);
+
+        if (bombCard == null) {
+            return null;
+        }
+
+        int totalAdvantage = 0;
+
+        // 1. calculate advantage from clearing horn effects
+        int opponentHornBuff = calculateHornBuff(opponent, board);
+        int myHornBuff = calculateHornBuff(this, board);
+        totalAdvantage += (opponentHornBuff - myHornBuff);
+
+        // 2. calculate advantage from clearing weather effects
+        int myWeatherGain = calculateWeatherGain(this, board);
+        int opponentWeatherGain = calculateWeatherGain(opponent, board);
+        totalAdvantage += (myWeatherGain - opponentWeatherGain);
+
+        // if the total advantage is high => play the bomb
+        if (totalAdvantage >= 12) {
+            return bombCard;
+        }
+
+        return null;
+    }
+
+    private int calculateHornBuff(Player player, Board board) {
+        int powerFromHorn = 0;
+        for (RowType row : new RowType[]{RowType.MELEE, RowType.RANGED, RowType.SIEGE}) {
+            // check if horn is actually active on this row for the player
+            if (board.isHornActive(player, row)) {
+                // the buff is equal to the rows base power
+                // Horn doubled the value so / 2 to get the buff impact
+                powerFromHorn += board.calculateRowPower(row, player) / 2;
+            }
+        }
+        return powerFromHorn;
+    }
+
+    private Card findClearWeatherMove(Player opponent, Board board) {
+        // check if we even have a clear weather card to play
+        Card clearWeatherCard = getHand().stream()
+                .filter(c -> c.getEffectType() == EffectType.CLEAR_WEATHER || c.getEffectType() == EffectType.RALLY)
+                .findFirst()
+                .orElse(null);
+
+        if (clearWeatherCard == null || board.getActiveWeather().isEmpty()) {
+            return null;
+        }
+
+        // calculate how much both players would gain from clearing weather
+        int myGain = calculateWeatherGain(this, board);
+        int opponentGain = calculateWeatherGain(opponent, board);
+
+        // calculate net advantage from clearing weather
+        int advantage = myGain - opponentGain;
+
+        // high advantage => play card
+        if (advantage >= 8) {
+            return clearWeatherCard;
+        }
+
+        return null;
+    }
+
+    private int calculateWeatherGain(Player player, Board board) {
+        int totalGain = 0;
+        // only look at active weather effects
+        for (RowType row : board.getActiveWeather().keySet()) {
+            int powerLoss = 0;
+            List<Card> nonHeroUnits = board.getPlayerRows(player)
+                    .getOrDefault(row, List.of())
+                    .stream()
+                    .filter(c -> c.getRarity() != Rarity.LEGENDARY && c.getRarity() != Rarity.MYTHIC)
+                    .toList();
+
+            for (Card unit : nonHeroUnits) {
+                // gain is the difference between base power and 1
+                powerLoss += (unit.getPower() - 1);
+            }
+            totalGain += powerLoss;
+        }
+        return totalGain;
+    }
+
     private Card findOptimalHorn(Board board) {
         // check if we even have a horn card to play
         Card commandersHornCard = getHand()
@@ -224,6 +344,11 @@ public class TacticalBot extends PlayerImpl {
         RowType[] rows = new RowType[]{RowType.MELEE, RowType.RANGED, RowType.SIEGE};
 
         for (RowType currentRowType : rows) {
+            // horn cannot be applied to a row that already has a horn
+            if (board.isHornActive(this, currentRowType)) {
+                continue;
+            }
+
             int currentCardCount = board.getPlayerRows(this)
                     .getOrDefault(currentRowType, List.of())
                     .size();
@@ -235,8 +360,8 @@ public class TacticalBot extends PlayerImpl {
             }
         }
 
-        // if no row has a card return
-        if (maxCardCount == 0) {
+        // if no valid row has a card return
+        if (targetRowType == null || maxCardCount == 0) {
             return null;
         }
 
@@ -249,5 +374,30 @@ public class TacticalBot extends PlayerImpl {
         } else {
             return null;
         }
+    }
+
+    private Card findMedicMove() {
+        // check if we even have a medic card to play
+        Card medicCard = getHand().stream()
+                .filter(c -> c.getEffectType() == EffectType.MEDIC)
+                .findFirst()
+                .orElse(null);
+
+        if (medicCard == null) {
+            return null;
+        }
+
+        // find the strongest non hero unit in the graveyard
+        Card cardToRevive = getDiscardPile().stream()
+                .filter(c -> c.getCardType() == CardType.UNIT && c.getRarity() != Rarity.LEGENDARY && c.getRarity() != Rarity.MYTHIC)
+                .max(Comparator.comparingInt(Card::getPower))
+                .orElse(null);
+
+        // if there is a valuable target to revive => play the medic
+        if (cardToRevive != null && cardToRevive.getPower() >= 8) {
+            return medicCard;
+        }
+
+        return null;
     }
 }
