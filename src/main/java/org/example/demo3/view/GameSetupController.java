@@ -56,7 +56,6 @@ public class GameSetupController {
         cardRepository = CardRepository.getInstance();
 
         List<Faction> playableFactions = Stream.of(Faction.values())
-                .filter(f -> f != Faction.KNIGHTS)
                 .collect(Collectors.toList());
 
         p1FactionComboBox.setItems(
