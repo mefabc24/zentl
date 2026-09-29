@@ -38,3 +38,15 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Assets ###
+
+# Ignore card assets except knights
+/src/main/resources/org/example/demo3/assets/cards/*
+!/src/main/resources/org/example/demo3/assets/cards/knights/
+!/src/main/resources/org/example/demo3/assets/cards/special/
+!/src/main/resources/org/example/demo3/assets/cards/weather/
+!/src/main/resources/org/example/demo3/assets/cards/templates/
+
+# Ignore audio files
+/src/main/resources/org/example/demo3/assets/audio/*
